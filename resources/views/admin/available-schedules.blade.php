@@ -48,7 +48,7 @@
                                 {{ $waktu->waktu }}
                             </td>
                             @for($hari = 1; $hari <= 7; $hari++)
-                                <td class="p-1 align-top border-r border-slate-700/30">
+                                <td class="p-1 align-top border-r border-slate-700/30 max-w-[120px]">
                                     @php $items = $mappedSchedule[$hari][$waktu->id] ?? []; @endphp
                                     @if(count($items) > 0)
                                         <div class="flex flex-col gap-1">
