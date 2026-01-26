@@ -176,4 +176,30 @@ class TentorSiswaController extends Controller
 
         return redirect()->route('tentor-siswa.schedule', $tentor)->with('success', 'Jadwal berhasil diperbarui.');
     }
+
+    public function allSchedules()
+    {
+        $waktus = \App\Models\Waktu::orderBy('id', 'asc')->get();
+
+        $schedules = \App\Models\JadwalTentor::with(['tentor', 'siswa'])
+            ->where('id_siswa', '>', 1)
+            ->get();
+
+        $mappedSchedule = [];
+        foreach ($schedules as $item) {
+            $mappedSchedule[$item->hari][$item->waktu][] = $item;
+        }
+
+        $hariLabels = [
+            1 => 'Senin',
+            2 => 'Selasa',
+            3 => 'Rabu',
+            4 => 'Kamis',
+            5 => 'Jumat',
+            6 => 'Sabtu',
+            7 => 'Ahad'
+        ];
+
+        return view('admin.all-schedules', compact('waktus', 'mappedSchedule', 'hariLabels'));
+    }
 }
