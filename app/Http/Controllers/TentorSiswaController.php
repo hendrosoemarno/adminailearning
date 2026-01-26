@@ -98,4 +98,82 @@ class TentorSiswaController extends Controller
 
         return view('admin.tentor-schedule', compact('tentor', 'waktus', 'mappedSchedule', 'hariLabels'));
     }
+
+    public function editSchedule(Tentor $tentor)
+    {
+        $waktus = \App\Models\Waktu::orderBy('id', 'asc')->get();
+        $schedules = \App\Models\JadwalTentor::with('linkJadwal')
+            ->where('id_tentor', $tentor->id)
+            ->get();
+
+        // Tentor's assigned students for the dropdown
+        $students = $tentor->siswas()->orderBy('firstname', 'asc')->get();
+
+        $mappedSchedule = [];
+        foreach ($schedules as $item) {
+            $mappedSchedule[$item->hari][$item->waktu] = $item;
+        }
+
+        $hariLabels = [
+            1 => 'Senin',
+            2 => 'Selasa',
+            3 => 'Rabu',
+            4 => 'Kamis',
+            5 => 'Jumat',
+            6 => 'Sabtu',
+            7 => 'Ahad'
+        ];
+
+        return view('admin.tentor-schedule-edit', compact('tentor', 'waktus', 'mappedSchedule', 'hariLabels', 'students'));
+    }
+
+    public function updateSchedule(Request $request, Tentor $tentor)
+    {
+        $inputSchedules = $request->input('schedule', []); // [hari][waktu_id]
+        $links = $request->input('links', []); // [hari][waktu_id]
+
+        foreach ($inputSchedules as $hari => $slots) {
+            foreach ($slots as $waktuId => $idSiswa) {
+                // Find existing
+                $existing = \App\Models\JadwalTentor::where('id_tentor', $tentor->id)
+                    ->where('hari', $hari)
+                    ->where('waktu', $waktuId)
+                    ->first();
+
+                if ($idSiswa == "empty") {
+                    if ($existing) {
+                        // Delete link if exists
+                        \App\Models\LinkJadwal::where('id_jadwal', $existing->id)->delete();
+                        $existing->delete();
+                    }
+                } else {
+                    if ($existing) {
+                        $existing->update(['id_siswa' => $idSiswa]);
+                        $jadwalId = $existing->id;
+                    } else {
+                        $newJadwal = \App\Models\JadwalTentor::create([
+                            'id_tentor' => $tentor->id,
+                            'hari' => $hari,
+                            'waktu' => $waktuId,
+                            'id_siswa' => $idSiswa
+                        ]);
+                        $jadwalId = $newJadwal->id;
+                    }
+
+                    // Handle link
+                    $linkVal = $links[$hari][$waktuId] ?? null;
+                    if ($linkVal) {
+                        \App\Models\LinkJadwal::updateOrCreate(
+                            ['id_jadwal' => $jadwalId],
+                            ['link' => $linkVal]
+                        );
+                    } else {
+                        \App\Models\LinkJadwal::where('id_jadwal', $jadwalId)->delete();
+                    }
+                }
+            }
+        }
+
+        return redirect()->route('tentor-siswa.schedule', $tentor)->with('success', 'Jadwal berhasil diperbarui.');
+    }
 }
