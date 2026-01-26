@@ -26,11 +26,11 @@
     <div class="bg-slate-800/50 backdrop-blur-sm border border-slate-700 rounded-xl shadow-xl overflow-hidden mb-12">
         <div class="overflow-x-auto">
             <table class="w-full text-left border-collapse table-fixed">
-                <thead>
-                    <tr class="bg-slate-900 border-b border-slate-700">
-                        <th class="p-4 w-24 text-xs font-bold text-slate-400 uppercase tracking-widest border-r border-slate-700/50">Waktu</th>
+                <thead class="sticky top-0 z-10">
+                    <tr class="bg-slate-900 border-b border-slate-700 shadow-md">
+                        <th class="p-4 w-24 text-xs font-bold text-slate-400 uppercase tracking-widest border-r border-slate-700/50 bg-slate-900">Waktu</th>
                         @foreach($hariLabels as $index => $label)
-                            <th class="p-4 text-xs font-bold text-slate-400 uppercase tracking-widest">{{ $label }}</th>
+                            <th class="p-4 text-xs font-bold text-slate-400 uppercase tracking-widest bg-slate-900">{{ $label }}</th>
                         @endforeach
                     </tr>
                 </thead>
