@@ -24,6 +24,6 @@ Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
 
 Route::middleware('auth')->group(function () {
     Route::get('/dashboard', [LoginController::class, 'dashboard'])->name('dashboard');
-    Route::get('/tentors', [\App\Http\Controllers\TentorController::class, 'index'])->name('tentors.index');
+    Route::resource('tentors', \App\Http\Controllers\TentorController::class);
     Route::get('/users', [\App\Http\Controllers\UserController::class, 'index'])->name('users.index');
 });
