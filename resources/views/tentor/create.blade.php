@@ -50,8 +50,13 @@
                 <!-- Mata Pelajaran -->
                 <div class="space-y-2">
                     <label for="mapel" class="block text-sm font-medium text-slate-400">Mata Pelajaran</label>
-                    <input type="text" name="mapel" id="mapel" value="{{ old('mapel') }}" required
-                        class="w-full bg-slate-900 border border-slate-700 rounded-lg px-4 py-2.5 text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all placeholder-slate-600">
+                    <select name="mapel" id="mapel" required
+                        class="w-full bg-slate-900 border border-slate-700 rounded-lg px-4 py-2.5 text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all cursor-pointer">
+                        <option value="" disabled {{ old('mapel') == '' ? 'selected' : '' }}>Pilih Mata Pelajaran</option>
+                        <option value="Bahasa Inggris" {{ old('mapel') == 'Bahasa Inggris' ? 'selected' : '' }}>Bahasa Inggris
+                        </option>
+                        <option value="Matematika" {{ old('mapel') == 'Matematika' ? 'selected' : '' }}>Matematika</option>
+                    </select>
                 </div>
 
                 <!-- WhatsApp -->

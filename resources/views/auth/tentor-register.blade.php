@@ -130,9 +130,15 @@
                             <label
                                 class="block text-xs font-semibold text-slate-500 uppercase tracking-widest mb-2">Mata
                                 Pelajaran</label>
-                            <input type="text" name="mapel" value="{{ old('mapel') }}" required
-                                placeholder="Contoh: Matematika, Fisika"
-                                class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-3 text-white outline-none focus:ring-2 focus:ring-blue-500 transition-all">
+                            <select name="mapel" required
+                                class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-3 text-white outline-none focus:ring-2 focus:ring-blue-500 transition-all cursor-pointer">
+                                <option value="" disabled {{ old('mapel') == '' ? 'selected' : '' }}>Pilih Mata Pelajaran
+                                </option>
+                                <option value="Bahasa Inggris" {{ old('mapel') == 'Bahasa Inggris' ? 'selected' : '' }}>
+                                    Bahasa Inggris</option>
+                                <option value="Matematika" {{ old('mapel') == 'Matematika' ? 'selected' : '' }}>Matematika
+                                </option>
+                            </select>
                         </div>
 
                         <div class="grid grid-cols-2 gap-4">
