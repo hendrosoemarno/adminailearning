@@ -12,35 +12,51 @@ class PresensiController extends Controller
         $search = $request->input('search');
         $startDate = $request->input('start_date');
         $endDate = $request->input('end_date');
+        $sort = $request->input('sort', 'tgl_input');
+        $direction = $request->input('direction', 'desc');
 
-        $query = Presensi::with(['tentor', 'siswa']);
+        // Default to last 7 days if no filters are applied
+        if (!$search && !$startDate && !$endDate && !$request->has('filter')) {
+            $startDate = date('Y-m-d', strtotime('-7 days'));
+            $endDate = date('Y-m-d');
+        }
+
+        $query = Presensi::select('ai_presensi.*')
+            ->leftJoin('ai_tentor', 'ai_presensi.id_tentor', '=', 'ai_tentor.id')
+            ->leftJoin('mdlu6_user', 'ai_presensi.id_siswa', '=', 'mdlu6_user.id')
+            ->with(['tentor', 'siswa']);
 
         if ($search) {
             $query->where(function ($q) use ($search) {
-                $q->whereHas('tentor', function ($t) use ($search) {
-                    $t->where('nama', 'like', "%{$search}%")
-                        ->orWhere('nickname', 'like', "%{$search}%");
-                })
-                    ->orWhereHas('siswa', function ($s) use ($search) {
-                        $s->where('firstname', 'like', "%{$search}%")
-                            ->orWhere('lastname', 'like', "%{$search}%")
-                            ->orWhere('username', 'like', "%{$search}%");
-                    });
+                $q->where('ai_tentor.nama', 'like', "%{$search}%")
+                    ->orWhere('ai_tentor.nickname', 'like', "%{$search}%")
+                    ->orWhere('mdlu6_user.firstname', 'like', "%{$search}%")
+                    ->orWhere('mdlu6_user.lastname', 'like', "%{$search}%")
+                    ->orWhere('mdlu6_user.username', 'like', "%{$search}%");
             });
         }
 
         if ($startDate) {
-            $query->where('tgl_kbm', '>=', strtotime($startDate));
+            $query->where('ai_presensi.tgl_kbm', '>=', strtotime($startDate));
         }
 
         if ($endDate) {
-            // End of day
-            $query->where('tgl_kbm', '<=', strtotime($endDate . ' 23:59:59'));
+            $query->where('ai_presensi.tgl_kbm', '<=', strtotime($endDate . ' 23:59:59'));
         }
 
-        $presensis = $query->orderBy('tgl_input', 'desc')->paginate(20);
+        // Sorting mapping
+        $sortMap = [
+            'id' => 'ai_presensi.id',
+            'waktu_input' => 'ai_presensi.tgl_input',
+            'tentor' => 'ai_tentor.nama',
+            'siswa' => 'mdlu6_user.firstname',
+            'tgl_kbm' => 'ai_presensi.tgl_kbm'
+        ];
 
-        return view('admin.presensi.index', compact('presensis', 'search', 'startDate', 'endDate'));
+        $orderColumn = $sortMap[$sort] ?? 'ai_presensi.tgl_input';
+        $presensis = $query->orderBy($orderColumn, $direction)->get();
+
+        return view('admin.presensi.index', compact('presensis', 'search', 'startDate', 'endDate', 'sort', 'direction'));
     }
 
     public function destroy($id)

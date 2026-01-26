@@ -11,15 +11,13 @@
     <!-- Filters -->
     <div class="bg-slate-800/50 backdrop-blur-sm border border-slate-700 p-6 rounded-xl shadow-lg mb-8">
         <form method="GET" action="{{ route('presensi.index') }}" class="grid grid-cols-1 md:grid-cols-4 gap-4 items-end">
+            <input type="hidden" name="filter" value="1">
             <!-- Search Text -->
             <div class="flex flex-col gap-1 col-span-1 md:col-span-1">
                 <label for="search" class="text-sm font-medium text-slate-400">Cari Tentor/Siswa</label>
                 <div class="relative">
                     <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                        <svg class="h-4 w-4 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
-                        </svg>
+                        <svg class="h-4 w-4 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
                     </div>
                     <input type="text" name="search" id="search" placeholder="Nama..." value="{{ $search }}"
                         class="w-full bg-slate-900 border border-slate-700 rounded-lg pl-10 pr-4 py-2 text-sm text-white focus:ring-2 focus:ring-blue-500 transition-all">
@@ -72,7 +70,7 @@
                 </button>
             </div>
             <div class="text-xs text-slate-500">
-                Menampilkan {{ $presensis->firstItem() }} - {{ $presensis->lastItem() }} dari {{ $presensis->total() }} data
+                Total: <span class="text-blue-400 font-bold">{{ count($presensis) }}</span> data ditemukan
             </div>
         </div>
 
@@ -83,24 +81,42 @@
                     <thead>
                         <tr class="bg-slate-900/50 border-b border-slate-700">
                             <th class="p-4 w-10"></th>
-                            <th class="p-4 text-xs font-bold text-slate-400 uppercase tracking-wider">No</th>
-                            <th class="p-4 text-xs font-bold text-slate-400 uppercase tracking-wider">Waktu Input</th>
-                            <th class="p-4 text-xs font-bold text-slate-400 uppercase tracking-wider">Tentor</th>
-                            <th class="p-4 text-xs font-bold text-slate-400 uppercase tracking-wider">Siswa</th>
-                            <th class="p-4 text-xs font-bold text-slate-400 uppercase tracking-wider">Tgl Pertemuan</th>
+                            @php
+                                $headers = [
+                                    'id' => 'No',
+                                    'waktu_input' => 'Waktu Input',
+                                    'tentor' => 'Tentor',
+                                    'siswa' => 'Siswa',
+                                    'tgl_kbm' => 'Tgl Pertemuan',
+                                ];
+                            @endphp
+                            @foreach($headers as $key => $label)
+                            <th class="p-4 text-xs font-bold text-slate-400 uppercase tracking-wider">
+                                <a href="{{ request()->fullUrlWithQuery(['sort' => $key, 'direction' => ($sort == $key && $direction == 'asc') ? 'desc' : 'asc']) }}" class="flex items-center hover:text-white transition-colors">
+                                    {{ $label }}
+                                    @if($sort == $key)
+                                        @if($direction == 'asc')
+                                            <svg class="w-3 h-3 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 15l7-7 7 7"></path></svg>
+                                        @else
+                                            <svg class="w-3 h-3 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                                        @endif
+                                    @endif
+                                </a>
+                            </th>
+                            @endforeach
                             <th class="p-4 text-xs font-bold text-slate-400 uppercase tracking-wider">Screenshot</th>
                             <th class="p-4 text-xs font-bold text-slate-400 uppercase tracking-wider text-right">Aksi</th>
                         </tr>
                     </thead>
                     <tbody class="divide-y divide-slate-700/50">
-                        @forelse($presensis as $index => $item)
+                        @forelse($presensis as $item)
                             <tr class="hover:bg-slate-700/20 transition-colors group">
                                 <td class="p-4">
                                     <input type="checkbox" name="ids[]" value="{{ $item->id }}"
                                         class="row-checkbox w-4 h-4 rounded border-slate-700 bg-slate-900 text-blue-500 focus:ring-offset-slate-900 focus:ring-blue-500">
                                 </td>
                                 <td class="p-4 text-sm text-slate-500 font-mono">
-                                    {{ $presensis->firstItem() + $index }}
+                                    {{ $loop->iteration }}
                                 </td>
                                 <td class="p-4">
                                     <div class="text-sm text-white">{{ date('d/m/Y', (int) $item->tgl_input) }}</div>
@@ -152,10 +168,6 @@
                     </tbody>
                 </table>
             </div>
-        </div>
-
-        <div class="mt-6">
-            {{ $presensis->appends(request()->query())->links() }}
         </div>
     </form>
 
