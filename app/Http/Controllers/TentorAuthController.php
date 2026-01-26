@@ -73,6 +73,46 @@ class TentorAuthController extends Controller
         return view('tentor-portal.dashboard', compact('tentor'));
     }
 
+    public function editProfile()
+    {
+        $tentor = Auth::guard('tentor')->user();
+        return view('tentor-portal.edit-profile', compact('tentor'));
+    }
+
+    public function updateProfile(Request $request)
+    {
+        $tentor = Auth::guard('tentor')->user();
+
+        $validated = $request->validate([
+            'nama' => 'required|string|max:255',
+            'nickname' => 'required|string|max:255',
+            'email' => 'required|email|unique:ai_tentor,email,' . $tentor->id,
+            'password' => 'nullable|min:6|confirmed',
+            'mapel' => 'required|string|in:mat,bing,coding',
+            'wa' => 'required|string|max:20',
+            'alamat' => 'required|string',
+            'tempat_lahir' => 'required|string|max:255',
+            'tgl_lahir' => 'required|date',
+            'tahun_lulus' => 'required|string|max:10',
+            'pendidikan_terakhir' => 'required|string|max:255',
+            'ket_pendidikan' => 'required|string',
+        ]);
+
+        if ($request->filled('password')) {
+            $validated['password'] = Hash::make($request->password);
+        } else {
+            unset($validated['password']);
+        }
+
+        if (!empty($validated['tgl_lahir'])) {
+            $validated['tgl_lahir'] = strtotime($validated['tgl_lahir']);
+        }
+
+        $tentor->update($validated);
+
+        return redirect()->route('tentor.dashboard')->with('success', 'Profil berhasil diperbarui.');
+    }
+
     public function logout(Request $request)
     {
         Auth::guard('tentor')->logout();
