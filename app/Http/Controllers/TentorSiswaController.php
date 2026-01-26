@@ -181,7 +181,7 @@ class TentorSiswaController extends Controller
     {
         $waktus = \App\Models\Waktu::orderBy('id', 'asc')->get();
 
-        $schedules = \App\Models\JadwalTentor::with(['tentor', 'siswa'])
+        $schedules = \App\Models\JadwalTentor::with(['tentor', 'siswa', 'linkJadwal'])
             ->where('id_siswa', '>', 1)
             ->get();
 

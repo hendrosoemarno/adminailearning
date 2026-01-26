@@ -36,9 +36,14 @@
                                             @foreach($items as $item)
                                                 <div class="bg-blue-500/5 border border-blue-500/10 p-2 rounded-lg group">
                                                     <div class="flex flex-col">
-                                                        <span class="text-blue-400 text-[10px] font-bold leading-tight">
+                                                        <span class="text-blue-400 text-[10px] font-bold leading-tight flex items-center gap-1">
                                                             {{ $item->tentor->nickname ?? 'Unknown' }}-{{ $item->siswa->firstname ?? 'Unknown' }}
                                                             {{ $item->siswa->lastname ?? '' }}
+                                                            @if($item->linkJadwal)
+                                                                <a href="{{ $item->linkJadwal->link }}" target="_blank" class="text-slate-500 hover:text-white transition-colors" title="Buka Link">
+                                                                    <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+                                                                </a>
+                                                            @endif
                                                         </span>
                                                     </div>
                                                 </div>
