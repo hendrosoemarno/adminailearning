@@ -157,6 +157,24 @@
                         <span class="font-medium">Master Jadwal</span>
                     </a>
 
+                    <a href="{{ route('tentor-siswa.available', ['mapel' => 'mat']) }}"
+                        class="flex items-center px-4 py-3 rounded-lg group transition-all duration-200 {{ request('mapel') == 'mat' ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 shadow-[0_0_15px_rgba(16,185,129,0.15)]' : 'text-slate-400 hover:bg-slate-800 hover:text-slate-100' }}">
+                        <svg class="w-5 h-5 mr-3 {{ request('mapel') == 'mat' ? 'text-emerald-400' : 'text-slate-500 group-hover:text-slate-300' }}"
+                            fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z"></path>
+                        </svg>
+                        <span class="font-medium">Jadwal Bisa Mat</span>
+                    </a>
+
+                    <a href="{{ route('tentor-siswa.available', ['mapel' => 'bing']) }}"
+                        class="flex items-center px-4 py-3 rounded-lg group transition-all duration-200 {{ request('mapel') == 'bing' ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 shadow-[0_0_15px_rgba(16,185,129,0.15)]' : 'text-slate-400 hover:bg-slate-800 hover:text-slate-100' }}">
+                        <svg class="w-5 h-5 mr-3 {{ request('mapel') == 'bing' ? 'text-emerald-400' : 'text-slate-500 group-hover:text-slate-300' }}"
+                            fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5h12M9 3v2m1.048 9.5A18.022 18.022 0 016.412 9m6.088 9h7M11 21l5-10 5 10M12.751 5C11.783 10.77 8.07 15.61 3 18.129"></path>
+                        </svg>
+                        <span class="font-medium">Jadwal Bisa Bing</span>
+                    </a>
+
                     <a href="{{ route('presensi.index') }}"
                         class="flex items-center px-4 py-3 rounded-lg group transition-all duration-200 {{ request()->routeIs('presensi.*') ? 'bg-blue-500/10 text-blue-400 border border-blue-500/20 shadow-[0_0_15px_rgba(59,130,246,0.15)]' : 'text-slate-400 hover:bg-slate-800 hover:text-slate-100' }}">
                         <svg class="w-5 h-5 mr-3 {{ request()->routeIs('presensi.*') ? 'text-blue-400' : 'text-slate-500 group-hover:text-slate-300' }}"

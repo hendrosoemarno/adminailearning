@@ -36,6 +36,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/active-tentors/{tentor}/schedule/edit', [\App\Http\Controllers\TentorSiswaController::class, 'editSchedule'])->name('tentor-siswa.schedule.edit');
     Route::put('/active-tentors/{tentor}/schedule', [\App\Http\Controllers\TentorSiswaController::class, 'updateSchedule'])->name('tentor-siswa.schedule.update');
     Route::get('/master-schedule', [\App\Http\Controllers\TentorSiswaController::class, 'allSchedules'])->name('tentor-siswa.all-schedules');
+    Route::get('/available-schedule', [\App\Http\Controllers\TentorSiswaController::class, 'availableSchedules'])->name('tentor-siswa.available');
 
     // Presensi Management
     Route::get('/presensi', [\App\Http\Controllers\PresensiController::class, 'index'])->name('presensi.index');

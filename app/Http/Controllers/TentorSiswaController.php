@@ -202,4 +202,36 @@ class TentorSiswaController extends Controller
 
         return view('admin.all-schedules', compact('waktus', 'mappedSchedule', 'hariLabels'));
     }
+
+    public function availableSchedules(Request $request)
+    {
+        $mapel = $request->input('mapel', 'mat');
+        $waktus = \App\Models\Waktu::orderBy('id', 'asc')->get();
+
+        $schedules = \App\Models\JadwalTentor::with(['tentor'])
+            ->join('ai_tentor', 'ai_jadwal_tentor.id_tentor', '=', 'ai_tentor.id')
+            ->where('ai_jadwal_tentor.id_siswa', 1)
+            ->where('ai_tentor.mapel', $mapel)
+            ->select('ai_jadwal_tentor.*')
+            ->get();
+
+        $mappedSchedule = [];
+        foreach ($schedules as $item) {
+            $mappedSchedule[$item->hari][$item->waktu][] = $item;
+        }
+
+        $hariLabels = [
+            1 => 'Senin',
+            2 => 'Selasa',
+            3 => 'Rabu',
+            4 => 'Kamis',
+            5 => 'Jumat',
+            6 => 'Sabtu',
+            7 => 'Ahad'
+        ];
+
+        $title = "Jadwal Bisa - " . ($mapel == 'mat' ? 'Matematika' : ($mapel == 'bing' ? 'Bahasa Inggris' : 'Coding'));
+
+        return view('admin.available-schedules', compact('waktus', 'mappedSchedule', 'hariLabels', 'mapel', 'title'));
+    }
 }
