@@ -32,6 +32,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/active-tentors/{tentor}/students', [\App\Http\Controllers\TentorSiswaController::class, 'manageStudents'])->name('tentor-siswa.manage');
     Route::post('/active-tentors/{tentor}/add-student', [\App\Http\Controllers\TentorSiswaController::class, 'addStudent'])->name('tentor-siswa.add');
     Route::post('/active-tentors/{tentor}/remove-student', [\App\Http\Controllers\TentorSiswaController::class, 'removeStudent'])->name('tentor-siswa.remove');
+    Route::get('/active-tentors/{tentor}/schedule', [\App\Http\Controllers\TentorSiswaController::class, 'showSchedule'])->name('tentor-siswa.schedule');
 
     // Presensi Management
     Route::get('/presensi', [\App\Http\Controllers\PresensiController::class, 'index'])->name('presensi.index');

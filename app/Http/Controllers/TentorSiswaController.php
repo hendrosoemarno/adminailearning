@@ -72,4 +72,30 @@ class TentorSiswaController extends Controller
 
         return back()->with('success', 'Siswa berhasil dikeluarkan dari tentor.');
     }
+
+    public function showSchedule(Tentor $tentor)
+    {
+        $waktus = \App\Models\Waktu::orderBy('id', 'asc')->get();
+        $schedules = \App\Models\JadwalTentor::with(['siswa', 'linkJadwal'])
+            ->where('id_tentor', $tentor->id)
+            ->get();
+
+        // Map schedule for easy array access [hari][waktu_id]
+        $mappedSchedule = [];
+        foreach ($schedules as $item) {
+            $mappedSchedule[$item->hari][$item->waktu] = $item;
+        }
+
+        $hariLabels = [
+            1 => 'Senin',
+            2 => 'Selasa',
+            3 => 'Rabu',
+            4 => 'Kamis',
+            5 => 'Jumat',
+            6 => 'Sabtu',
+            7 => 'Ahad'
+        ];
+
+        return view('admin.tentor-schedule', compact('tentor', 'waktus', 'mappedSchedule', 'hariLabels'));
+    }
 }
