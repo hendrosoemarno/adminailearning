@@ -39,6 +39,20 @@ class LoginController extends Controller
         $startDate = $request->input('start_date', date('Y-m-d'));
         $endDate = $request->input('end_date', date('Y-m-d'));
         $search = $request->input('search');
+        $sort = $request->input('sort', 'timestart');
+        $direction = $request->input('direction', 'desc');
+
+        $allowedSorts = [
+            'quizattid' => 'qa.id',
+            'username' => 'u.username',
+            'firstname' => 'u.firstname',
+            'course' => 'c.fullname',
+            'quizname' => 'q.name',
+            'timestart' => 'qa.timestart',
+            'timefinish' => 'qa.timefinish'
+        ];
+
+        $sortColumn = $allowedSorts[$sort] ?? 'qa.timestart';
 
         $query = \Illuminate\Support\Facades\DB::table('mdlu6_quiz_attempts as qa')
             ->join('mdlu6_user as u', 'qa.userid', '=', 'u.id')
@@ -58,8 +72,7 @@ class LoginController extends Controller
                 'qa.sumgrades as jmlbenar',
                 \Illuminate\Support\Facades\DB::raw("FROM_UNIXTIME(qa.timestart, '%Y-%m-%d %H:%i:%s') as timestart"),
                 \Illuminate\Support\Facades\DB::raw("FROM_UNIXTIME(qa.timefinish, '%Y-%m-%d %H:%i:%s') as timefinish")
-            )
-            ->orderBy('qa.timestart');
+            );
 
         // Apply Date Range Filter
         if ($startDate && $endDate) {
@@ -80,9 +93,9 @@ class LoginController extends Controller
             });
         }
 
-        $results = $query->get();
+        $results = $query->orderBy($sortColumn, $direction)->get();
 
-        return view('dashboard', compact('results', 'startDate', 'endDate', 'search'));
+        return view('dashboard', compact('results', 'startDate', 'endDate', 'search', 'sort', 'direction'));
     }
 
     public function logout(Request $request)

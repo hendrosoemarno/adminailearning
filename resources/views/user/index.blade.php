@@ -44,10 +44,28 @@
             <table class="w-full text-left border-collapse">
                 <thead>
                     <tr class="bg-slate-900/50 border-b border-slate-700">
-                        <th class="p-4 text-xs font-bold text-slate-400 uppercase tracking-wider w-24">User ID</th>
-                        <th class="p-4 text-xs font-bold text-slate-400 uppercase tracking-wider">Username</th>
-                        <th class="p-4 text-xs font-bold text-slate-400 uppercase tracking-wider">Nama User</th>
-                        <th class="p-4 text-xs font-bold text-slate-400 uppercase tracking-wider">First Access</th>
+                        @php
+                            $headers = [
+                                'id' => 'User ID',
+                                'username' => 'Username',
+                                'firstname' => 'Nama User',
+                                'firstaccess' => 'First Access'
+                            ];
+                        @endphp
+                        @foreach($headers as $key => $label)
+                            <th class="p-4 text-xs font-bold text-slate-400 uppercase tracking-wider {{ $key == 'id' ? 'w-24' : '' }}">
+                                <a href="{{ request()->fullUrlWithQuery(['sort' => $key, 'direction' => ($sort == $key && $direction == 'asc') ? 'desc' : 'asc']) }}" class="flex items-center gap-1 hover:text-white transition-colors">
+                                    {{ $label }}
+                                    @if($sort == $key)
+                                        @if($direction == 'asc')
+                                            <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 15l7-7 7 7"></path></svg>
+                                        @else
+                                            <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                                        @endif
+                                    @endif
+                                </a>
+                            </th>
+                        @endforeach
                     </tr>
                 </thead>
                 <tbody class="divide-y divide-slate-700/50">

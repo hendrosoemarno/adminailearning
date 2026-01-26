@@ -10,6 +10,13 @@ class TentorController extends Controller
     public function index(Request $request)
     {
         $search = $request->input('search');
+        $sort = $request->input('sort', 'nickname');
+        $direction = $request->input('direction', 'asc');
+
+        $allowedSorts = ['id', 'nama', 'nickname', 'mapel', 'email', 'wa', 'aktif'];
+        if (!in_array($sort, $allowedSorts)) {
+            $sort = 'nickname';
+        }
 
         $query = Tentor::query();
 
@@ -19,7 +26,7 @@ class TentorController extends Controller
                 ->orWhere('mapel', 'like', "%{$search}%");
         }
 
-        $tentors = $query->get();
-        return view('tentor.index', compact('tentors'));
+        $tentors = $query->orderBy($sort, $direction)->get();
+        return view('tentor.index', compact('tentors', 'search', 'sort', 'direction'));
     }
 }
