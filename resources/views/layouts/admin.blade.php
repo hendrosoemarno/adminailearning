@@ -101,38 +101,22 @@
 
             <!-- Navigation -->
             <nav class="p-4 space-y-2">
-                <a href="{{ route('dashboard') }}"
-                    class="flex items-center px-4 py-3 rounded-lg group transition-all duration-200 {{ request()->routeIs('dashboard') ? 'bg-blue-500/10 text-blue-400 border border-blue-500/20 shadow-[0_0_15px_rgba(59,130,246,0.15)]' : 'text-slate-400 hover:bg-slate-800 hover:text-slate-100' }}">
-                    <svg class="w-5 h-5 mr-3 {{ request()->routeIs('dashboard') ? 'text-blue-400' : 'text-slate-500 group-hover:text-slate-300' }}"
-                        fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                            d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z">
-                        </path>
-                    </svg>
+                <a href="{{ Auth::guard('tentor')->check() ? route('tentor.dashboard') : route('dashboard') }}" class="flex items-center px-4 py-3 rounded-lg group transition-all duration-200 {{ (request()->routeIs('dashboard') || request()->routeIs('tentor.dashboard')) ? 'bg-blue-500/10 text-blue-400 border border-blue-500/20 shadow-[0_0_15px_rgba(59,130,246,0.15)]' : 'text-slate-400 hover:bg-slate-800 hover:text-slate-100' }}">
+                    <svg class="w-5 h-5 mr-3 {{ (request()->routeIs('dashboard') || request()->routeIs('tentor.dashboard')) ? 'text-blue-400' : 'text-slate-500 group-hover:text-slate-300' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"></path></svg>
                     <span class="font-medium">Dashboard</span>
                 </a>
 
-                <a href="{{ route('tentors.index') }}"
-                    class="flex items-center px-4 py-3 rounded-lg group transition-all duration-200 {{ request()->routeIs('tentors.index') ? 'bg-blue-500/10 text-blue-400 border border-blue-500/20 shadow-[0_0_15px_rgba(59,130,246,0.15)]' : 'text-slate-400 hover:bg-slate-800 hover:text-slate-100' }}">
-                    <svg class="w-5 h-5 mr-3 {{ request()->routeIs('tentors.index') ? 'text-blue-400' : 'text-slate-500 group-hover:text-slate-300' }}"
-                        fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                            d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z">
-                        </path>
-                    </svg>
-                    <span class="font-medium">Data Tentor</span>
-                </a>
+                @if(!Auth::guard('tentor')->check())
+                    <a href="{{ route('tentors.index') }}" class="flex items-center px-4 py-3 rounded-lg group transition-all duration-200 {{ request()->routeIs('tentors.index') ? 'bg-blue-500/10 text-blue-400 border border-blue-500/20 shadow-[0_0_15px_rgba(59,130,246,0.15)]' : 'text-slate-400 hover:bg-slate-800 hover:text-slate-100' }}">
+                        <svg class="w-5 h-5 mr-3 {{ request()->routeIs('tentors.index') ? 'text-blue-400' : 'text-slate-500 group-hover:text-slate-300' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
+                        <span class="font-medium">Data Tentor</span>
+                    </a>
 
-                <a href="{{ route('users.index') }}"
-                    class="flex items-center px-4 py-3 rounded-lg group transition-all duration-200 {{ request()->routeIs('users.index') ? 'bg-blue-500/10 text-blue-400 border border-blue-500/20 shadow-[0_0_15px_rgba(59,130,246,0.15)]' : 'text-slate-400 hover:bg-slate-800 hover:text-slate-100' }}">
-                    <svg class="w-5 h-5 mr-3 {{ request()->routeIs('users.index') ? 'text-blue-400' : 'text-slate-500 group-hover:text-slate-300' }}"
-                        fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                            d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z">
-                        </path>
-                    </svg>
-                    <span class="font-medium">Data User</span>
-                </a>
+                    <a href="{{ route('users.index') }}" class="flex items-center px-4 py-3 rounded-lg group transition-all duration-200 {{ request()->routeIs('users.index') ? 'bg-blue-500/10 text-blue-400 border border-blue-500/20 shadow-[0_0_15px_rgba(59,130,246,0.15)]' : 'text-slate-400 hover:bg-slate-800 hover:text-slate-100' }}">
+                        <svg class="w-5 h-5 mr-3 {{ request()->routeIs('users.index') ? 'text-blue-400' : 'text-slate-500 group-hover:text-slate-300' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
+                        <span class="font-medium">Data User</span>
+                    </a>
+                @endif
             </nav>
         </div>
 
@@ -140,11 +124,17 @@
         <div class="p-4 border-t border-slate-700/50 bg-slate-900/50">
             <div class="flex items-center justify-between">
                 <div class="flex flex-col">
-                    <span class="text-sm font-semibold text-slate-200">{{ Auth::user()->firstname }}
-                        {{ Auth::user()->lastname }}</span>
-                    <span class="text-xs text-slate-500">Administrator</span>
+                    @if(Auth::guard('tentor')->check())
+                        <span class="text-sm font-semibold text-slate-200">{{ Auth::guard('tentor')->user()->nama }}</span>
+                        <span class="text-xs text-slate-500">Tentor</span>
+                    @else
+                        <span class="text-sm font-semibold text-slate-200">{{ Auth::user()->firstname }}
+                            {{ Auth::user()->lastname }}</span>
+                        <span class="text-xs text-slate-500">Administrator</span>
+                    @endif
                 </div>
-                <form method="POST" action="{{ route('logout') }}">
+                <form method="POST"
+                    action="{{ Auth::guard('tentor')->check() ? route('tentor.logout') : route('logout') }}">
                     @csrf
                     <button type="submit"
                         class="p-2 text-slate-400 hover:text-red-400 transition-colors rounded hover:bg-slate-800">

@@ -27,3 +27,16 @@ Route::middleware('auth')->group(function () {
     Route::resource('tentors', \App\Http\Controllers\TentorController::class);
     Route::get('/users', [\App\Http\Controllers\UserController::class, 'index'])->name('users.index');
 });
+
+// Tentor Portal Routes
+Route::prefix('portal')->group(function () {
+    Route::get('/register', [\App\Http\Controllers\TentorAuthController::class, 'showRegistrationForm'])->name('tentor.register');
+    Route::post('/register', [\App\Http\Controllers\TentorAuthController::class, 'register']);
+    Route::get('/login', [\App\Http\Controllers\TentorAuthController::class, 'showLoginForm'])->name('tentor.login');
+    Route::post('/login', [\App\Http\Controllers\TentorAuthController::class, 'login']);
+    Route::post('/logout', [\App\Http\Controllers\TentorAuthController::class, 'logout'])->name('tentor.logout');
+
+    Route::middleware('auth:tentor')->group(function () {
+        Route::get('/dashboard', [\App\Http\Controllers\TentorAuthController::class, 'dashboard'])->name('tentor.dashboard');
+    });
+});

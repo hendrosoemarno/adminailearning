@@ -40,6 +40,10 @@ return [
             'driver' => 'session',
             'provider' => 'users',
         ],
+        'tentor' => [
+            'driver' => 'session',
+            'provider' => 'tentors',
+        ],
     ],
 
     /*
@@ -69,6 +73,10 @@ return [
         //     'driver' => 'database',
         //     'table' => 'users',
         // ],
+        'tentors' => [
+            'driver' => 'eloquent',
+            'model' => App\Models\Tentor::class,
+        ],
     ],
 
     /*
