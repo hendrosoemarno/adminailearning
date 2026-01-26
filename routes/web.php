@@ -26,6 +26,12 @@ Route::middleware('auth')->group(function () {
     Route::get('/dashboard', [LoginController::class, 'dashboard'])->name('dashboard');
     Route::resource('tentors', \App\Http\Controllers\TentorController::class);
     Route::get('/users', [\App\Http\Controllers\UserController::class, 'index'])->name('users.index');
+
+    // Tentor-Siswa Management
+    Route::get('/active-tentors', [\App\Http\Controllers\TentorSiswaController::class, 'index'])->name('tentor-siswa.active');
+    Route::get('/active-tentors/{tentor}/students', [\App\Http\Controllers\TentorSiswaController::class, 'manageStudents'])->name('tentor-siswa.manage');
+    Route::post('/active-tentors/{tentor}/add-student', [\App\Http\Controllers\TentorSiswaController::class, 'addStudent'])->name('tentor-siswa.add');
+    Route::post('/active-tentors/{tentor}/remove-student', [\App\Http\Controllers\TentorSiswaController::class, 'removeStudent'])->name('tentor-siswa.remove');
 });
 
 // Tentor Portal Routes

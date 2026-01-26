@@ -28,5 +28,10 @@ class Tentor extends Authenticatable
         'aktif'
     ];
 
+    public function siswas()
+    {
+        return $this->belongsToMany(MoodleUser::class, 'ai_tentor_siswa', 'id_tentor', 'id_siswa');
+    }
+
     public $timestamps = false;
 }
