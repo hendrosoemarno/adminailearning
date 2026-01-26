@@ -25,14 +25,22 @@ class TentorSiswaController extends Controller
         return view('admin.active-tentors', compact('tentors', 'search'));
     }
 
-    public function manageStudents(Tentor $tentor)
+    public function manageStudents(Request $request, Tentor $tentor)
     {
+        $studentSearch = $request->input('student_search');
+
         // Bagian 1: Seluruh siswa aktif (suspended = 0)
-        // Moodle users where suspended = 0 are considered active students.
-        $allActiveStudents = MoodleUser::where('suspended', 0)
-            ->where('deleted', 0)
-            ->orderBy('firstname', 'asc')
-            ->get();
+        $query = MoodleUser::where('suspended', 0)->where('deleted', 0);
+
+        if ($studentSearch) {
+            $query->where(function ($q) use ($studentSearch) {
+                $q->where('firstname', 'like', "%{$studentSearch}%")
+                    ->orWhere('lastname', 'like', "%{$studentSearch}%")
+                    ->orWhere('username', 'like', "%{$studentSearch}%");
+            });
+        }
+
+        $allActiveStudents = $query->orderBy('firstname', 'asc')->get();
 
         // Bagian 2: Siswa yang terhubung dengan tentor ini
         $assignedStudents = $tentor->siswas()->orderBy('firstname', 'asc')->get();
@@ -43,7 +51,7 @@ class TentorSiswaController extends Controller
             return in_array($user->id, $assignedStudentIds);
         });
 
-        return view('admin.tentor-students', compact('tentor', 'availableStudents', 'assignedStudents'));
+        return view('admin.tentor-students', compact('tentor', 'availableStudents', 'assignedStudents', 'studentSearch'));
     }
 
     public function addStudent(Request $request, Tentor $tentor)
