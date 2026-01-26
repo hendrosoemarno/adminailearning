@@ -42,18 +42,18 @@
                     @foreach($waktus as $waktu)
                         <tr class="hover:bg-slate-700/10 transition-colors border-b border-slate-700/30">
                             <td
-                                class="p-4 text-xs font-bold text-slate-500 bg-slate-900/30 border-r border-slate-700/50 font-mono">
+                                class="p-2 w-20 text-[10px] font-bold text-slate-500 bg-slate-900/30 border-r border-slate-700/50 font-mono text-center">
                                 {{ $waktu->waktu }}
                             </td>
                             @for($hari = 1; $hari <= 7; $hari++)
-                                <td class="p-2 min-h-24 align-top border-r border-slate-700/30">
+                                <td class="p-1 align-top border-r border-slate-700/30">
                                     @php $items = $mappedSchedule[$hari][$waktu->id] ?? []; @endphp
                                     @if(count($items) > 0)
                                         <div class="flex flex-col gap-1">
                                             @foreach($items as $item)
-                                                <div class="bg-emerald-500 text-slate-950 p-1.5 rounded-md shadow-sm">
-                                                    <div class="text-[10px] font-bold leading-tight uppercase">
-                                                        {{ $item->tentor->nickname ?? 'Unknown' }}-Bisa
+                                                <div class="bg-emerald-500 text-slate-950 px-1.5 py-0.5 rounded shadow-sm">
+                                                    <div class="text-[8px] font-bold leading-tight uppercase truncate">
+                                                        {{ $item->tentor->nickname ?? '?' }}-Bisa
                                                     </div>
                                                 </div>
                                             @endforeach
