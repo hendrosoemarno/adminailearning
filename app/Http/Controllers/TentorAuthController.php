@@ -23,10 +23,20 @@ class TentorAuthController extends Controller
             'password' => 'required|min:6|confirmed',
             'mapel' => 'required|string|max:255',
             'wa' => 'required|string|max:20',
+            'alamat' => 'required|string',
+            'tempat_lahir' => 'required|string|max:255',
+            'tgl_lahir' => 'required|date',
+            'tahun_lulus' => 'required|string|max:10',
+            'pendidikan_terakhir' => 'required|string|max:255',
+            'ket_pendidikan' => 'required|string',
         ]);
 
         $validated['password'] = Hash::make($request->password);
-        $validated['aktif'] = 1; // Default to active for new registrations, or change as needed
+        $validated['aktif'] = 1;
+
+        if (!empty($validated['tgl_lahir'])) {
+            $validated['tgl_lahir'] = strtotime($validated['tgl_lahir']);
+        }
 
         $tentor = Tentor::create($validated);
 
