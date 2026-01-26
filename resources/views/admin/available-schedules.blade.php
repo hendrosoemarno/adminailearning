@@ -34,7 +34,7 @@
                             Waktu</th>
                         @foreach($hariLabels as $index => $label)
                             <th
-                                class="p-2 text-[9px] font-bold text-slate-400 uppercase tracking-wider bg-slate-900 text-center whitespace-nowrap">
+                                class="p-2 w-[100px] text-[9px] font-bold text-slate-400 uppercase tracking-wider bg-slate-900 text-center whitespace-nowrap">
                                 {{ $label }}
                             </th>
                         @endforeach
