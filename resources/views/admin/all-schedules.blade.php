@@ -13,11 +13,10 @@
             <table class="w-full text-left border-collapse table-fixed min-w-[1000px]">
                 <thead class="sticky top-0 z-30 shadow-lg">
                     <tr class="bg-slate-900 border-b border-slate-700">
-                        <th
-                            class="p-4 w-28 text-xs font-bold text-slate-400 uppercase tracking-widest border-r border-slate-700/50 bg-slate-900">
+                        <th class="p-2 w-16 text-[9px] font-bold text-slate-400 uppercase tracking-wider border-r border-slate-700/50 bg-slate-900 text-center">
                             Waktu</th>
                         @foreach($hariLabels as $index => $label)
-                            <th class="p-4 text-xs font-bold text-slate-400 uppercase tracking-widest bg-slate-900">{{ $label }}</th>
+                            <th class="p-2 text-[9px] font-bold text-slate-400 uppercase tracking-wider bg-slate-900 text-center">{{ $label }}</th>
                         @endforeach
                     </tr>
                 </thead>
