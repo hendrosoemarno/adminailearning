@@ -74,10 +74,10 @@
                         class="w-full bg-slate-900 border border-slate-700 rounded-lg px-4 py-2.5 text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all placeholder-slate-600">
                 </div>
 
-                <!-- Tanggal Lahir -->
                 <div class="space-y-2">
                     <label for="tgl_lahir" class="block text-sm font-medium text-slate-400">Tanggal Lahir</label>
-                    <input type="date" name="tgl_lahir" id="tgl_lahir" value="{{ old('tgl_lahir', $tentor->tgl_lahir) }}"
+                    <input type="date" name="tgl_lahir" id="tgl_lahir"
+                        value="{{ old('tgl_lahir', $tentor->tgl_lahir ? date('Y-m-d', (int) $tentor->tgl_lahir) : '') }}"
                         class="w-full bg-slate-900 border border-slate-700 rounded-lg px-4 py-2.5 text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all">
                 </div>
 

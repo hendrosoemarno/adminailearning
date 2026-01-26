@@ -136,7 +136,7 @@
                     </div>
                     <div>
                         <p class="text-xs text-slate-500 uppercase font-bold mb-1">Tanggal Lahir</p>
-                        <p class="text-white">{{ $tentor->tgl_lahir ?: '-' }}</p>
+                        <p class="text-white">{{ $tentor->tgl_lahir ? date('d F Y', (int) $tentor->tgl_lahir) : '-' }}</p>
                     </div>
                 </div>
             </div>

@@ -55,6 +55,10 @@ class TentorController extends Controller
 
         $validated['password'] = bcrypt($validated['password']);
 
+        if (!empty($validated['tgl_lahir'])) {
+            $validated['tgl_lahir'] = strtotime($validated['tgl_lahir']);
+        }
+
         Tentor::create($validated);
 
         return redirect()->route('tentors.index')->with('success', 'Tentor berhasil ditambahkan.');
@@ -92,6 +96,10 @@ class TentorController extends Controller
             $validated['password'] = bcrypt($validated['password']);
         } else {
             unset($validated['password']);
+        }
+
+        if (!empty($validated['tgl_lahir'])) {
+            $validated['tgl_lahir'] = strtotime($validated['tgl_lahir']);
         }
 
         $tentor->update($validated);
