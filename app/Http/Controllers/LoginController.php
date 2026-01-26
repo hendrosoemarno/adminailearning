@@ -88,6 +88,7 @@ class LoginController extends Controller
                 $q->where('u.username', 'like', "%{$search}%")
                     ->orWhere('u.firstname', 'like', "%{$search}%")
                     ->orWhere('u.lastname', 'like', "%{$search}%")
+                    ->orWhere(\Illuminate\Support\Facades\DB::raw("CONCAT(u.firstname, ' ', u.lastname)"), 'like', "%{$search}%")
                     ->orWhere('q.name', 'like', "%{$search}%")
                     ->orWhere('c.fullname', 'like', "%{$search}%");
             });

@@ -25,7 +25,8 @@ class UserController extends Controller
             $query->where(function ($q) use ($search) {
                 $q->where('username', 'like', "%{$search}%")
                     ->orWhere('firstname', 'like', "%{$search}%")
-                    ->orWhere('lastname', 'like', "%{$search}%");
+                    ->orWhere('lastname', 'like', "%{$search}%")
+                    ->orWhere(\Illuminate\Support\Facades\DB::raw("CONCAT(firstname, ' ', lastname)"), 'like', "%{$search}%");
             });
         }
 
