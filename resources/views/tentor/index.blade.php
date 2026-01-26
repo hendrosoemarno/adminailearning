@@ -86,7 +86,10 @@
                             <td class="p-4 text-sm text-slate-300">
                                 <span
                                     class="bg-blue-500/10 text-blue-400 border border-blue-500/20 px-2 py-0.5 rounded text-xs uppercase font-semibold">
-                                    {{ $tentor->mapel }}
+                                    @if($tentor->mapel == 'bing') Bahasa Inggris
+                                    @elseif($tentor->mapel == 'mat') Matematika
+                                    @elseif($tentor->mapel == 'coding') Coding
+                                    @else {{ $tentor->mapel }} @endif
                                 </span>
                             </td>
                             <td class="p-4 text-sm text-slate-400">{{ $tentor->wa }}</td>

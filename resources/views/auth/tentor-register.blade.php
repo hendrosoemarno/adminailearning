@@ -134,9 +134,11 @@
                                 class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-3 text-white outline-none focus:ring-2 focus:ring-blue-500 transition-all cursor-pointer">
                                 <option value="" disabled {{ old('mapel') == '' ? 'selected' : '' }}>Pilih Mata Pelajaran
                                 </option>
-                                <option value="Bahasa Inggris" {{ old('mapel') == 'Bahasa Inggris' ? 'selected' : '' }}>
+                                <option value="bing" {{ old('mapel') == 'bing' ? 'selected' : '' }}>
                                     Bahasa Inggris</option>
-                                <option value="Matematika" {{ old('mapel') == 'Matematika' ? 'selected' : '' }}>Matematika
+                                <option value="mat" {{ old('mapel') == 'mat' ? 'selected' : '' }}>Matematika
+                                </option>
+                                <option value="coding" {{ old('mapel') == 'coding' ? 'selected' : '' }}>Coding
                                 </option>
                             </select>
                         </div>

@@ -62,7 +62,10 @@
                         <p class="text-xs text-slate-500 uppercase font-bold mb-1">Mata Pelajaran</p>
                         <span
                             class="bg-blue-500/10 text-blue-400 border border-blue-500/20 px-3 py-1 rounded text-sm uppercase font-bold">
-                            {{ $tentor->mapel }}
+                            @if($tentor->mapel == 'bing') Bahasa Inggris
+                            @elseif($tentor->mapel == 'mat') Matematika
+                            @elseif($tentor->mapel == 'coding') Coding
+                            @else {{ $tentor->mapel }} @endif
                         </span>
                     </div>
                     <div>

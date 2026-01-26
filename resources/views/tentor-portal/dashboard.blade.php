@@ -22,7 +22,12 @@
                 </div>
             </div>
             <p class="text-slate-400 text-sm font-medium uppercase tracking-wider">Mata Pelajaran</p>
-            <h3 class="text-2xl font-bold text-white mt-1">{{ $tentor->mapel }}</h3>
+            <h3 class="text-2xl font-bold text-white mt-1">
+                @if($tentor->mapel == 'bing') Bahasa Inggris
+                @elseif($tentor->mapel == 'mat') Matematika
+                @elseif($tentor->mapel == 'coding') Coding
+                @else {{ $tentor->mapel }} @endif
+            </h3>
         </div>
 
         <!-- Stat Card 2 -->
@@ -77,7 +82,8 @@
                 <div>
                     <label class="text-xs font-bold text-slate-500 uppercase tracking-widest">Tempat/Tgl Lahir</label>
                     <p class="text-slate-300 mt-1">{{ $tentor->tempat_lahir }},
-                        {{ $tentor->tgl_lahir ? date('d F Y', (int) $tentor->tgl_lahir) : '-' }}</p>
+                        {{ $tentor->tgl_lahir ? date('d F Y', (int) $tentor->tgl_lahir) : '-' }}
+                    </p>
                 </div>
                 <div>
                     <label class="text-xs font-bold text-slate-500 uppercase tracking-widest">Pendidikan</label>

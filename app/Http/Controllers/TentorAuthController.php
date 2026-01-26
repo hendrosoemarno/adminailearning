@@ -21,7 +21,7 @@ class TentorAuthController extends Controller
             'nickname' => 'required|string|max:255',
             'email' => 'required|email|unique:ai_tentor,email',
             'password' => 'required|min:6|confirmed',
-            'mapel' => 'required|string|in:Bahasa Inggris,Matematika',
+            'mapel' => 'required|string|in:mat,bing,coding',
             'wa' => 'required|string|max:20',
             'alamat' => 'required|string',
             'tempat_lahir' => 'required|string|max:255',
