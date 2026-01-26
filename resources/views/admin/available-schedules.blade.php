@@ -26,7 +26,7 @@
 
     <div class="bg-slate-800/50 backdrop-blur-sm border border-slate-700 rounded-xl shadow-xl mb-12 overflow-hidden">
         <div class="overflow-auto rounded-xl max-h-[calc(100vh-250px)]">
-            <table class="w-full text-left border-collapse">
+            <table class="w-full text-left border-collapse table-fixed">
                 <thead class="sticky top-0 z-30 shadow-lg">
                     <tr class="bg-slate-900 border-b border-slate-700">
                         <th
@@ -34,7 +34,7 @@
                             Waktu</th>
                         @foreach($hariLabels as $index => $label)
                             <th
-                                class="p-2 w-[100px] text-[9px] font-bold text-slate-400 uppercase tracking-wider bg-slate-900 text-center whitespace-nowrap">
+                                class="p-2 text-[9px] font-bold text-slate-400 uppercase tracking-wider bg-slate-900 text-center whitespace-nowrap">
                                 {{ $label }}
                             </th>
                         @endforeach
