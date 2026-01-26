@@ -11,7 +11,7 @@ class UserController extends Controller
     {
         $search = $request->input('search');
 
-        $query = MoodleUser::select('id', 'username', 'firstname', 'lastname');
+        $query = MoodleUser::select('id', 'username', 'firstname', 'lastname', 'firstaccess');
 
         if ($search) {
             $query->where(function ($q) use ($search) {

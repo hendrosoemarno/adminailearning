@@ -47,6 +47,7 @@
                         <th class="p-4 text-xs font-bold text-slate-400 uppercase tracking-wider w-24">User ID</th>
                         <th class="p-4 text-xs font-bold text-slate-400 uppercase tracking-wider">Username</th>
                         <th class="p-4 text-xs font-bold text-slate-400 uppercase tracking-wider">Nama User</th>
+                        <th class="p-4 text-xs font-bold text-slate-400 uppercase tracking-wider">First Access</th>
                     </tr>
                 </thead>
                 <tbody class="divide-y divide-slate-700/50">
@@ -55,6 +56,9 @@
                             <td class="p-4 text-sm text-slate-400 font-mono">{{ $user->id }}</td>
                             <td class="p-4 text-sm text-blue-400 font-semibold font-mono">{{ $user->username }}</td>
                             <td class="p-4 text-sm text-white font-medium">{{ $user->firstname }} {{ $user->lastname }}</td>
+                            <td class="p-4 text-sm text-slate-400">
+                                {{ $user->firstaccess ? date('Y-m-d H:i', $user->firstaccess) : '-' }}
+                            </td>
                         </tr>
                     @empty
                         <tr>
