@@ -182,6 +182,9 @@ class TentorSiswaController extends Controller
         $waktus = \App\Models\Waktu::orderBy('id', 'asc')->get();
 
         $schedules = \App\Models\JadwalTentor::with(['tentor', 'siswa', 'linkJadwal'])
+            ->whereHas('tentor', function ($q) {
+                $q->where('aktif', 1);
+            })
             ->where('id_siswa', '>', 1)
             ->get();
 
@@ -212,6 +215,7 @@ class TentorSiswaController extends Controller
             ->join('ai_tentor', 'ai_jadwal_tentor.id_tentor', '=', 'ai_tentor.id')
             ->where('ai_jadwal_tentor.id_siswa', 1)
             ->where('ai_tentor.mapel', $mapel)
+            ->where('ai_tentor.aktif', 1)
             ->select('ai_jadwal_tentor.*')
             ->get();
 
