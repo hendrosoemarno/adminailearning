@@ -44,7 +44,7 @@
                             </td>
                             <td class="p-4 text-center">
                                 @if($item->foto)
-                                    <button onclick="showPhoto('{{ Storage::disk('public')->url($item->foto) }}')"
+                                    <button onclick="showPhoto('{{ asset('uploads/' . $item->foto) }}')"
                                         class="p-1.5 bg-slate-700 hover:bg-slate-600 rounded-lg transition-colors group">
                                         <svg class="w-5 h-5 text-slate-400 group-hover:text-blue-400" fill="none"
                                             stroke="currentColor" viewBox="0 0 24 24">

@@ -38,7 +38,7 @@ return [
         'public' => [
             'driver' => 'local',
             'root' => public_path('uploads'),
-            'url' => env('APP_URL') . '/uploads',
+            'url' => '/uploads',
             'visibility' => 'public',
         ],
 

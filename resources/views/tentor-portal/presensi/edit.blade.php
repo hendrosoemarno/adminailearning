@@ -48,7 +48,7 @@
                     <label class="block text-sm font-semibold text-slate-300 mb-2">Ganti Bukti Foto (Opsional)</label>
                     @if($presensi->foto)
                         <div class="mb-4 relative w-40 h-24 rounded-lg overflow-hidden border border-slate-700 shadow-sm group">
-                            <img src="{{ Storage::disk('public')->url($presensi->foto) }}" class="w-full h-full object-cover">
+                            <img src="{{ asset('uploads/' . $presensi->foto) }}" class="w-full h-full object-cover">
                             <div
                                 class="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center text-[10px] text-white">
                                 Foto Saat Ini
