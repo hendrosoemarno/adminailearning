@@ -141,6 +141,20 @@
                         <span class="font-medium ml-3 sidebar-label transition-all duration-300 whitespace-nowrap">Ubah
                             Profil</span>
                     </a>
+                    <a href="{{ route('tentor.schedule.index') }}"
+                        class="flex items-center px-4 py-3 rounded-lg group transition-all duration-200 {{ request()->routeIs('tentor.schedule.*') ? 'bg-blue-500/10 text-blue-400 border border-blue-500/20 shadow-[0_0_15px_rgba(59,130,246,0.15)]' : 'text-slate-400 hover:bg-slate-800 hover:text-slate-100' }}"
+                        title="Jadwal Saya">
+                        <div class="flex-shrink-0">
+                            <svg class="w-5 h-5 {{ request()->routeIs('tentor.schedule.*') ? 'text-blue-400' : 'text-slate-500 group-hover:text-slate-300' }}"
+                                fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z">
+                                </path>
+                            </svg>
+                        </div>
+                        <span class="font-medium ml-3 sidebar-label transition-all duration-300 whitespace-nowrap">Jadwal
+                            Saya</span>
+                    </a>
                     <a href="{{ route('tentor.presensi.index') }}"
                         class="flex items-center px-4 py-3 rounded-lg group transition-all duration-200 {{ request()->routeIs('tentor.presensi.*') ? 'bg-blue-500/10 text-blue-400 border border-blue-500/20 shadow-[0_0_15px_rgba(59,130,246,0.15)]' : 'text-slate-400 hover:bg-slate-800 hover:text-slate-100' }}"
                         title="Presensi Mengajar">

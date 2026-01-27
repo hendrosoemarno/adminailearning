@@ -59,5 +59,10 @@ Route::prefix('portal')->group(function () {
 
         // Presensi Tentor
         Route::resource('presensi', \App\Http\Controllers\Tentor\PresensiController::class, ['as' => 'tentor']);
+
+        // Jadwal Tentor
+        Route::get('/schedule', [\App\Http\Controllers\Tentor\ScheduleController::class, 'index'])->name('tentor.schedule.index');
+        Route::get('/schedule/edit', [\App\Http\Controllers\Tentor\ScheduleController::class, 'edit'])->name('tentor.schedule.edit');
+        Route::put('/schedule', [\App\Http\Controllers\Tentor\ScheduleController::class, 'update'])->name('tentor.schedule.update');
     });
 });
