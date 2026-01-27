@@ -70,7 +70,8 @@ class TentorAuthController extends Controller
     public function dashboard()
     {
         $tentor = Auth::guard('tentor')->user();
-        return view('tentor-portal.dashboard', compact('tentor'));
+        $presensiCount = \App\Models\Presensi::where('id_tentor', $tentor->id)->count();
+        return view('tentor-portal.dashboard', compact('tentor', 'presensiCount'));
     }
 
     public function editProfile()

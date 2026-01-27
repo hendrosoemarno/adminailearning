@@ -56,5 +56,8 @@ Route::prefix('portal')->group(function () {
         Route::get('/dashboard', [\App\Http\Controllers\TentorAuthController::class, 'dashboard'])->name('tentor.dashboard');
         Route::get('/profile', [\App\Http\Controllers\TentorAuthController::class, 'editProfile'])->name('tentor.profile.edit');
         Route::put('/profile', [\App\Http\Controllers\TentorAuthController::class, 'updateProfile'])->name('tentor.profile.update');
+
+        // Presensi Tentor
+        Route::resource('presensi', \App\Http\Controllers\Tentor\PresensiController::class, ['as' => 'tentor']);
     });
 });

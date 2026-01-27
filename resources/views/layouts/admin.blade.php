@@ -90,17 +90,20 @@
     <!-- Sidebar -->
     <aside id="sidebar"
         class="fixed inset-y-0 left-0 z-50 w-64 bg-slate-900/90 backdrop-blur-xl border-r border-slate-700/50 transform -translate-x-full md:translate-x-0 transition-all duration-300 ease-in-out md:relative md:flex md:flex-col justify-between shadow-2xl overflow-hidden group">
-        
+
         <!-- Toggle Button for Desktop -->
-        <button id="sidebar-toggle-btn" class="hidden md:flex absolute -right-3 top-1/2 -translate-y-1/2 w-6 h-12 bg-slate-800 border border-slate-700 rounded-full items-center justify-center text-slate-400 hover:text-white hover:bg-blue-600 transition-all z-50 shadow-lg">
-            <svg id="toggle-icon" class="w-4 h-4 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <button id="sidebar-toggle-btn"
+            class="hidden md:flex absolute -right-3 top-1/2 -translate-y-1/2 w-6 h-12 bg-slate-800 border border-slate-700 rounded-full items-center justify-center text-slate-400 hover:text-white hover:bg-blue-600 transition-all z-50 shadow-lg">
+            <svg id="toggle-icon" class="w-4 h-4 transition-transform duration-300" fill="none" stroke="currentColor"
+                viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
             </svg>
         </button>
 
         <div>
             <!-- Logo Desktop -->
-            <div class="hidden md:flex items-center justify-between h-16 px-6 border-b border-slate-700/50 overflow-hidden">
+            <div
+                class="hidden md:flex items-center justify-between h-16 px-6 border-b border-slate-700/50 overflow-hidden">
                 <span id="logo-text"
                     class="text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-cyan-400 tracking-wide whitespace-nowrap transition-all duration-300">
                     AdminPanel
@@ -112,7 +115,8 @@
                 @if(Auth::guard('tentor')->check() && request()->is('portal*'))
                     <!-- TENTOR MENU -->
                     <a href="{{ route('tentor.dashboard') }}"
-                        class="flex items-center px-4 py-3 rounded-lg group transition-all duration-200 {{ request()->routeIs('tentor.dashboard') ? 'bg-blue-500/10 text-blue-400 border border-blue-500/20 shadow-[0_0_15px_rgba(59,130,246,0.15)]' : 'text-slate-400 hover:bg-slate-800 hover:text-slate-100' }}" title="Dashboard Tentor">
+                        class="flex items-center px-4 py-3 rounded-lg group transition-all duration-200 {{ request()->routeIs('tentor.dashboard') ? 'bg-blue-500/10 text-blue-400 border border-blue-500/20 shadow-[0_0_15px_rgba(59,130,246,0.15)]' : 'text-slate-400 hover:bg-slate-800 hover:text-slate-100' }}"
+                        title="Dashboard Tentor">
                         <div class="flex-shrink-0">
                             <svg class="w-5 h-5 {{ request()->routeIs('tentor.dashboard') ? 'text-blue-400' : 'text-slate-500 group-hover:text-slate-300' }}"
                                 fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -121,10 +125,12 @@
                                 </path>
                             </svg>
                         </div>
-                        <span class="font-medium ml-3 sidebar-label transition-all duration-300 whitespace-nowrap">Dashboard Tentor</span>
+                        <span class="font-medium ml-3 sidebar-label transition-all duration-300 whitespace-nowrap">Dashboard
+                            Tentor</span>
                     </a>
                     <a href="{{ route('tentor.profile.edit') }}"
-                        class="flex items-center px-4 py-3 rounded-lg group transition-all duration-200 {{ request()->routeIs('tentor.profile.edit') ? 'bg-blue-500/10 text-blue-400 border border-blue-500/20 shadow-[0_0_15px_rgba(59,130,246,0.15)]' : 'text-slate-400 hover:bg-slate-800 hover:text-slate-100' }}" title="Ubah Profil">
+                        class="flex items-center px-4 py-3 rounded-lg group transition-all duration-200 {{ request()->routeIs('tentor.profile.edit') ? 'bg-blue-500/10 text-blue-400 border border-blue-500/20 shadow-[0_0_15px_rgba(59,130,246,0.15)]' : 'text-slate-400 hover:bg-slate-800 hover:text-slate-100' }}"
+                        title="Ubah Profil">
                         <div class="flex-shrink-0">
                             <svg class="w-5 h-5 {{ request()->routeIs('tentor.profile.edit') ? 'text-blue-400' : 'text-slate-500 group-hover:text-slate-300' }}"
                                 fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -132,12 +138,28 @@
                                     d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
                             </svg>
                         </div>
-                        <span class="font-medium ml-3 sidebar-label transition-all duration-300 whitespace-nowrap">Ubah Profil</span>
+                        <span class="font-medium ml-3 sidebar-label transition-all duration-300 whitespace-nowrap">Ubah
+                            Profil</span>
+                    </a>
+                    <a href="{{ route('tentor.presensi.index') }}"
+                        class="flex items-center px-4 py-3 rounded-lg group transition-all duration-200 {{ request()->routeIs('tentor.presensi.*') ? 'bg-blue-500/10 text-blue-400 border border-blue-500/20 shadow-[0_0_15px_rgba(59,130,246,0.15)]' : 'text-slate-400 hover:bg-slate-800 hover:text-slate-100' }}"
+                        title="Presensi Mengajar">
+                        <div class="flex-shrink-0">
+                            <svg class="w-5 h-5 {{ request()->routeIs('tentor.presensi.*') ? 'text-blue-400' : 'text-slate-500 group-hover:text-slate-300' }}"
+                                fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01">
+                                </path>
+                            </svg>
+                        </div>
+                        <span class="font-medium ml-3 sidebar-label transition-all duration-300 whitespace-nowrap">Presensi
+                            Mengajar</span>
                     </a>
                 @else
                     <!-- ADMIN MENU -->
                     <a href="{{ route('dashboard') }}"
-                        class="flex items-center px-4 py-3 rounded-lg group transition-all duration-200 {{ request()->routeIs('dashboard') ? 'bg-blue-500/10 text-blue-400 border border-blue-500/20 shadow-[0_0_15px_rgba(59,130,246,0.15)]' : 'text-slate-400 hover:bg-slate-800 hover:text-slate-100' }}" title="Dashboard Admin">
+                        class="flex items-center px-4 py-3 rounded-lg group transition-all duration-200 {{ request()->routeIs('dashboard') ? 'bg-blue-500/10 text-blue-400 border border-blue-500/20 shadow-[0_0_15px_rgba(59,130,246,0.15)]' : 'text-slate-400 hover:bg-slate-800 hover:text-slate-100' }}"
+                        title="Dashboard Admin">
                         <div class="flex-shrink-0">
                             <svg class="w-5 h-5 {{ request()->routeIs('dashboard') ? 'text-blue-400' : 'text-slate-500 group-hover:text-slate-300' }}"
                                 fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -146,11 +168,13 @@
                                 </path>
                             </svg>
                         </div>
-                        <span class="font-medium ml-3 sidebar-label transition-all duration-300 whitespace-nowrap">Dashboard Admin</span>
+                        <span class="font-medium ml-3 sidebar-label transition-all duration-300 whitespace-nowrap">Dashboard
+                            Admin</span>
                     </a>
 
                     <a href="{{ route('tentor-siswa.active') }}"
-                        class="flex items-center px-4 py-3 rounded-lg group transition-all duration-200 {{ request()->routeIs('tentor-siswa.active') ? 'bg-blue-500/10 text-blue-400 border border-blue-500/20 shadow-[0_0_15px_rgba(59,130,246,0.15)]' : 'text-slate-400 hover:bg-slate-800 hover:text-slate-100' }}" title="Tentor Aktif">
+                        class="flex items-center px-4 py-3 rounded-lg group transition-all duration-200 {{ request()->routeIs('tentor-siswa.active') ? 'bg-blue-500/10 text-blue-400 border border-blue-500/20 shadow-[0_0_15px_rgba(59,130,246,0.15)]' : 'text-slate-400 hover:bg-slate-800 hover:text-slate-100' }}"
+                        title="Tentor Aktif">
                         <div class="flex-shrink-0">
                             <svg class="w-5 h-5 {{ request()->routeIs('tentor-siswa.active') ? 'text-blue-400' : 'text-slate-500 group-hover:text-slate-300' }}"
                                 fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -159,11 +183,13 @@
                                 </path>
                             </svg>
                         </div>
-                        <span class="font-medium ml-3 sidebar-label transition-all duration-300 whitespace-nowrap">Tentor Aktif</span>
+                        <span class="font-medium ml-3 sidebar-label transition-all duration-300 whitespace-nowrap">Tentor
+                            Aktif</span>
                     </a>
 
                     <a href="{{ route('tentor-siswa.all-schedules') }}"
-                        class="flex items-center px-4 py-3 rounded-lg group transition-all duration-200 {{ request()->routeIs('tentor-siswa.all-schedules') ? 'bg-blue-500/10 text-blue-400 border border-blue-500/20 shadow-[0_0_15px_rgba(59,130,246,0.15)]' : 'text-slate-400 hover:bg-slate-800 hover:text-slate-100' }}" title="Master Jadwal">
+                        class="flex items-center px-4 py-3 rounded-lg group transition-all duration-200 {{ request()->routeIs('tentor-siswa.all-schedules') ? 'bg-blue-500/10 text-blue-400 border border-blue-500/20 shadow-[0_0_15px_rgba(59,130,246,0.15)]' : 'text-slate-400 hover:bg-slate-800 hover:text-slate-100' }}"
+                        title="Master Jadwal">
                         <div class="flex-shrink-0">
                             <svg class="w-5 h-5 {{ request()->routeIs('tentor-siswa.all-schedules') ? 'text-blue-400' : 'text-slate-500 group-hover:text-slate-300' }}"
                                 fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -172,33 +198,43 @@
                                 </path>
                             </svg>
                         </div>
-                        <span class="font-medium ml-3 sidebar-label transition-all duration-300 whitespace-nowrap">Master Jadwal</span>
+                        <span class="font-medium ml-3 sidebar-label transition-all duration-300 whitespace-nowrap">Master
+                            Jadwal</span>
                     </a>
 
                     <a href="{{ route('tentor-siswa.available', ['mapel' => 'mat']) }}"
-                        class="flex items-center px-4 py-3 rounded-lg group transition-all duration-200 {{ request('mapel') == 'mat' ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 shadow-[0_0_15px_rgba(16,185,129,0.15)]' : 'text-slate-400 hover:bg-slate-800 hover:text-slate-100' }}" title="Jadwal Bisa Mat">
+                        class="flex items-center px-4 py-3 rounded-lg group transition-all duration-200 {{ request('mapel') == 'mat' ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 shadow-[0_0_15px_rgba(16,185,129,0.15)]' : 'text-slate-400 hover:bg-slate-800 hover:text-slate-100' }}"
+                        title="Jadwal Bisa Mat">
                         <div class="flex-shrink-0">
                             <svg class="w-5 h-5 {{ request('mapel') == 'mat' ? 'text-emerald-400' : 'text-slate-500 group-hover:text-slate-300' }}"
                                 fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z"></path>
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z">
+                                </path>
                             </svg>
                         </div>
-                        <span class="font-medium ml-3 sidebar-label transition-all duration-300 whitespace-nowrap">Jadwal Bisa Mat</span>
+                        <span class="font-medium ml-3 sidebar-label transition-all duration-300 whitespace-nowrap">Jadwal
+                            Bisa Mat</span>
                     </a>
 
                     <a href="{{ route('tentor-siswa.available', ['mapel' => 'bing']) }}"
-                        class="flex items-center px-4 py-3 rounded-lg group transition-all duration-200 {{ request('mapel') == 'bing' ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 shadow-[0_0_15px_rgba(16,185,129,0.15)]' : 'text-slate-400 hover:bg-slate-800 hover:text-slate-100' }}" title="Jadwal Bisa Bing">
+                        class="flex items-center px-4 py-3 rounded-lg group transition-all duration-200 {{ request('mapel') == 'bing' ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 shadow-[0_0_15px_rgba(16,185,129,0.15)]' : 'text-slate-400 hover:bg-slate-800 hover:text-slate-100' }}"
+                        title="Jadwal Bisa Bing">
                         <div class="flex-shrink-0">
                             <svg class="w-5 h-5 {{ request('mapel') == 'bing' ? 'text-emerald-400' : 'text-slate-500 group-hover:text-slate-300' }}"
                                 fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5h12M9 3v2m1.048 9.5A18.022 18.022 0 016.412 9m6.088 9h7M11 21l5-10 5 10M12.751 5C11.783 10.77 8.07 15.61 3 18.129"></path>
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M3 5h12M9 3v2m1.048 9.5A18.022 18.022 0 016.412 9m6.088 9h7M11 21l5-10 5 10M12.751 5C11.783 10.77 8.07 15.61 3 18.129">
+                                </path>
                             </svg>
                         </div>
-                        <span class="font-medium ml-3 sidebar-label transition-all duration-300 whitespace-nowrap">Jadwal Bisa Bing</span>
+                        <span class="font-medium ml-3 sidebar-label transition-all duration-300 whitespace-nowrap">Jadwal
+                            Bisa Bing</span>
                     </a>
 
                     <a href="{{ route('presensi.index') }}"
-                        class="flex items-center px-4 py-3 rounded-lg group transition-all duration-200 {{ request()->routeIs('presensi.*') ? 'bg-blue-500/10 text-blue-400 border border-blue-500/20 shadow-[0_0_15px_rgba(59,130,246,0.15)]' : 'text-slate-400 hover:bg-slate-800 hover:text-slate-100' }}" title="Data Presensi">
+                        class="flex items-center px-4 py-3 rounded-lg group transition-all duration-200 {{ request()->routeIs('presensi.*') ? 'bg-blue-500/10 text-blue-400 border border-blue-500/20 shadow-[0_0_15px_rgba(59,130,246,0.15)]' : 'text-slate-400 hover:bg-slate-800 hover:text-slate-100' }}"
+                        title="Data Presensi">
                         <div class="flex-shrink-0">
                             <svg class="w-5 h-5 {{ request()->routeIs('presensi.*') ? 'text-blue-400' : 'text-slate-500 group-hover:text-slate-300' }}"
                                 fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -207,11 +243,13 @@
                                 </path>
                             </svg>
                         </div>
-                        <span class="font-medium ml-3 sidebar-label transition-all duration-300 whitespace-nowrap">Data Presensi</span>
+                        <span class="font-medium ml-3 sidebar-label transition-all duration-300 whitespace-nowrap">Data
+                            Presensi</span>
                     </a>
 
                     <a href="{{ route('tentors.index') }}"
-                        class="flex items-center px-4 py-3 rounded-lg group transition-all duration-200 {{ request()->routeIs('tentors.*') ? 'bg-blue-500/10 text-blue-400 border border-blue-500/20 shadow-[0_0_15px_rgba(59,130,246,0.15)]' : 'text-slate-400 hover:bg-slate-800 hover:text-slate-100' }}" title="Data Tentor">
+                        class="flex items-center px-4 py-3 rounded-lg group transition-all duration-200 {{ request()->routeIs('tentors.*') ? 'bg-blue-500/10 text-blue-400 border border-blue-500/20 shadow-[0_0_15px_rgba(59,130,246,0.15)]' : 'text-slate-400 hover:bg-slate-800 hover:text-slate-100' }}"
+                        title="Data Tentor">
                         <div class="flex-shrink-0">
                             <svg class="w-5 h-5 {{ request()->routeIs('tentors.*') ? 'text-blue-400' : 'text-slate-500 group-hover:text-slate-300' }}"
                                 fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -220,11 +258,13 @@
                                 </path>
                             </svg>
                         </div>
-                        <span class="font-medium ml-3 sidebar-label transition-all duration-300 whitespace-nowrap">Data Tentor</span>
+                        <span class="font-medium ml-3 sidebar-label transition-all duration-300 whitespace-nowrap">Data
+                            Tentor</span>
                     </a>
 
                     <a href="{{ route('users.index') }}"
-                        class="flex items-center px-4 py-3 rounded-lg group transition-all duration-200 {{ request()->routeIs('users.index') ? 'bg-blue-500/10 text-blue-400 border border-blue-500/20 shadow-[0_0_15px_rgba(59,130,246,0.15)]' : 'text-slate-400 hover:bg-slate-800 hover:text-slate-100' }}" title="Data User">
+                        class="flex items-center px-4 py-3 rounded-lg group transition-all duration-200 {{ request()->routeIs('users.index') ? 'bg-blue-500/10 text-blue-400 border border-blue-500/20 shadow-[0_0_15px_rgba(59,130,246,0.15)]' : 'text-slate-400 hover:bg-slate-800 hover:text-slate-100' }}"
+                        title="Data User">
                         <div class="flex-shrink-0">
                             <svg class="w-5 h-5 {{ request()->routeIs('users.index') ? 'text-blue-400' : 'text-slate-500 group-hover:text-slate-300' }}"
                                 fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -233,7 +273,8 @@
                                 </path>
                             </svg>
                         </div>
-                        <span class="font-medium ml-3 sidebar-label transition-all duration-300 whitespace-nowrap">Data User</span>
+                        <span class="font-medium ml-3 sidebar-label transition-all duration-300 whitespace-nowrap">Data
+                            User</span>
                     </a>
                 @endif
             </nav>
@@ -244,7 +285,8 @@
             <div class="flex items-center justify-between">
                 <div class="flex flex-col sidebar-label transition-all duration-300 overflow-hidden">
                     @if(Auth::guard('tentor')->check() && request()->is('portal*'))
-                        <span class="text-sm font-semibold text-slate-200 whitespace-nowrap">{{ Auth::guard('tentor')->user()->nama }}</span>
+                        <span
+                            class="text-sm font-semibold text-slate-200 whitespace-nowrap">{{ Auth::guard('tentor')->user()->nama }}</span>
                         <span class="text-xs text-slate-500 whitespace-nowrap">Tentor Portal</span>
                     @elseif(Auth::guard('web')->check())
                         <span class="text-sm font-semibold text-slate-200 whitespace-nowrap">{{ Auth::user()->firstname }}
@@ -263,7 +305,8 @@
                 <form method="POST" action="{{ $logoutAction }}" class="flex-shrink-0">
                     @csrf
                     <button type="submit"
-                        class="p-2 text-slate-400 hover:text-red-400 transition-colors rounded hover:bg-slate-800" title="Keluar">
+                        class="p-2 text-slate-400 hover:text-red-400 transition-colors rounded hover:bg-slate-800"
+                        title="Keluar">
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                 d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1">
@@ -282,14 +325,16 @@
             <div
                 class="mb-6 p-4 rounded-lg bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 flex items-center shadow-lg">
                 <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
                 </svg>
                 <span class="font-medium text-sm">{{ session('success') }}</span>
             </div>
         @endif
 
         @if($errors->any())
-            <div class="mb-6 p-4 rounded-lg bg-red-500/10 border border-red-500/20 text-red-400 shadow-lg font-medium text-sm">
+            <div
+                class="mb-6 p-4 rounded-lg bg-red-500/10 border border-red-500/20 text-red-400 shadow-lg font-medium text-sm">
                 <div class="flex items-center mb-2">
                     <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -334,7 +379,7 @@
         function toggleDesktopSidebar() {
             isCollapsed = !isCollapsed;
             localStorage.setItem('sidebarCollapsed', isCollapsed);
-            
+
             if (isCollapsed) {
                 collapseSidebar();
             } else {
