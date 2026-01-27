@@ -26,6 +26,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/dashboard', [LoginController::class, 'dashboard'])->name('dashboard');
     Route::resource('tentors', \App\Http\Controllers\TentorController::class);
     Route::get('/users', [\App\Http\Controllers\UserController::class, 'index'])->name('users.index');
+    Route::resource('useradmins', \App\Http\Controllers\AdminUserController::class);
 
     // Tentor-Siswa Management
     Route::get('/active-tentors', [\App\Http\Controllers\TentorSiswaController::class, 'index'])->name('tentor-siswa.active');
@@ -42,6 +43,11 @@ Route::middleware('auth')->group(function () {
     Route::get('/presensi', [\App\Http\Controllers\PresensiController::class, 'index'])->name('presensi.index');
     Route::delete('/presensi/{id}', [\App\Http\Controllers\PresensiController::class, 'destroy'])->name('presensi.destroy');
     Route::post('/presensi/bulk-delete', [\App\Http\Controllers\PresensiController::class, 'bulkDelete'])->name('presensi.bulk-delete');
+
+    // Monitoring Management
+    Route::get('/monitoring', [\App\Http\Controllers\MonitoringController::class, 'index'])->name('monitoring.index');
+    Route::get('/monitoring/edit', [\App\Http\Controllers\MonitoringController::class, 'edit'])->name('monitoring.edit');
+    Route::post('/monitoring/update', [\App\Http\Controllers\MonitoringController::class, 'update'])->name('monitoring.update');
 });
 
 // Tentor Portal Routes

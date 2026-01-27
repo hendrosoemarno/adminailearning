@@ -66,7 +66,7 @@ return [
     'providers' => [
         'users' => [
             'driver' => 'eloquent',
-            'model' => App\Models\MoodleUser::class,
+            'model' => App\Models\AdminUser::class,
         ],
 
         // 'users' => [

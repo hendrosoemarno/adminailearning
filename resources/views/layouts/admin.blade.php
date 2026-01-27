@@ -246,6 +246,24 @@
                             Bisa Bing</span>
                     </a>
 
+                    <a href="{{ route('monitoring.index') }}"
+                        class="flex items-center px-4 py-3 rounded-lg group transition-all duration-200 {{ request()->routeIs('monitoring.*') ? 'bg-amber-500/10 text-amber-400 border border-amber-500/20 shadow-[0_0_15px_rgba(245,158,11,0.15)]' : 'text-slate-400 hover:bg-slate-800 hover:text-slate-100' }}"
+                        title="Monitoring Jadwal">
+                        <div class="flex-shrink-0">
+                            <svg class="w-5 h-5 {{ request()->routeIs('monitoring.*') ? 'text-amber-400' : 'text-slate-500 group-hover:text-slate-300' }}"
+                                fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M15 12a3 3 0 11-6 0 3 3 0 016 0z">
+                                </path>
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z">
+                                </path>
+                            </svg>
+                        </div>
+                        <span class="font-medium ml-3 sidebar-label transition-all duration-300 whitespace-nowrap">Monitoring
+                            Jadwal</span>
+                    </a>
+
                     <a href="{{ route('presensi.index') }}"
                         class="flex items-center px-4 py-3 rounded-lg group transition-all duration-200 {{ request()->routeIs('presensi.*') ? 'bg-blue-500/10 text-blue-400 border border-blue-500/20 shadow-[0_0_15px_rgba(59,130,246,0.15)]' : 'text-slate-400 hover:bg-slate-800 hover:text-slate-100' }}"
                         title="Data Presensi">
@@ -276,6 +294,21 @@
                             Tentor</span>
                     </a>
 
+                    <a href="{{ route('useradmins.index') }}"
+                        class="flex items-center px-4 py-3 rounded-lg group transition-all duration-200 {{ request()->routeIs('useradmins.*') ? 'bg-blue-500/10 text-blue-400 border border-blue-500/20 shadow-[0_0_15px_rgba(59,130,246,0.15)]' : 'text-slate-400 hover:bg-slate-800 hover:text-slate-100' }}"
+                        title="Kelola Admin">
+                        <div class="flex-shrink-0">
+                            <svg class="w-5 h-5 {{ request()->routeIs('useradmins.*') ? 'text-blue-400' : 'text-slate-500 group-hover:text-slate-300' }}"
+                                fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z">
+                                </path>
+                            </svg>
+                        </div>
+                        <span class="font-medium ml-3 sidebar-label transition-all duration-300 whitespace-nowrap">Kelola
+                            Admin</span>
+                    </a>
+
                     <a href="{{ route('users.index') }}"
                         class="flex items-center px-4 py-3 rounded-lg group transition-all duration-200 {{ request()->routeIs('users.index') ? 'bg-blue-500/10 text-blue-400 border border-blue-500/20 shadow-[0_0_15px_rgba(59,130,246,0.15)]' : 'text-slate-400 hover:bg-slate-800 hover:text-slate-100' }}"
                         title="Data User">
@@ -303,8 +336,7 @@
                             class="text-sm font-semibold text-slate-200 whitespace-nowrap">{{ Auth::guard('tentor')->user()->nama }}</span>
                         <span class="text-xs text-slate-500 whitespace-nowrap">Tentor Portal</span>
                     @elseif(Auth::guard('web')->check())
-                        <span class="text-sm font-semibold text-slate-200 whitespace-nowrap">{{ Auth::user()->firstname }}
-                            {{ Auth::user()->lastname }}</span>
+                        <span class="text-sm font-semibold text-slate-200 whitespace-nowrap">{{ Auth::user()->nama }}</span>
                         <span class="text-xs text-slate-500 whitespace-nowrap">Administrator</span>
                     @endif
                 </div>
