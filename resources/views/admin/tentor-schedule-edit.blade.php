@@ -33,18 +33,21 @@
                     <thead class="sticky top-0 z-30 shadow-lg">
                         <tr class="bg-slate-900 border-b border-slate-700">
                             <th
-                                class="p-4 w-24 text-xs font-bold text-slate-400 uppercase tracking-widest border-r border-slate-700/50 bg-slate-900">
+                                class="p-2 w-16 text-[9px] font-bold text-slate-400 uppercase tracking-wider border-r border-slate-700/50 bg-slate-900 text-center whitespace-nowrap">
                                 Waktu</th>
                             @foreach($hariLabels as $index => $label)
-                                <th class="p-4 text-xs font-bold text-slate-400 uppercase tracking-widest bg-slate-900">
-                                    {{ $label }}</th>
+                                <th
+                                    class="p-2 text-[9px] font-bold text-slate-400 uppercase tracking-wider bg-slate-900 text-center whitespace-nowrap">
+                                    {{ $label }}
+                                </th>
                             @endforeach
                         </tr>
                     </thead>
                     <tbody class="divide-y divide-slate-700/50">
                         @foreach($waktus as $waktu)
                             <tr class="hover:bg-slate-700/5 transition-colors border-b border-slate-700/30">
-                                <td class="p-4 text-sm text-slate-500 bg-slate-900/30 border-r border-slate-700/50 font-mono">
+                                <td
+                                    class="p-2 text-[10px] font-bold text-slate-500 bg-slate-900/30 border-r border-slate-700/50 font-mono text-center">
                                     {{ $waktu->waktu }}
                                 </td>
                                 @for($hari = 1; $hari <= 7; $hari++)

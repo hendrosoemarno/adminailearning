@@ -54,7 +54,7 @@
                                         <div class="flex flex-col gap-1">
                                             @foreach($items as $item)
                                                 <div class="bg-emerald-500 text-slate-950 px-1.5 py-0.5 rounded shadow-sm">
-                                                    <div class="text-[8px] font-bold leading-tight uppercase truncate">
+                                                    <div class="text-[9px] font-bold leading-tight uppercase truncate tracking-wider">
                                                         {{ $item->tentor->nickname ?? '?' }}-Bisa
                                                     </div>
                                                 </div>

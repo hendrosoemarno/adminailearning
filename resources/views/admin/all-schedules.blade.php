@@ -32,9 +32,9 @@
                                     @if(count($items) > 0)
                                         <div class="flex flex-col gap-1">
                                             @foreach($items as $item)
-                                                <div class="bg-blue-500/10 border border-blue-500/20 px-1.5 py-0.5 rounded text-[8px] group">
+                                                <div class="bg-blue-500/10 border border-blue-500/20 px-1.5 py-0.5 rounded text-[9px] group">
                                                     <div class="flex items-center justify-between gap-1 overflow-hidden">
-                                                        <span class="text-blue-400 font-bold leading-tight truncate">
+                                                        <span class="text-blue-400 font-bold leading-tight truncate uppercase tracking-wider">
                                                             {{ $item->tentor->nickname ?? '?' }}-{{ $item->siswa->firstname ?? '?' }}
                                                         </span>
                                                         @if($item->linkJadwal)

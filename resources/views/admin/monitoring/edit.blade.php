@@ -48,7 +48,7 @@
                                                         <input type="checkbox" name="monitor[]" value="{{ $key }}" 
                                                             {{ isset($monitoredKeys[$key]) ? 'checked' : '' }}
                                                             class="mt-0.5 rounded border-slate-600 bg-slate-800 text-blue-500 focus:ring-blue-500/20">
-                                                        <span class="text-[7px] font-medium text-slate-400 group-hover:text-blue-400 leading-tight">
+                                                        <span class="text-[9px] font-bold text-slate-400 group-hover:text-blue-400 leading-tight uppercase tracking-wider">
                                                             {{ $item->tentor->nickname ?? '?' }}-{{ $item->siswa->firstname ?? '?' }}
                                                         </span>
                                                     </label>

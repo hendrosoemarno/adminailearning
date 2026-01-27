@@ -30,7 +30,8 @@
                         @foreach($hariLabels as $index => $label)
                             <th
                                 class="p-2 text-[9px] font-bold text-slate-400 uppercase tracking-wider bg-slate-900 text-center whitespace-nowrap">
-                                {{ $label }}</th>
+                                {{ $label }}
+                            </th>
                         @endforeach
                     </tr>
                 </thead>
@@ -48,9 +49,10 @@
                                         <div class="flex flex-col gap-1">
                                             @foreach($items as $item)
                                                 <div
-                                                    class="bg-amber-500/10 border border-amber-500/20 px-1.5 py-0.5 rounded text-[8px] group">
+                                                    class="bg-amber-500/10 border border-amber-500/20 px-1.5 py-0.5 rounded text-[9px] group">
                                                     <div class="flex items-center justify-between gap-1 overflow-hidden">
-                                                        <span class="text-amber-400 font-bold leading-tight truncate">
+                                                        <span
+                                                            class="text-amber-400 font-bold leading-tight truncate uppercase tracking-wider">
                                                             {{ $item->tentor->nickname ?? '?' }}-{{ $item->siswa->firstname ?? '?' }}
                                                         </span>
                                                     </div>
