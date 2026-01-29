@@ -48,6 +48,7 @@
                                 @endif
                             </a>
                         </th>
+                        <th class="p-4 text-xs font-bold text-slate-400 uppercase tracking-wider">Tanggal Masuk</th>
                         <th class="p-4 text-xs font-bold text-slate-400 uppercase tracking-wider">
                             <a href="{{ request()->fullUrlWithQuery(['sort' => 'biaya', 'direction' => ($sort == 'biaya' && $direction == 'asc') ? 'desc' : 'asc']) }}" class="flex items-center gap-1 hover:text-white transition-colors">
                                 Biaya
@@ -117,6 +118,15 @@
                                     @endforeach
                                 </select>
                             </td>
+                            <td class="p-4">
+                                <input type="date" 
+                                    value="{{ $siswa->tanggal_masuk }}"
+                                    onchange="updateCustomData({{ $siswa->id }}, 'tanggal_masuk', this.value)"
+                                    class="bg-slate-900 border border-slate-700 text-white text-xs rounded-lg px-2 py-1 outline-none focus:ring-1 focus:ring-blue-500 transition-all w-36">
+                                @if($siswa->tanggal_masuk)
+                                    <span class="ml-1 text-xs text-amber-400">🟡</span>
+                                @endif
+                            </td>
                             <td class="p-4 text-sm text-white font-semibold whitespace-nowrap" id="biaya-{{ $siswa->id }}">
                                 Rp {{ number_format($siswa->biaya, 0, ',', '.') }}
                             </td>
@@ -127,16 +137,26 @@
                                 Rp {{ number_format($siswa->gaji_tentor, 0, ',', '.') }}
                             </td>
                             <td class="p-4">
-                                <div class="flex items-center text-slate-300">
-                                    <span class="bg-slate-700 px-2 py-0.5 rounded text-xs whitespace-nowrap" id="total-meet-{{ $siswa->id }}">
-                                        {{ $siswa->total_meet }} Pertemuan
-                                    </span>
+                                <div class="flex items-center gap-2">
+                                    <input type="number" 
+                                        min="1" 
+                                        max="99"
+                                        value="{{ $siswa->total_meet }}"
+                                        onchange="updateCustomData({{ $siswa->id }}, 'custom_total_meet', this.value)"
+                                        class="w-16 text-center bg-slate-900 border border-slate-700 text-white text-xs rounded px-2 py-1 outline-none focus:ring-1 focus:ring-blue-500"
+                                        id="meet-input-{{ $siswa->id }}">
+                                    <span class="text-xs text-slate-500">/ {{ $siswa->default_total_meet }}</span>
+                                    @if($siswa->is_custom)
+                                        <span class="text-xs text-amber-400" title="Custom">🟡</span>
+                                    @else
+                                        <span class="text-xs text-green-400" title="Default">🟢</span>
+                                    @endif
                                 </div>
                             </td>
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="6" class="p-12 text-center text-slate-500">
+                            <td colspan="7" class="p-12 text-center text-slate-500">
                                 Tidak ada siswa yang terhubung dengan tentor ini.
                             </td>
                         </tr>
@@ -248,6 +268,52 @@
             } else {
                 row.classList.remove('animate-pulse', 'bg-blue-500/5');
             }
+        }
+
+        function updateCustomData(siswaId, field, value) {
+            rowPulse(siswaId, true);
+
+            fetch('{{ route("biaya.update-custom") }}', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                },
+                body: JSON.stringify({
+                    id_siswa: siswaId,
+                    field: field,
+                    value: value
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    // Update all affected cells
+                    document.getElementById('biaya-' + siswaId).textContent = formatRupiah(data.data.biaya);
+                    document.getElementById('ai-learning-' + siswaId).textContent = formatRupiah(data.data.ai_learning);
+                    document.getElementById('gaji-tentor-' + siswaId).textContent = formatRupiah(data.data.gaji_tentor);
+                    
+                    // Update meet input if it was tanggal_masuk that changed
+                    if (field === 'tanggal_masuk') {
+                        document.getElementById('meet-input-' + siswaId).value = data.data.total_meet;
+                    }
+
+                    // Update Summary
+                    updateSummary();
+                    
+                    // Show success feedback (optional)
+                    console.log('Data berhasil diperbarui');
+                } else {
+                    alert('Gagal memperbarui data custom.');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Terjadi kesalahan saat memperbarui data.');
+            })
+            .finally(() => {
+                rowPulse(siswaId, false);
+            });
         }
     </script>
 @endsection

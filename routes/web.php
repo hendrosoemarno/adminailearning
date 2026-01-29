@@ -62,6 +62,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/biaya/{tentor}', [\App\Http\Controllers\BiayaController::class, 'show'])->name('biaya.show');
     Route::get('/biaya/{tentor}/salary', [\App\Http\Controllers\BiayaController::class, 'salary'])->name('biaya.salary');
     Route::post('/biaya/update-paket', [\App\Http\Controllers\BiayaController::class, 'updatePaket'])->name('biaya.update-paket');
+    Route::post('/biaya/update-custom', [\App\Http\Controllers\BiayaController::class, 'updateCustomData'])->name('biaya.update-custom');
 
     // Tarif Management
     Route::get('/tarifs/history', [\App\Http\Controllers\TarifController::class, 'history'])->name('tarifs.history');

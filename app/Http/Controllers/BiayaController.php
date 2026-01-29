@@ -49,18 +49,52 @@ class BiayaController extends Controller
 
         foreach ($siswas as $siswa) {
             $tarif = $siswa->siswaTarif->tarif ?? null;
+            $siswaTarif = $siswa->siswaTarif;
 
             if ($tarif) {
-                $siswa->biaya = $tarif->aplikasi + $tarif->manajemen + $tarif->tentor;
-                $siswa->ai_learning = $tarif->aplikasi + $tarif->manajemen;
-                $siswa->gaji_tentor = $tarif->tentor;
-                $siswa->paket_kode = $tarif->kode;
-                $siswa->id_tarif = $tarif->id;
+                // Get custom values or defaults
+                $customTotalMeet = $siswaTarif->custom_total_meet;
+                $tanggalMasuk = $siswaTarif->tanggal_masuk;
 
-                // Calculate Total Meet: Extract number from code (e.g., "SD 2x" -> 2)
+                // Calculate default total meet from package
                 preg_match('/\d+/', $tarif->kode, $matches);
                 $multiplier = isset($matches[0]) ? (int) $matches[0] : 0;
-                $siswa->total_meet = $multiplier * 4;
+                $defaultTotalMeet = $multiplier * 4;
+
+                // Use custom or default
+                $totalMeet = $customTotalMeet ?? $defaultTotalMeet;
+
+                // Calculate proportions
+                $meetRatio = $defaultTotalMeet > 0 ? $totalMeet / $defaultTotalMeet : 1;
+
+                // Calculate Gaji (proportional)
+                $gaji = $tarif->tentor * $meetRatio;
+
+                // Calculate Manajemen (proportional)
+                $manajemen = $tarif->manajemen * $meetRatio;
+
+                // Calculate Aplikasi (based on tanggal_masuk)
+                $aplikasi = $tarif->aplikasi;
+                if ($tanggalMasuk) {
+                    $day = (int) date('d', strtotime($tanggalMasuk));
+                    if ($day > 20) {
+                        $aplikasi = $aplikasi * 0.5; // 1/2
+                    } elseif ($day >= 11 && $day <= 20) {
+                        $aplikasi = $aplikasi * (2 / 3); // 2/3
+                    }
+                    // else: full (100%)
+                }
+
+                $siswa->biaya = $gaji + $manajemen + $aplikasi;
+                $siswa->ai_learning = $manajemen + $aplikasi;
+                $siswa->gaji_tentor = $gaji;
+                $siswa->paket_kode = $tarif->kode;
+                $siswa->id_tarif = $tarif->id;
+                $siswa->total_meet = $totalMeet;
+                $siswa->default_total_meet = $defaultTotalMeet;
+                $siswa->tanggal_masuk = $tanggalMasuk;
+                $siswa->custom_total_meet = $customTotalMeet;
+                $siswa->is_custom = ($customTotalMeet !== null || $tanggalMasuk !== null);
             } else {
                 $siswa->biaya = 0;
                 $siswa->ai_learning = 0;
@@ -68,6 +102,10 @@ class BiayaController extends Controller
                 $siswa->paket_kode = '-';
                 $siswa->id_tarif = null;
                 $siswa->total_meet = 0;
+                $siswa->default_total_meet = 0;
+                $siswa->tanggal_masuk = null;
+                $siswa->custom_total_meet = null;
+                $siswa->is_custom = false;
             }
         }
 
@@ -88,19 +126,35 @@ class BiayaController extends Controller
 
         foreach ($siswas as $siswa) {
             $tarif = $siswa->siswaTarif->tarif ?? null;
+            $siswaTarif = $siswa->siswaTarif;
 
             if ($tarif) {
                 // Split Kode: "SD 2x" -> Materi: "SD", Paket: "2x"
                 $parts = explode(' ', $tarif->kode);
                 $siswa->materi = $parts[0] ?? '-';
                 $siswa->paket = $parts[1] ?? '-';
-                $siswa->gaji = $tarif->tentor;
-                $siswa->total = $tarif->tentor;
 
-                // Calculate Total Meet
+                // Get custom values or defaults
+                $customTotalMeet = $siswaTarif->custom_total_meet;
+                $tanggalMasuk = $siswaTarif->tanggal_masuk;
+
+                // Calculate default total meet from package
                 preg_match('/\d+/', $tarif->kode, $matches);
                 $multiplier = isset($matches[0]) ? (int) $matches[0] : 0;
-                $siswa->total_meet = $multiplier * 4;
+                $defaultTotalMeet = $multiplier * 4;
+
+                // Use custom or default
+                $totalMeet = $customTotalMeet ?? $defaultTotalMeet;
+
+                // Calculate proportions
+                $meetRatio = $defaultTotalMeet > 0 ? $totalMeet / $defaultTotalMeet : 1;
+
+                // Calculate Gaji (proportional) - USING CUSTOM FORMULA
+                $gaji = $tarif->tentor * $meetRatio;
+
+                $siswa->gaji = $gaji;
+                $siswa->total = $gaji;
+                $siswa->total_meet = $totalMeet;
             } else {
                 $siswa->materi = '-';
                 $siswa->paket = '-';
@@ -151,6 +205,69 @@ class BiayaController extends Controller
                 'ai_learning' => $tarif->aplikasi + $tarif->manajemen,
                 'gaji_tentor' => $tarif->tentor,
                 'total_meet' => $totalMeet . ' Pertemuan'
+            ]
+        ]);
+    }
+
+    public function updateCustomData(Request $request)
+    {
+        $request->validate([
+            'id_siswa' => 'required|exists:mdlu6_user,id',
+            'field' => 'required|in:tanggal_masuk,custom_total_meet',
+            'value' => 'nullable'
+        ]);
+
+        $siswaTarif = SiswaTarif::where('id_siswa', $request->id_siswa)->firstOrFail();
+
+        // Update field
+        if ($request->field == 'tanggal_masuk') {
+            $siswaTarif->tanggal_masuk = $request->value ?: null;
+        } else {
+            $siswaTarif->custom_total_meet = $request->value > 0 ? (int) $request->value : null;
+        }
+        $siswaTarif->save();
+
+        // Recalculate billing
+        $tarif = $siswaTarif->tarif;
+
+        // Calculate default total meet
+        preg_match('/\d+/', $tarif->kode, $matches);
+        $multiplier = isset($matches[0]) ? (int) $matches[0] : 0;
+        $defaultTotalMeet = $multiplier * 4;
+
+        // Use custom or default
+        $totalMeet = $siswaTarif->custom_total_meet ?? $defaultTotalMeet;
+        $meetRatio = $defaultTotalMeet > 0 ? $totalMeet / $defaultTotalMeet : 1;
+
+        // Calculate Gaji (proportional)
+        $gaji = $tarif->tentor * $meetRatio;
+
+        // Calculate Manajemen (proportional)
+        $manajemen = $tarif->manajemen * $meetRatio;
+
+        // Calculate Aplikasi (based on tanggal_masuk)
+        $aplikasi = $tarif->aplikasi;
+        if ($siswaTarif->tanggal_masuk) {
+            $day = (int) date('d', strtotime($siswaTarif->tanggal_masuk));
+            if ($day > 20) {
+                $aplikasi = $aplikasi * 0.5; // 1/2
+            } elseif ($day >= 11 && $day <= 20) {
+                $aplikasi = $aplikasi * (2 / 3); // 2/3
+            }
+        }
+
+        $totalBiaya = $gaji + $manajemen + $aplikasi;
+        $aiLearning = $manajemen + $aplikasi;
+
+        return response()->json([
+            'success' => true,
+            'data' => [
+                'biaya' => $totalBiaya,
+                'ai_learning' => $aiLearning,
+                'gaji_tentor' => $gaji,
+                'total_meet' => $totalMeet,
+                'default_total_meet' => $defaultTotalMeet,
+                'is_custom' => ($siswaTarif->custom_total_meet !== null || $siswaTarif->tanggal_masuk !== null)
             ]
         ]);
     }
