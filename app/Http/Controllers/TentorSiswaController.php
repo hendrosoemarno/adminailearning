@@ -12,7 +12,15 @@ class TentorSiswaController extends Controller
     public function index(Request $request)
     {
         $search = $request->input('search');
-        $query = Tentor::where('aktif', 1);
+        $sort = $request->input('sort', 'nickname');
+        $direction = $request->input('direction', 'asc');
+
+        $allowedSorts = ['nama', 'nickname', 'mapel', 'siswas_count'];
+        if (!in_array($sort, $allowedSorts)) {
+            $sort = 'nickname';
+        }
+
+        $query = Tentor::where('aktif', 1)->withCount('siswas');
 
         if ($search) {
             $query->where(function ($q) use ($search) {
@@ -21,8 +29,8 @@ class TentorSiswaController extends Controller
             });
         }
 
-        $tentors = $query->orderBy('nickname', 'asc')->get();
-        return view('admin.active-tentors', compact('tentors', 'search'));
+        $tentors = $query->orderBy($sort, $direction)->get();
+        return view('admin.active-tentors', compact('tentors', 'search', 'sort', 'direction'));
     }
 
     public function manageStudents(Request $request, Tentor $tentor)

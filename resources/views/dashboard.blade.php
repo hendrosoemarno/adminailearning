@@ -16,7 +16,7 @@
 
     <!-- Filters -->
     <div class="bg-slate-800/50 backdrop-blur-sm border border-slate-700 p-6 rounded-xl shadow-lg mb-8">
-        <form method="GET" action="{{ route('dashboard') }}" class="flex flex-col md:flex-row gap-4 items-end">
+        <form method="GET" action="{{ route('quiz-attempts') }}" class="flex flex-col md:flex-row gap-4 items-end">
             <div class="w-full md:w-auto flex flex-col gap-1">
                 <label for="start_date" class="text-sm font-medium text-slate-400">Start Date</label>
                 <input type="date" name="start_date" id="start_date" value="{{ $startDate }}"
@@ -42,7 +42,7 @@
                 </button>
 
                 @if(($startDate != date('Y-m-d') || $endDate != date('Y-m-d')) || $search)
-                    <a href="{{ route('dashboard') }}"
+                    <a href="{{ route('quiz-attempts') }}"
                         class="text-slate-400 hover:text-white text-sm whitespace-nowrap transition-colors py-2">
                         Clear Filters
                     </a>

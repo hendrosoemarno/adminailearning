@@ -170,7 +170,11 @@
                             Mengajar</span>
                     </a>
                 @else
-                    <!-- ADMIN MENU -->
+                    <!-- DASHBOARD -->
+                    <div class="px-4 pt-4 pb-2">
+                        <span
+                            class="text-[10px] font-bold text-slate-500 uppercase tracking-[0.2em] sidebar-label">Dashboard</span>
+                    </div>
                     <a href="{{ route('dashboard') }}"
                         class="flex items-center px-4 py-3 rounded-lg group transition-all duration-200 {{ request()->routeIs('dashboard') ? 'bg-blue-500/10 text-blue-400 border border-blue-500/20 shadow-[0_0_15px_rgba(59,130,246,0.15)]' : 'text-slate-400 hover:bg-slate-800 hover:text-slate-100' }}"
                         title="Dashboard Admin">
@@ -182,147 +186,146 @@
                                 </path>
                             </svg>
                         </div>
-                        <span class="font-medium ml-3 sidebar-label transition-all duration-300 whitespace-nowrap">Dashboard
-                            Admin</span>
+                        <span
+                            class="font-medium ml-3 sidebar-label transition-all duration-300 whitespace-nowrap">Dashboard</span>
                     </a>
 
-                    <a href="{{ route('tentor-siswa.active') }}"
-                        class="flex items-center px-4 py-3 rounded-lg group transition-all duration-200 {{ request()->routeIs('tentor-siswa.active') ? 'bg-blue-500/10 text-blue-400 border border-blue-500/20 shadow-[0_0_15px_rgba(59,130,246,0.15)]' : 'text-slate-400 hover:bg-slate-800 hover:text-slate-100' }}"
-                        title="Tentor Aktif">
-                        <div class="flex-shrink-0">
-                            <svg class="w-5 h-5 {{ request()->routeIs('tentor-siswa.active') ? 'text-blue-400' : 'text-slate-500 group-hover:text-slate-300' }}"
+                    <!-- SISWA -->
+                    <div class="space-y-1">
+                        <button type="button" onclick="toggleSubmenu('siswa-menu')"
+                            class="w-full flex items-center justify-between px-4 py-3 rounded-lg group transition-all duration-200 text-slate-400 hover:bg-slate-800 hover:text-slate-100">
+                            <div class="flex items-center">
+                                <div class="flex-shrink-0">
+                                    <svg class="w-5 h-5 text-slate-500 group-hover:text-slate-300" fill="none"
+                                        stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z">
+                                        </path>
+                                    </svg>
+                                </div>
+                                <span
+                                    class="font-medium ml-3 sidebar-label transition-all duration-300 whitespace-nowrap">Siswa</span>
+                            </div>
+                            <svg id="siswa-menu-arrow" class="w-4 h-4 transition-transform duration-200 sidebar-label"
                                 fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7">
                                 </path>
                             </svg>
+                        </button>
+                        <div id="siswa-menu" class="hidden pl-4 space-y-1 overflow-hidden">
+                            <a href="{{ route('quiz-attempts') }}"
+                                class="flex items-center px-4 py-2 rounded-lg text-sm {{ request()->routeIs('quiz-attempts') ? 'text-blue-400' : 'text-slate-400 hover:bg-slate-800 hover:text-slate-100' }}">
+                                <span class="sidebar-label">Quiz Attempts</span>
+                            </a>
+                            <a href="{{ route('dashboard') }}"
+                                class="flex items-center px-4 py-2 rounded-lg text-sm {{ request()->routeIs('dashboard') && !request()->routeIs('quiz-attempts') ? 'text-blue-400' : 'text-slate-400 hover:bg-slate-800 hover:text-slate-100' }}">
+                                <span class="sidebar-label">Data User</span>
+                            </a>
+                            <a href="#"
+                                class="flex items-center px-4 py-2 rounded-lg text-sm text-slate-400 hover:bg-slate-800 hover:text-slate-100">
+                                <span class="sidebar-label">Siswa-Tarif</span>
+                            </a>
                         </div>
-                        <span class="font-medium ml-3 sidebar-label transition-all duration-300 whitespace-nowrap">Tentor
-                            Aktif</span>
-                    </a>
+                    </div>
 
-                    <a href="{{ route('tentor-siswa.all-schedules') }}"
-                        class="flex items-center px-4 py-3 rounded-lg group transition-all duration-200 {{ request()->routeIs('tentor-siswa.all-schedules') ? 'bg-blue-500/10 text-blue-400 border border-blue-500/20 shadow-[0_0_15px_rgba(59,130,246,0.15)]' : 'text-slate-400 hover:bg-slate-800 hover:text-slate-100' }}"
-                        title="Master Jadwal">
-                        <div class="flex-shrink-0">
-                            <svg class="w-5 h-5 {{ request()->routeIs('tentor-siswa.all-schedules') ? 'text-blue-400' : 'text-slate-500 group-hover:text-slate-300' }}"
+                    <!-- TENTOR -->
+                    <div class="space-y-1">
+                        <button type="button" onclick="toggleSubmenu('tentor-menu')"
+                            class="w-full flex items-center justify-between px-4 py-3 rounded-lg group transition-all duration-200 text-slate-400 hover:bg-slate-800 hover:text-slate-100">
+                            <div class="flex items-center">
+                                <div class="flex-shrink-0">
+                                    <svg class="w-5 h-5 text-slate-500 group-hover:text-slate-300" fill="none"
+                                        stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z">
+                                        </path>
+                                    </svg>
+                                </div>
+                                <span
+                                    class="font-medium ml-3 sidebar-label transition-all duration-300 whitespace-nowrap">Tentor</span>
+                            </div>
+                            <svg id="tentor-menu-arrow" class="w-4 h-4 transition-transform duration-200 sidebar-label"
                                 fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7">
                                 </path>
                             </svg>
+                        </button>
+                        <div id="tentor-menu" class="hidden pl-4 space-y-1 overflow-hidden">
+                            <a href="{{ route('tentor-siswa.active') }}"
+                                class="flex items-center px-4 py-2 rounded-lg text-sm {{ request()->routeIs('tentor-siswa.active') ? 'text-blue-400' : 'text-slate-400 hover:bg-slate-800 hover:text-slate-100' }}">
+                                <span class="sidebar-label">Tentor Aktif</span>
+                            </a>
+                            <a href="{{ route('tentor-siswa.all-schedules') }}"
+                                class="flex items-center px-4 py-2 rounded-lg text-sm {{ request()->routeIs('tentor-siswa.all-schedules') ? 'text-blue-400' : 'text-slate-400 hover:bg-slate-800 hover:text-slate-100' }}">
+                                <span class="sidebar-label">Master Jadwal</span>
+                            </a>
+                            <a href="{{ route('tentor-siswa.available', ['mapel' => 'mat']) }}"
+                                class="flex items-center px-4 py-2 rounded-lg text-sm {{ request('mapel') == 'mat' ? 'text-emerald-400' : 'text-slate-400 hover:bg-slate-800 hover:text-slate-100' }}">
+                                <span class="sidebar-label">Jadwal Bisa Mat</span>
+                            </a>
+                            <a href="{{ route('tentor-siswa.available', ['mapel' => 'bing']) }}"
+                                class="flex items-center px-4 py-2 rounded-lg text-sm {{ request('mapel') == 'bing' ? 'text-emerald-400' : 'text-slate-400 hover:bg-slate-800 hover:text-slate-100' }}">
+                                <span class="sidebar-label">Jadwal Bisa Bing</span>
+                            </a>
+                            <a href="{{ route('monitoring.index') }}"
+                                class="flex items-center px-4 py-2 rounded-lg text-sm {{ request()->routeIs('monitoring.*') ? 'text-amber-400' : 'text-slate-400 hover:bg-slate-800 hover:text-slate-100' }}">
+                                <span class="sidebar-label">Monitoring Jadwal</span>
+                            </a>
+                            <a href="{{ route('presensi-monitoring.create') }}"
+                                class="flex items-center px-4 py-2 rounded-lg text-sm {{ request()->routeIs('presensi-monitoring.create') ? 'text-emerald-400' : 'text-slate-400 hover:bg-slate-800 hover:text-slate-100' }}">
+                                <span class="sidebar-label">Telah Monitoring</span>
+                            </a>
+                            <a href="{{ route('presensi-monitoring.index') }}"
+                                class="flex items-center px-4 py-2 rounded-lg text-sm {{ (request()->routeIs('presensi-monitoring.*') && !request()->routeIs('presensi-monitoring.create')) ? 'text-blue-400' : 'text-slate-400 hover:bg-slate-800 hover:text-slate-100' }}">
+                                <span class="sidebar-label">Data Log Monitoring</span>
+                            </a>
+                            <a href="{{ route('presensi.index') }}"
+                                class="flex items-center px-4 py-2 rounded-lg text-sm {{ request()->routeIs('presensi.index') ? 'text-blue-400' : 'text-slate-400 hover:bg-slate-800 hover:text-slate-100' }}">
+                                <span class="sidebar-label">Data Presensi</span>
+                            </a>
+                            <a href="{{ route('tentors.index') }}"
+                                class="flex items-center px-4 py-2 rounded-lg text-sm {{ request()->routeIs('tentors.*') ? 'text-blue-400' : 'text-slate-400 hover:bg-slate-800 hover:text-slate-100' }}">
+                                <span class="sidebar-label">Data Tentor</span>
+                            </a>
                         </div>
-                        <span class="font-medium ml-3 sidebar-label transition-all duration-300 whitespace-nowrap">Master
-                            Jadwal</span>
-                    </a>
+                    </div>
 
-                    <a href="{{ route('tentor-siswa.available', ['mapel' => 'mat']) }}"
-                        class="flex items-center px-4 py-3 rounded-lg group transition-all duration-200 {{ request('mapel') == 'mat' ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 shadow-[0_0_15px_rgba(16,185,129,0.15)]' : 'text-slate-400 hover:bg-slate-800 hover:text-slate-100' }}"
-                        title="Jadwal Bisa Mat">
-                        <div class="flex-shrink-0">
-                            <svg class="w-5 h-5 {{ request('mapel') == 'mat' ? 'text-emerald-400' : 'text-slate-500 group-hover:text-slate-300' }}"
+                    <!-- ADMIN -->
+                    <div class="space-y-1">
+                        <button type="button" onclick="toggleSubmenu('admin-menu')"
+                            class="w-full flex items-center justify-between px-4 py-3 rounded-lg group transition-all duration-200 text-slate-400 hover:bg-slate-800 hover:text-slate-100">
+                            <div class="flex items-center">
+                                <div class="flex-shrink-0">
+                                    <svg class="w-5 h-5 text-slate-500 group-hover:text-slate-300" fill="none"
+                                        stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z">
+                                        </path>
+                                    </svg>
+                                </div>
+                                <span
+                                    class="font-medium ml-3 sidebar-label transition-all duration-300 whitespace-nowrap">Admin</span>
+                            </div>
+                            <svg id="admin-menu-arrow" class="w-4 h-4 transition-transform duration-200 sidebar-label"
                                 fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7">
                                 </path>
                             </svg>
+                        </button>
+                        <div id="admin-menu" class="hidden pl-4 space-y-1 overflow-hidden">
+                            <a href="{{ route('useradmins.index') }}"
+                                class="flex items-center px-4 py-2 rounded-lg text-sm {{ request()->routeIs('useradmins.*') ? 'text-blue-400' : 'text-slate-400 hover:bg-slate-800 hover:text-slate-100' }}">
+                                <span class="sidebar-label">Kelola Admin</span>
+                            </a>
+                            <a href="{{ route('biaya.index') }}" class="flex items-center px-4 py-2 rounded-lg text-sm {{ request()->routeIs('biaya.*') ? 'text-blue-400' : 'text-slate-400 hover:bg-slate-800 hover:text-slate-100' }}">
+                                <span class="sidebar-label">Biaya</span>
+                            </a>
+                            <a href="{{ route('tarifs.index') }}"
+                                class="flex items-center px-4 py-2 rounded-lg text-sm {{ request()->routeIs('tarifs.*') ? 'text-blue-400' : 'text-slate-400 hover:bg-slate-800 hover:text-slate-100' }}">
+                                <span class="sidebar-label">Kelola Tarif</span>
+                            </a>
                         </div>
-                        <span class="font-medium ml-3 sidebar-label transition-all duration-300 whitespace-nowrap">Jadwal
-                            Bisa Mat</span>
-                    </a>
-
-                    <a href="{{ route('tentor-siswa.available', ['mapel' => 'bing']) }}"
-                        class="flex items-center px-4 py-3 rounded-lg group transition-all duration-200 {{ request('mapel') == 'bing' ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 shadow-[0_0_15px_rgba(16,185,129,0.15)]' : 'text-slate-400 hover:bg-slate-800 hover:text-slate-100' }}"
-                        title="Jadwal Bisa Bing">
-                        <div class="flex-shrink-0">
-                            <svg class="w-5 h-5 {{ request('mapel') == 'bing' ? 'text-emerald-400' : 'text-slate-500 group-hover:text-slate-300' }}"
-                                fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M3 5h12M9 3v2m1.048 9.5A18.022 18.022 0 016.412 9m6.088 9h7M11 21l5-10 5 10M12.751 5C11.783 10.77 8.07 15.61 3 18.129">
-                                </path>
-                            </svg>
-                        </div>
-                        <span class="font-medium ml-3 sidebar-label transition-all duration-300 whitespace-nowrap">Jadwal
-                            Bisa Bing</span>
-                    </a>
-
-                    <a href="{{ route('monitoring.index') }}"
-                        class="flex items-center px-4 py-3 rounded-lg group transition-all duration-200 {{ request()->routeIs('monitoring.*') ? 'bg-amber-500/10 text-amber-400 border border-amber-500/20 shadow-[0_0_15px_rgba(245,158,11,0.15)]' : 'text-slate-400 hover:bg-slate-800 hover:text-slate-100' }}"
-                        title="Monitoring Jadwal">
-                        <div class="flex-shrink-0">
-                            <svg class="w-5 h-5 {{ request()->routeIs('monitoring.*') ? 'text-amber-400' : 'text-slate-500 group-hover:text-slate-300' }}"
-                                fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M15 12a3 3 0 11-6 0 3 3 0 016 0z">
-                                </path>
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z">
-                                </path>
-                            </svg>
-                        </div>
-                        <span class="font-medium ml-3 sidebar-label transition-all duration-300 whitespace-nowrap">Monitoring
-                            Jadwal</span>
-                    </a>
-
-                    <a href="{{ route('presensi.index') }}"
-                        class="flex items-center px-4 py-3 rounded-lg group transition-all duration-200 {{ request()->routeIs('presensi.*') ? 'bg-blue-500/10 text-blue-400 border border-blue-500/20 shadow-[0_0_15px_rgba(59,130,246,0.15)]' : 'text-slate-400 hover:bg-slate-800 hover:text-slate-100' }}"
-                        title="Data Presensi">
-                        <div class="flex-shrink-0">
-                            <svg class="w-5 h-5 {{ request()->routeIs('presensi.*') ? 'text-blue-400' : 'text-slate-500 group-hover:text-slate-300' }}"
-                                fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01">
-                                </path>
-                            </svg>
-                        </div>
-                        <span class="font-medium ml-3 sidebar-label transition-all duration-300 whitespace-nowrap">Data
-                            Presensi</span>
-                    </a>
-
-                    <a href="{{ route('tentors.index') }}"
-                        class="flex items-center px-4 py-3 rounded-lg group transition-all duration-200 {{ request()->routeIs('tentors.*') ? 'bg-blue-500/10 text-blue-400 border border-blue-500/20 shadow-[0_0_15px_rgba(59,130,246,0.15)]' : 'text-slate-400 hover:bg-slate-800 hover:text-slate-100' }}"
-                        title="Data Tentor">
-                        <div class="flex-shrink-0">
-                            <svg class="w-5 h-5 {{ request()->routeIs('tentors.*') ? 'text-blue-400' : 'text-slate-500 group-hover:text-slate-300' }}"
-                                fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z">
-                                </path>
-                            </svg>
-                        </div>
-                        <span class="font-medium ml-3 sidebar-label transition-all duration-300 whitespace-nowrap">Data
-                            Tentor</span>
-                    </a>
-
-                    <a href="{{ route('useradmins.index') }}"
-                        class="flex items-center px-4 py-3 rounded-lg group transition-all duration-200 {{ request()->routeIs('useradmins.*') ? 'bg-blue-500/10 text-blue-400 border border-blue-500/20 shadow-[0_0_15px_rgba(59,130,246,0.15)]' : 'text-slate-400 hover:bg-slate-800 hover:text-slate-100' }}"
-                        title="Kelola Admin">
-                        <div class="flex-shrink-0">
-                            <svg class="w-5 h-5 {{ request()->routeIs('useradmins.*') ? 'text-blue-400' : 'text-slate-500 group-hover:text-slate-300' }}"
-                                fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z">
-                                </path>
-                            </svg>
-                        </div>
-                        <span class="font-medium ml-3 sidebar-label transition-all duration-300 whitespace-nowrap">Kelola
-                            Admin</span>
-                    </a>
-
-                    <a href="{{ route('users.index') }}"
-                        class="flex items-center px-4 py-3 rounded-lg group transition-all duration-200 {{ request()->routeIs('users.index') ? 'bg-blue-500/10 text-blue-400 border border-blue-500/20 shadow-[0_0_15px_rgba(59,130,246,0.15)]' : 'text-slate-400 hover:bg-slate-800 hover:text-slate-100' }}"
-                        title="Data User">
-                        <div class="flex-shrink-0">
-                            <svg class="w-5 h-5 {{ request()->routeIs('users.index') ? 'text-blue-400' : 'text-slate-500 group-hover:text-slate-300' }}"
-                                fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z">
-                                </path>
-                            </svg>
-                        </div>
-                        <span class="font-medium ml-3 sidebar-label transition-all duration-300 whitespace-nowrap">Data
-                            User</span>
-                    </a>
+                    </div>
                 @endif
             </nav>
         </div>
@@ -461,8 +464,31 @@
             }
         });
 
-        // Initialize state
-        document.addEventListener('DOMContentLoaded', applyInitialState);
+        function toggleSubmenu(id) {
+            const menu = document.getElementById(id);
+            const arrow = document.getElementById(id + '-arrow');
+ if (menu.classList.contains('hidden')) {
+                menu.classList.remove('hidden');
+                arrow.classList.add('rotate-180');
+            } else {
+                menu.classList.add('hidden');
+                arrow.classList.remove('rotate-180');
+            }
+        }
+
+        // Auto-expand active menus
+        document.addEventListener('DOMContentLoaded', () => {
+            const activeLinks = document.querySelectorAll('#sidebar a.text-blue-400, #sidebar a.text-emerald-400, #sidebar a.text-amber-400');
+            activeLinks.forEach(link => {
+                const parentMenu = link.closest('[id$="-menu"]');
+                if (parentMenu) {
+                    parentMenu.classList.remove('hidden');
+                    const arrow = document.getElementById(parentMenu.id + '-arrow');
+                    if (arrow) arrow.classList.add('rotate-180');
+                }
+            });
+            applyInitialState();
+        });
     </script>
 </body>
 

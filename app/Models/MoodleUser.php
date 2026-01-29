@@ -58,6 +58,11 @@ class MoodleUser extends Authenticatable
 
     public $timestamps = false; // Easier to just disable unless we need them.
 
+    public function siswaTarif()
+    {
+        return $this->hasOne(SiswaTarif::class, 'id_siswa');
+    }
+
     // If we need to write:
     // protected $dateFormat = 'U';
 }

@@ -23,9 +23,9 @@ Route::post('/login', [LoginController::class, 'login']);
 Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
 
 Route::middleware('auth')->group(function () {
-    Route::get('/dashboard', [LoginController::class, 'dashboard'])->name('dashboard');
+    Route::get('/dashboard', [\App\Http\Controllers\UserController::class, 'index'])->name('dashboard');
+    Route::get('/quiz-attempts', [\App\Http\Controllers\LoginController::class, 'dashboard'])->name('quiz-attempts');
     Route::resource('tentors', \App\Http\Controllers\TentorController::class);
-    Route::get('/users', [\App\Http\Controllers\UserController::class, 'index'])->name('users.index');
     Route::resource('useradmins', \App\Http\Controllers\AdminUserController::class);
 
     // Tentor-Siswa Management
@@ -48,6 +48,24 @@ Route::middleware('auth')->group(function () {
     Route::get('/monitoring', [\App\Http\Controllers\MonitoringController::class, 'index'])->name('monitoring.index');
     Route::get('/monitoring/edit', [\App\Http\Controllers\MonitoringController::class, 'edit'])->name('monitoring.edit');
     Route::post('/monitoring/update', [\App\Http\Controllers\MonitoringController::class, 'update'])->name('monitoring.update');
+
+    // Presensi Monitoring
+    Route::get('/presensi-monitoring', [\App\Http\Controllers\PresensiMonitoringController::class, 'index'])->name('presensi-monitoring.index');
+    Route::get('/presensi-monitoring/create', [\App\Http\Controllers\PresensiMonitoringController::class, 'create'])->name('presensi-monitoring.create');
+    Route::post('/presensi-monitoring', [\App\Http\Controllers\PresensiMonitoringController::class, 'store'])->name('presensi-monitoring.store');
+    Route::get('/presensi-monitoring/{id}/edit', [\App\Http\Controllers\PresensiMonitoringController::class, 'edit'])->name('presensi-monitoring.edit');
+    Route::put('/presensi-monitoring/{id}', [\App\Http\Controllers\PresensiMonitoringController::class, 'update'])->name('presensi-monitoring.update');
+    Route::delete('/presensi-monitoring/{id}', [\App\Http\Controllers\PresensiMonitoringController::class, 'destroy'])->name('presensi-monitoring.destroy');
+
+    // Biaya Management
+    Route::get('/biaya', [\App\Http\Controllers\BiayaController::class, 'index'])->name('biaya.index');
+    Route::get('/biaya/{tentor}', [\App\Http\Controllers\BiayaController::class, 'show'])->name('biaya.show');
+    Route::get('/biaya/{tentor}/salary', [\App\Http\Controllers\BiayaController::class, 'salary'])->name('biaya.salary');
+    Route::post('/biaya/update-paket', [\App\Http\Controllers\BiayaController::class, 'updatePaket'])->name('biaya.update-paket');
+
+    // Tarif Management
+    Route::get('/tarifs/history', [\App\Http\Controllers\TarifController::class, 'history'])->name('tarifs.history');
+    Route::resource('tarifs', \App\Http\Controllers\TarifController::class);
 });
 
 // Tentor Portal Routes

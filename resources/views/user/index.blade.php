@@ -10,7 +10,7 @@
 
     <!-- Search -->
     <div class="bg-slate-800/50 backdrop-blur-sm border border-slate-700 p-6 rounded-xl shadow-lg mb-8">
-        <form method="GET" action="{{ route('users.index') }}" class="flex flex-col md:flex-row gap-4 items-end">
+        <form method="GET" action="{{ route('dashboard') }}" class="flex flex-col md:flex-row gap-4 items-end">
             <div class="w-full flex-1 flex flex-col gap-1">
                 <label for="search" class="text-sm font-medium text-slate-400">Search</label>
                 <div class="relative">
@@ -31,7 +31,7 @@
                     Search
                 </button>
                 @if(request('search'))
-                    <a href="{{ route('users.index') }}"
+                    <a href="{{ route('dashboard') }}"
                         class="text-slate-400 hover:text-white text-sm whitespace-nowrap transition-colors py-2">Clear</a>
                 @endif
             </div>

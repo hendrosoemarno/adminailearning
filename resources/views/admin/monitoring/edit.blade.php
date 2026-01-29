@@ -48,9 +48,16 @@
                                                         <input type="checkbox" name="monitor[]" value="{{ $key }}" 
                                                             {{ isset($monitoredKeys[$key]) ? 'checked' : '' }}
                                                             class="mt-0.5 rounded border-slate-600 bg-slate-800 text-blue-500 focus:ring-blue-500/20">
-                                                        <span class="text-[9px] font-bold text-slate-400 group-hover:text-blue-400 leading-tight uppercase tracking-wider">
-                                                            {{ $item->tentor->nickname ?? '?' }}-{{ $item->siswa->firstname ?? '?' }}
-                                                        </span>
+                                                        <div class="flex flex-col flex-1 min-w-0">
+                                                            <div class="flex items-center justify-between gap-1 overflow-hidden">
+                                                                <span class="text-[9px] font-bold text-slate-400 group-hover:text-blue-400 leading-tight uppercase tracking-wider truncate">
+                                                                    {{ $item->tentor->nickname ?? '?' }}-{{ $item->siswa->firstname ?? '?' }}
+                                                                </span>
+                                                                @if($item->linkJadwal)
+                                                                    <svg class="w-2.5 h-2.5 text-cyan-500 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"></path></svg>
+                                                                @endif
+                                                            </div>
+                                                        </div>
                                                     </label>
                                                 @endforeach
                                             </div>

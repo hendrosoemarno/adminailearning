@@ -20,12 +20,25 @@ class MonitoringController extends Controller
         7 => 'Ahad'
     ];
 
-    public function index()
+    public function index(Request $request)
     {
+        $admins = \App\Models\AdminUser::orderBy('nama', 'asc')->get();
+        $selectedAdminId = $request->input('admin_id', Auth::id());
+
         $waktus = Waktu::orderBy('id', 'asc')->get();
-        // We show all monitoring schedules from all admins or just current? 
-        // User asked "halaman monitoring di admin", usually means view all that are set to be monitored.
-        $schedules = JadwalMonitoring::with(['tentor', 'siswa'])->get();
+
+        // Join with JadwalTentor and LinkJadwal to get the link availability
+        $schedules = JadwalMonitoring::with(['tentor', 'siswa'])
+            ->where('id_admin', $selectedAdminId)
+            ->leftJoin('ai_jadwal_tentor as jt', function ($join) {
+                $join->on('ai_jadwal_monitoring.id_tentor', '=', 'jt.id_tentor')
+                    ->on('ai_jadwal_monitoring.hari', '=', 'jt.hari')
+                    ->on('ai_jadwal_monitoring.waktu', '=', 'jt.waktu')
+                    ->on('ai_jadwal_monitoring.id_siswa', '=', 'jt.id_siswa');
+            })
+            ->leftJoin('ai_link_jadwal as lj', 'jt.id', '=', 'lj.id_jadwal')
+            ->select('ai_jadwal_monitoring.*', 'lj.link as meeting_link')
+            ->get();
 
         $mappedSchedule = [];
         foreach ($schedules as $item) {
@@ -34,23 +47,23 @@ class MonitoringController extends Controller
 
         $hariLabels = $this->hariLabels;
 
-        return view('admin.monitoring.index', compact('waktus', 'mappedSchedule', 'hariLabels'));
+        return view('admin.monitoring.index', compact('waktus', 'mappedSchedule', 'hariLabels', 'admins', 'selectedAdminId'));
     }
 
     public function edit()
     {
         $waktus = Waktu::orderBy('id', 'asc')->get();
 
-        // Load all active tentor schedules (Master Jadwal style)
-        $allSchedules = JadwalTentor::with(['tentor', 'siswa'])
+        // Load all active tentor schedules with links
+        $allSchedules = JadwalTentor::with(['tentor', 'siswa', 'linkJadwal'])
             ->whereHas('tentor', function ($q) {
                 $q->where('aktif', 1);
             })
             ->where('id_siswa', '>', 1)
             ->get();
 
-        // Load currently monitored schedules to check them
-        $monitored = JadwalMonitoring::all();
+        // Load currently monitored schedules for the current admin
+        $monitored = JadwalMonitoring::where('id_admin', Auth::id())->get();
         $monitoredKeys = [];
         foreach ($monitored as $m) {
             $key = "{$m->hari}-{$m->waktu}-{$m->id_tentor}-{$m->id_siswa}";
@@ -74,10 +87,8 @@ class MonitoringController extends Controller
 
         // Transaction for safety
         \DB::transaction(function () use ($selected, $adminId) {
-            // Simplified: Current implementation clears and rewrites. 
-            // In a multi-admin system, we might want to only clear for current admin, 
-            // but user said "tabel ai_jadwal_monitoring" which seems to be a shared list of what's being monitored.
-            JadwalMonitoring::truncate();
+            // Only delete monitoring for the current admin
+            JadwalMonitoring::where('id_admin', $adminId)->delete();
 
             foreach ($selected as $key) {
                 list($hari, $waktu, $idTentor, $idSiswa) = explode('-', $key);

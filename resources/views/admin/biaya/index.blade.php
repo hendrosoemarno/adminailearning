@@ -1,16 +1,16 @@
 @extends('layouts.admin')
 
-@section('title', 'Tentor Aktif')
+@section('title', 'Biaya Portal')
 
 @section('content')
     <div class="mb-8">
-        <h1 class="text-3xl font-bold text-white mb-2 tracking-tight">Manajemen Tentor Siswa</h1>
-        <p class="text-slate-400">Pilih Tentor Aktif untuk mengelola daftar siswa mereka.</p>
+        <h1 class="text-3xl font-bold text-white mb-2 tracking-tight">Manajemen Biaya Tentor</h1>
+        <p class="text-slate-400">Pilih Tentor Aktif untuk melihat rincian biaya siswa mereka.</p>
     </div>
 
     <!-- Search -->
     <div class="bg-slate-800/50 backdrop-blur-sm border border-slate-700 p-6 rounded-xl shadow-lg mb-8">
-        <form method="GET" action="{{ route('tentor-siswa.active') }}" class="flex flex-col md:flex-row gap-4 items-end">
+        <form method="GET" action="{{ route('biaya.index') }}" class="flex flex-col md:flex-row gap-4 items-end">
             <div class="w-full flex-1 flex flex-col gap-1">
                 <label for="search" class="text-sm font-medium text-slate-400">Cari Tentor</label>
                 <div class="relative">
@@ -31,7 +31,7 @@
                     Filter
                 </button>
                 @if(request('search'))
-                    <a href="{{ route('tentor-siswa.active') }}"
+                    <a href="{{ route('biaya.index') }}"
                         class="text-slate-400 hover:text-white text-sm whitespace-nowrap transition-colors py-2">Reset</a>
                 @endif
             </div>
@@ -68,18 +68,6 @@
                                 @endif
                             </a>
                         </th>
-                        <th class="p-4 text-xs font-bold text-slate-400 uppercase tracking-wider">
-                            <a href="{{ request()->fullUrlWithQuery(['sort' => 'siswas_count', 'direction' => ($sort == 'siswas_count' && $direction == 'asc') ? 'desc' : 'asc']) }}" class="flex items-center gap-1 hover:text-white transition-colors">
-                                Jumlah Siswa
-                                @if($sort == 'siswas_count')
-                                    @if($direction == 'asc')
-                                        <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 15l7-7 7 7"></path></svg>
-                                    @else
-                                        <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
-                                    @endif
-                                @endif
-                            </a>
-                        </th>
                         <th class="p-4 text-xs font-bold text-slate-400 uppercase tracking-wider text-right">Aksi</th>
                     </tr>
                 </thead>
@@ -91,51 +79,37 @@
                                 <div class="text-xs text-slate-500">{{ $tentor->nickname }}</div>
                             </td>
                             <td class="p-4">
-                                <span
-                                    class="bg-blue-500/10 text-blue-400 border border-blue-500/20 px-2 py-0.5 rounded text-xs uppercase font-semibold">
-                                    @if($tentor->mapel == 'bing') Bahasa Inggris
+                                <span class="bg-blue-500/10 text-blue-400 border border-blue-500/20 px-2 py-0.5 rounded text-xs uppercase font-semibold">
+                                    @if($tentor->mapel == 'bing') B. Inggris
                                     @elseif($tentor->mapel == 'mat') Matematika
                                     @elseif($tentor->mapel == 'coding') Coding
                                     @else {{ $tentor->mapel }} @endif
                                 </span>
                             </td>
-                            <td class="p-4">
-                                <div class="flex items-center text-slate-300">
-                                    <svg class="w-4 h-4 mr-2 text-slate-500" fill="none" stroke="currentColor"
-                                        viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                            d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z">
-                                        </path>
-                                    </svg>
-                                    {{ $tentor->siswas_count }} Siswa
-                                </div>
-                            </td>
                             <td class="p-4 text-right">
-                                <div class="flex flex-wrap justify-end gap-2">
-                                    <a href="{{ route('tentor-siswa.schedule', $tentor) }}"
-                                        class="inline-flex items-center px-4 py-2 bg-slate-800 text-cyan-400 hover:bg-cyan-500 hover:text-white text-sm font-semibold rounded-lg border border-cyan-500/30 transition-all">
+                                <div class="flex justify-end gap-2">
+                                    <a href="{{ route('biaya.salary', $tentor) }}"
+                                        class="inline-flex items-center px-4 py-2 bg-slate-700 hover:bg-amber-600 text-white text-sm font-semibold rounded-lg transition-all">
+                                        <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z"></path>
+                                        </svg>
+                                        Gaji
+                                    </a>
+                                    <a href="{{ route('biaya.show', $tentor) }}"
+                                        class="inline-flex items-center px-4 py-2 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white text-sm font-bold rounded-lg shadow-lg hover:shadow-emerald-500/25 transition-all duration-200 transform hover:-translate-y-0.5">
                                         <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                                d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z">
+                                                d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z">
                                             </path>
                                         </svg>
-                                        Jadwal
-                                    </a>
-                                    <a href="{{ route('tentor-siswa.manage', $tentor) }}"
-                                        class="inline-flex items-center px-4 py-2 bg-slate-700 hover:bg-blue-600 text-white text-sm font-semibold rounded-lg transition-all group-hover:scale-105">
-                                        Kelola Siswa
-                                        <svg class="w-4 h-4 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                                d="M9 5l7 7-7 7">
-                                            </path>
-                                        </svg>
+                                        Biaya Siswa
                                     </a>
                                 </div>
                             </td>
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="4" class="p-12 text-center text-slate-500 uppercase tracking-widest text-sm">
+                            <td colspan="2" class="p-12 text-center text-slate-500 uppercase tracking-widest text-sm">
                                 Tidak ada tentor aktif ditemukan.
                             </td>
                         </tr>
