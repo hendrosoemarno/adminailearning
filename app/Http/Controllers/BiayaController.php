@@ -125,6 +125,61 @@ class BiayaController extends Controller
         $sort = $request->input('sort', 'id');
         $direction = $request->input('direction', 'asc');
 
+        $siswas = $this->getSalaryData($tentor, $month, $sort, $direction);
+
+        return view('admin.biaya.salary', compact('tentor', 'siswas', 'month', 'sort', 'direction'));
+    }
+
+    public function salaryExport(Request $request, Tentor $tentor)
+    {
+        $month = $request->input('month', date('Y-m'));
+        $sort = $request->input('sort', 'id');
+        $direction = $request->input('direction', 'asc');
+
+        $siswas = $this->getSalaryData($tentor, $month, $sort, $direction);
+
+        $fileName = 'Gaji_' . $tentor->nama . '_' . $month . '.csv';
+
+        $headers = array(
+            "Content-type" => "text/csv",
+            "Content-Disposition" => "attachment; filename=$fileName",
+            "Pragma" => "no-cache",
+            "Cache-Control" => "must-revalidate, post-check=0, pre-check=0",
+            "Expires" => "0"
+        );
+
+        $columns = array('User ID', 'Nama Siswa', 'Materi', 'Paket', 'Gaji', 'Rencana KBM', 'Perhitungan', 'Total', 'Realisasi KBM', 'Total Meet');
+
+        $callback = function () use ($siswas, $columns) {
+            $file = fopen('php://output', 'w');
+            fputcsv($file, $columns);
+
+            foreach ($siswas as $siswa) {
+                fputcsv($file, array(
+                    $siswa->id,
+                    $siswa->firstname . ' ' . $siswa->lastname,
+                    $siswa->materi,
+                    $siswa->paket,
+                    $siswa->gaji,
+                    $siswa->rencana_kbm,
+                    $siswa->perhitungan,
+                    $siswa->total,
+                    $siswa->realisasi_kbm,
+                    $siswa->total_meet
+                ));
+            }
+
+            // Total row
+            fputcsv($file, array('', '', '', '', '', '', 'TOTAL', $siswas->sum('total'), '', ''));
+
+            fclose($file);
+        };
+
+        return response()->stream($callback, 200, $headers);
+    }
+
+    private function getSalaryData(Tentor $tentor, $month, $sort, $direction)
+    {
         $siswas = $tentor->siswas()->with(['siswaTarif.tarif'])->get();
 
         foreach ($siswas as $siswa) {
@@ -192,7 +247,7 @@ class BiayaController extends Controller
             $siswas = $siswas->sortByDesc($sort);
         }
 
-        return view('admin.biaya.salary', compact('tentor', 'siswas', 'month', 'sort', 'direction'));
+        return $siswas;
     }
 
     public function updatePaket(Request $request)
