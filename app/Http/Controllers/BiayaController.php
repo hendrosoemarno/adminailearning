@@ -122,6 +122,9 @@ class BiayaController extends Controller
     public function salary(Request $request, Tentor $tentor)
     {
         $month = $request->input('month', date('Y-m'));
+        $sort = $request->input('sort', 'id');
+        $direction = $request->input('direction', 'asc');
+
         $siswas = $tentor->siswas()->with(['siswaTarif.tarif'])->get();
 
         foreach ($siswas as $siswa) {
@@ -155,12 +158,24 @@ class BiayaController extends Controller
                 $siswa->gaji = $gaji;
                 $siswa->total = $gaji;
                 $siswa->total_meet = $totalMeet;
+
+                // Handle custom meet display logic
+                if ($customTotalMeet !== null && $customTotalMeet != $defaultTotalMeet) {
+                    $siswa->rencana_kbm = $customTotalMeet . "x Pertemuan";
+                    $perMeet = $defaultTotalMeet > 0 ? $tarif->tentor / $defaultTotalMeet : 0;
+                    $siswa->perhitungan = $customTotalMeet . " x Rp." . number_format($perMeet, 0, ',', '.');
+                } else {
+                    $siswa->rencana_kbm = "Penuh";
+                    $siswa->perhitungan = "-";
+                }
             } else {
                 $siswa->materi = '-';
                 $siswa->paket = '-';
                 $siswa->gaji = 0;
                 $siswa->total = 0;
                 $siswa->total_meet = 0;
+                $siswa->rencana_kbm = "Penuh";
+                $siswa->perhitungan = "-";
             }
 
             // Calculate Realisasi KBM
@@ -168,12 +183,16 @@ class BiayaController extends Controller
                 ->where('id_siswa', $siswa->id)
                 ->whereRaw("DATE_FORMAT(FROM_UNIXTIME(tgl_kbm), '%Y-%m') = ?", [$month])
                 ->count();
-
-            $siswa->rencana_kbm = "Penuh";
-            $siswa->perhitungan = "-";
         }
 
-        return view('admin.biaya.salary', compact('tentor', 'siswas', 'month'));
+        // Apply Sorting to collection
+        if ($direction == 'asc') {
+            $siswas = $siswas->sortBy($sort);
+        } else {
+            $siswas = $siswas->sortByDesc($sort);
+        }
+
+        return view('admin.biaya.salary', compact('tentor', 'siswas', 'month', 'sort', 'direction'));
     }
 
     public function updatePaket(Request $request)

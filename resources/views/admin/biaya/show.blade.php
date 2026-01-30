@@ -24,6 +24,18 @@
                 <thead>
                     <tr class="bg-slate-900/50 border-b border-slate-700">
                         <th class="p-4 text-xs font-bold text-slate-400 uppercase tracking-wider">
+                            <a href="{{ request()->fullUrlWithQuery(['sort' => 'id', 'direction' => ($sort == 'id' && $direction == 'asc') ? 'desc' : 'asc']) }}" class="flex items-center gap-1 hover:text-white transition-colors">
+                                User ID
+                                @if($sort == 'id')
+                                    @if($direction == 'asc')
+                                        <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 15l7-7 7 7"></path></svg>
+                                    @else
+                                        <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                                    @endif
+                                @endif
+                            </a>
+                        </th>
+                        <th class="p-4 text-xs font-bold text-slate-400 uppercase tracking-wider">
                             <a href="{{ request()->fullUrlWithQuery(['sort' => 'firstname', 'direction' => ($sort == 'firstname' && $direction == 'asc') ? 'desc' : 'asc']) }}" class="flex items-center gap-1 hover:text-white transition-colors">
                                 Nama Siswa
                                 @if($sort == 'firstname')
@@ -48,7 +60,18 @@
                                 @endif
                             </a>
                         </th>
-                        <th class="p-4 text-xs font-bold text-slate-400 uppercase tracking-wider">Tanggal Masuk</th>
+                        <th class="p-4 text-xs font-bold text-slate-400 uppercase tracking-wider">
+                            <a href="{{ request()->fullUrlWithQuery(['sort' => 'tanggal_masuk', 'direction' => ($sort == 'tanggal_masuk' && $direction == 'asc') ? 'desc' : 'asc']) }}" class="flex items-center gap-1 hover:text-white transition-colors">
+                                Tanggal Masuk
+                                @if($sort == 'tanggal_masuk')
+                                    @if($direction == 'asc')
+                                        <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 15l7-7 7 7"></path></svg>
+                                    @else
+                                        <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                                    @endif
+                                @endif
+                            </a>
+                        </th>
                         <th class="p-4 text-xs font-bold text-slate-400 uppercase tracking-wider">
                             <a href="{{ request()->fullUrlWithQuery(['sort' => 'biaya', 'direction' => ($sort == 'biaya' && $direction == 'asc') ? 'desc' : 'asc']) }}" class="flex items-center gap-1 hover:text-white transition-colors">
                                 Biaya
@@ -102,11 +125,11 @@
                 <tbody class="divide-y divide-slate-700/50">
                     @forelse($siswas as $siswa)
                         <tr class="hover:bg-slate-700/20 transition-colors" data-siswa-id="{{ $siswa->id }}">
+                            <td class="p-4 text-sm font-mono text-slate-400">#{{ $siswa->id }}</td>
                             <td class="p-4">
                                 <div class="font-medium text-white">{{ $siswa->firstname }} {{ $siswa->lastname }}</div>
                                 <div class="text-xs text-slate-500">{{ $siswa->username }}</div>
                             </td>
-
                             <td class="p-4">
                                 <select onchange="updatePaket(this, {{ $siswa->id }})" 
                                     class="bg-slate-900 border border-slate-700 text-blue-400 text-xs font-bold rounded-lg px-2 py-1 outline-none focus:ring-1 focus:ring-blue-500 transition-all cursor-pointer">
@@ -156,7 +179,7 @@
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="7" class="p-12 text-center text-slate-500">
+                            <td colspan="8" class="p-12 text-center text-slate-500">
                                 Tidak ada siswa yang terhubung dengan tentor ini.
                             </td>
                         </tr>

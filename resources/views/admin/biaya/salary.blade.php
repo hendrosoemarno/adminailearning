@@ -25,21 +25,121 @@
             <table class="w-full text-left border-collapse">
                 <thead>
                     <tr class="bg-slate-900/50 border-b border-slate-700">
-                        <th class="p-4 text-xs font-bold text-slate-400 uppercase tracking-wider">Nama Siswa</th>
-                        <th class="p-4 text-xs font-bold text-slate-400 uppercase tracking-wider">Materi</th>
-                        <th class="p-4 text-xs font-bold text-slate-400 uppercase tracking-wider">Paket</th>
-                        <th class="p-4 text-xs font-bold text-slate-400 uppercase tracking-wider">Gaji</th>
-                        <th class="p-4 text-xs font-bold text-slate-400 uppercase tracking-wider">Rencana KBM</th>
-                        <th class="p-4 text-xs font-bold text-slate-400 uppercase tracking-wider text-center">Realisasi KBM
+                        <th class="p-4 text-xs font-bold text-slate-400 uppercase tracking-wider">
+                            <a href="{{ request()->fullUrlWithQuery(['sort' => 'id', 'direction' => ($sort == 'id' && $direction == 'asc') ? 'desc' : 'asc']) }}" class="flex items-center gap-1 hover:text-white transition-colors">
+                                User ID
+                                @if($sort == 'id')
+                                    @if($direction == 'asc')
+                                        <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 15l7-7 7 7"></path></svg>
+                                    @else
+                                        <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                                    @endif
+                                @endif
+                            </a>
+                        </th>
+                        <th class="p-4 text-xs font-bold text-slate-400 uppercase tracking-wider">
+                            <a href="{{ request()->fullUrlWithQuery(['sort' => 'firstname', 'direction' => ($sort == 'firstname' && $direction == 'asc') ? 'desc' : 'asc']) }}" class="flex items-center gap-1 hover:text-white transition-colors">
+                                Nama Siswa
+                                @if($sort == 'firstname')
+                                    @if($direction == 'asc')
+                                        <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 15l7-7 7 7"></path></svg>
+                                    @else
+                                        <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                                    @endif
+                                @endif
+                            </a>
+                        </th>
+                        <th class="p-4 text-xs font-bold text-slate-400 uppercase tracking-wider">
+                            <a href="{{ request()->fullUrlWithQuery(['sort' => 'materi', 'direction' => ($sort == 'materi' && $direction == 'asc') ? 'desc' : 'asc']) }}" class="flex items-center gap-1 hover:text-white transition-colors">
+                                Materi
+                                @if($sort == 'materi')
+                                    @if($direction == 'asc')
+                                        <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 15l7-7 7 7"></path></svg>
+                                    @else
+                                        <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                                    @endif
+                                @endif
+                            </a>
+                        </th>
+                        <th class="p-4 text-xs font-bold text-slate-400 uppercase tracking-wider">
+                            <a href="{{ request()->fullUrlWithQuery(['sort' => 'paket', 'direction' => ($sort == 'paket' && $direction == 'asc') ? 'desc' : 'asc']) }}" class="flex items-center gap-1 hover:text-white transition-colors">
+                                Paket
+                                @if($sort == 'paket')
+                                    @if($direction == 'asc')
+                                        <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 15l7-7 7 7"></path></svg>
+                                    @else
+                                        <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                                    @endif
+                                @endif
+                            </a>
+                        </th>
+                        <th class="p-4 text-xs font-bold text-slate-400 uppercase tracking-wider">
+                            <a href="{{ request()->fullUrlWithQuery(['sort' => 'gaji', 'direction' => ($sort == 'gaji' && $direction == 'asc') ? 'desc' : 'asc']) }}" class="flex items-center gap-1 hover:text-white transition-colors">
+                                Gaji
+                                @if($sort == 'gaji')
+                                    @if($direction == 'asc')
+                                        <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 15l7-7 7 7"></path></svg>
+                                    @else
+                                        <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                                    @endif
+                                @endif
+                            </a>
+                        </th>
+                        <th class="p-4 text-xs font-bold text-slate-400 uppercase tracking-wider">
+                            <a href="{{ request()->fullUrlWithQuery(['sort' => 'rencana_kbm', 'direction' => ($sort == 'rencana_kbm' && $direction == 'asc') ? 'desc' : 'asc']) }}" class="flex items-center gap-1 hover:text-white transition-colors">
+                                Rencana KBM
+                                @if($sort == 'rencana_kbm')
+                                    @if($direction == 'asc')
+                                        <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 15l7-7 7 7"></path></svg>
+                                    @else
+                                        <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                                    @endif
+                                @endif
+                            </a>
                         </th>
                         <th class="p-4 text-xs font-bold text-slate-400 uppercase tracking-wider">Perhitungan</th>
-                        <th class="p-4 text-xs font-bold text-slate-400 uppercase tracking-wider">Total</th>
-                        <th class="p-4 text-xs font-bold text-slate-400 uppercase tracking-wider">Total Meet</th>
+                        <th class="p-4 text-xs font-bold text-slate-400 uppercase tracking-wider text-center">
+                            <a href="{{ request()->fullUrlWithQuery(['sort' => 'realisasi_kbm', 'direction' => ($sort == 'realisasi_kbm' && $direction == 'asc') ? 'desc' : 'asc']) }}" class="flex items-center gap-1 hover:text-white transition-colors">
+                                Realisasi KBM
+                                @if($sort == 'realisasi_kbm')
+                                    @if($direction == 'asc')
+                                        <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 15l7-7 7 7"></path></svg>
+                                    @else
+                                        <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                                    @endif
+                                @endif
+                            </a>
+                        </th>
+                        <th class="p-4 text-xs font-bold text-slate-400 uppercase tracking-wider">
+                            <a href="{{ request()->fullUrlWithQuery(['sort' => 'total', 'direction' => ($sort == 'total' && $direction == 'asc') ? 'desc' : 'asc']) }}" class="flex items-center gap-1 hover:text-white transition-colors">
+                                Total
+                                @if($sort == 'total')
+                                    @if($direction == 'asc')
+                                        <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 15l7-7 7 7"></path></svg>
+                                    @else
+                                        <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                                    @endif
+                                @endif
+                            </a>
+                        </th>
+                        <th class="p-4 text-xs font-bold text-slate-400 uppercase tracking-wider">
+                            <a href="{{ request()->fullUrlWithQuery(['sort' => 'total_meet', 'direction' => ($sort == 'total_meet' && $direction == 'asc') ? 'desc' : 'asc']) }}" class="flex items-center gap-1 hover:text-white transition-colors">
+                                Total Meet
+                                @if($sort == 'total_meet')
+                                    @if($direction == 'asc')
+                                        <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 15l7-7 7 7"></path></svg>
+                                    @else
+                                        <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                                    @endif
+                                @endif
+                            </a>
+                        </th>
                     </tr>
                 </thead>
                 <tbody class="divide-y divide-slate-700/50">
                     @forelse($siswas as $siswa)
                         <tr class="hover:bg-slate-700/20 transition-colors">
+                            <td class="p-4 text-sm font-mono text-slate-400">#{{ $siswa->id }}</td>
                             <td class="p-4">
                                 <div class="font-medium text-white">{{ $siswa->firstname }} {{ $siswa->lastname }}</div>
                                 <div class="text-xs text-slate-500">{{ $siswa->username }}</div>
@@ -48,13 +148,12 @@
                             <td class="p-4 text-sm font-mono text-blue-400 font-bold">{{ $siswa->paket }}</td>
                             <td class="p-4 text-sm text-white">Rp {{ number_format($siswa->gaji, 0, ',', '.') }}</td>
                             <td class="p-4 text-sm text-slate-400 italic">{{ $siswa->rencana_kbm }}</td>
+                            <td class="p-4 text-sm text-slate-500">{{ $siswa->perhitungan }}</td>
                             <td class="p-4 text-center">
-                                <span
-                                    class="bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 px-3 py-1 rounded-full text-xs font-bold">
+                                <span class="bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 px-3 py-1 rounded-full text-xs font-bold">
                                     {{ $siswa->realisasi_kbm }}
                                 </span>
                             </td>
-                            <td class="p-4 text-sm text-slate-500">{{ $siswa->perhitungan }}</td>
                             <td class="p-4 text-sm text-white font-bold">Rp {{ number_format($siswa->total, 0, ',', '.') }}</td>
                             <td class="p-4">
                                 <span class="text-xs text-slate-400 whitespace-nowrap bg-slate-700/50 px-2 py-1 rounded">
@@ -64,7 +163,7 @@
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="9" class="p-12 text-center text-slate-500">
+                            <td colspan="10" class="p-12 text-center text-slate-500">
                                 Tidak ada data siswa untuk tentor ini.
                             </td>
                         </tr>
@@ -73,7 +172,7 @@
                 @if(count($siswas) > 0)
                     <tfoot class="bg-slate-900/30">
                         <tr>
-                            <td colspan="7" class="p-4 text-right font-bold text-slate-400 uppercase tracking-wider">Total Gaji
+                            <td colspan="8" class="p-4 text-right font-bold text-slate-400 uppercase tracking-wider">Total Gaji
                                 Bulan Ini</td>
                             <td class="p-4 text-lg font-bold text-emerald-400">
                                 Rp {{ number_format($siswas->sum('total'), 0, ',', '.') }}
