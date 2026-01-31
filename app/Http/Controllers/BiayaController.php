@@ -173,7 +173,7 @@ class BiayaController extends Controller
                     $siswa->rencana_kbm,
                     $siswa->perhitungan,
                     $siswa->total,
-                    $siswa->realisasi_kbm,
+                    $siswa->realisasi_kbm . 'x Pertemuan',
                     $siswa->total_meet
                 ));
             }
