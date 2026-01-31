@@ -276,17 +276,25 @@ class BiayaController extends Controller
         $idSiswa = $request->id_siswa;
         $idTarif = $request->id_tarif;
 
-        $siswaTarif = SiswaTarif::updateOrCreate(
-            ['id_siswa' => $idSiswa],
-            ['id_tarif' => $idTarif]
+        // Use firstOrCreate to get existing record or create new one
+        // This preserves all existing fields
+        $siswaTarif = SiswaTarif::firstOrCreate(
+            ['id_siswa' => $idSiswa]
         );
+
+        // Only update the tarif, keep other fields intact
+        $siswaTarif->id_tarif = $idTarif;
+        $siswaTarif->save();
 
         // Log the update for debugging
         \Log::info('Package updated', [
             'siswa_id' => $idSiswa,
             'tarif_id' => $idTarif,
             'siswa_tarif_id' => $siswaTarif->id,
-            'was_recently_created' => $siswaTarif->wasRecentlyCreated
+            'was_recently_created' => $siswaTarif->wasRecentlyCreated,
+            'is_salary_hidden' => $siswaTarif->is_salary_hidden,
+            'tanggal_masuk' => $siswaTarif->tanggal_masuk,
+            'custom_total_meet' => $siswaTarif->custom_total_meet
         ]);
 
         $tarif = $siswaTarif->tarif;
