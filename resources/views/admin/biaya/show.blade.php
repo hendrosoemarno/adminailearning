@@ -137,7 +137,7 @@
                                 <div class="text-xs text-slate-500">{{ $siswa->username }}</div>
                             </td>
                             <td class="p-4">
-                                <select onchange="updatePaket(this, {{ $siswa->id }})" 
+                                <select onchange="updatePaket(this, {{ $siswa->id }}, {{ $tentor->id }})" 
                                     class="bg-slate-900 border border-slate-700 text-blue-400 text-xs font-bold rounded-lg px-2 py-1 outline-none focus:ring-1 focus:ring-blue-500 transition-all cursor-pointer">
                                     <option value="">Pilih Paket</option>
                                     @foreach($availablePackages as $package)
@@ -150,7 +150,7 @@
                             <td class="p-4">
                                 <input type="date" 
                                     value="{{ $siswa->tanggal_masuk }}"
-                                    onchange="updateCustomData({{ $siswa->id }}, 'tanggal_masuk', this.value)"
+                                    onchange="updateCustomData({{ $siswa->id }}, 'tanggal_masuk', this.value, {{ $tentor->id }})"
                                     class="bg-slate-900 border border-slate-700 text-white text-xs rounded-lg px-2 py-1 outline-none focus:ring-1 focus:ring-blue-500 transition-all w-36">
                                 @if($siswa->tanggal_masuk)
                                     <span class="ml-1 text-xs text-amber-400">🟡</span>
@@ -171,7 +171,7 @@
                                         min="1" 
                                         max="99"
                                         value="{{ $siswa->total_meet }}"
-                                        onchange="updateCustomData({{ $siswa->id }}, 'custom_total_meet', this.value)"
+                                        onchange="updateCustomData({{ $siswa->id }}, 'custom_total_meet', this.value, {{ $tentor->id }})"
                                         class="w-16 text-center bg-slate-900 border border-slate-700 text-white text-xs rounded px-2 py-1 outline-none focus:ring-1 focus:ring-blue-500"
                                         id="meet-input-{{ $siswa->id }}">
                                     <span class="text-xs text-slate-500">/ <span id="default-meet-{{ $siswa->id }}">{{ $siswa->default_total_meet }}</span></span>
@@ -199,7 +199,7 @@
                                 </span>
                             </td>
                             <td class="p-4 text-center">
-                                <button onclick="toggleSalary({{ $siswa->id }}, this)" 
+                                <button onclick="toggleSalary({{ $siswa->id }}, this, {{ $tentor->id }})" 
                                     data-active="{{ $siswa->is_salary_hidden ? 'false' : 'true' }}"
                                     class="p-2 rounded-lg transition-all {{ $siswa->is_salary_hidden ? 'bg-red-500/10 text-red-500 border border-red-500/20' : 'bg-blue-500/10 text-blue-500 border border-blue-500/20' }}"
                                     title="{{ $siswa->is_salary_hidden ? 'Klik untuk aktifkan di Gaji Tentor' : 'Klik untuk keluarkan dari Gaji Tentor' }}">
@@ -274,11 +274,11 @@
             document.getElementById('summary-biaya').textContent = formatRupiah(totalBiaya);
         }
 
-        function updatePaket(select, siswaId) {
+        function updatePaket(select, siswaId, tentorId) {
             const tarifId = select.value;
             if (!tarifId) return;
 
-            // Show loading state (optional)
+            // Show loading state
             select.disabled = true;
             rowPulse(siswaId, true);
 
@@ -290,6 +290,7 @@
                 },
                 body: JSON.stringify({
                     id_siswa: siswaId,
+                    id_tentor: tentorId,
                     id_tarif: tarifId
                 })
             })
@@ -329,7 +330,7 @@
             }
         }
 
-        function updateCustomData(siswaId, field, value) {
+        function updateCustomData(siswaId, field, value, tentorId) {
             rowPulse(siswaId, true);
 
             fetch('{{ route("biaya.update-custom") }}', {
@@ -340,6 +341,7 @@
                 },
                 body: JSON.stringify({
                     id_siswa: siswaId,
+                    id_tentor: tentorId,
                     field: field,
                     value: value
                 })
@@ -374,7 +376,7 @@
                 rowPulse(siswaId, false);
             });
         }
-        function toggleSalary(siswaId, btn) {
+        function toggleSalary(siswaId, btn, tentorId) {
             const isActive = btn.getAttribute('data-active') === 'true';
             const newStatus = !isActive; // true means hidden (excluded)
 
@@ -389,6 +391,7 @@
                 },
                 body: JSON.stringify({
                     id_siswa: siswaId,
+                    id_tentor: tentorId,
                     status: isActive ? 1 : 0 // if it WAS active, we send 1 to hide it
                 })
             })

@@ -13,6 +13,7 @@ class SiswaTarif extends Model
 
     protected $fillable = [
         'id_siswa',
+        'id_tentor',
         'id_tarif',
         'tanggal_masuk',
         'custom_total_meet',

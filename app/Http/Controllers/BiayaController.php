@@ -42,13 +42,19 @@ class BiayaController extends Controller
         $sort = $request->input('sort', 'firstname');
         $direction = $request->input('direction', 'asc');
 
-        // Fetch available packages for the tentor's mapel
-        $availablePackages = Tarif::where('mapel', $tentor->mapel)->orderBy('kode', 'asc')->get();
+        // Ambil semua paket yang sesuai dengan PENGATURAN mapel tentor
+        // Pakai lowercase untuk keamanan
+        $mapel = strtolower($tentor->mapel);
+        $availablePackages = Tarif::where('mapel', $mapel)->orderBy('kode', 'asc')->get();
 
-        $siswas = $tentor->siswas()->with(['siswaTarif.tarif'])->get();
+        $siswas = $tentor->siswas()->get();
 
         foreach ($siswas as $siswa) {
-            $siswaTarif = $siswa->siswaTarif;
+            // Kita cari manual agar spesifik ke Tentor ini saja
+            $siswaTarif = SiswaTarif::where('id_siswa', $siswa->id)
+                ->where('id_tentor', $tentor->id)
+                ->first();
+
             $tarif = ($siswaTarif && $siswaTarif->tarif) ? $siswaTarif->tarif : null;
 
             if ($tarif && $siswaTarif) {
@@ -56,33 +62,24 @@ class BiayaController extends Controller
                 $customTotalMeet = $siswaTarif->custom_total_meet;
                 $tanggalMasuk = $siswaTarif->tanggal_masuk;
 
-                // Calculate default total meet from package
+                // Calculate default total meet
                 preg_match('/\d+/', $tarif->kode, $matches);
                 $multiplier = isset($matches[0]) ? (int) $matches[0] : 0;
                 $defaultTotalMeet = $multiplier * 4;
 
-                // Use custom or default
                 $totalMeet = $customTotalMeet ?? $defaultTotalMeet;
-
-                // Calculate proportions
                 $meetRatio = $defaultTotalMeet > 0 ? $totalMeet / $defaultTotalMeet : 1;
 
-                // Calculate Gaji (proportional)
                 $gaji = $tarif->tentor * $meetRatio;
-
-                // Calculate Manajemen (proportional)
                 $manajemen = $tarif->manajemen * $meetRatio;
-
-                // Calculate Aplikasi (based on tanggal_masuk)
                 $aplikasi = $tarif->aplikasi;
+
                 if ($tanggalMasuk) {
                     $day = (int) date('d', strtotime($tanggalMasuk));
-                    if ($day > 20) {
-                        $aplikasi = $aplikasi * 0.5; // 1/2
-                    } elseif ($day >= 11 && $day <= 20) {
-                        $aplikasi = $aplikasi * (2 / 3); // 2/3
-                    }
-                    // else: full (100%)
+                    if ($day > 20)
+                        $aplikasi *= 0.5;
+                    elseif ($day >= 11)
+                        $aplikasi *= (2 / 3);
                 }
 
                 $siswa->biaya = $gaji + $manajemen + $aplikasi;
@@ -110,7 +107,7 @@ class BiayaController extends Controller
                 $siswa->is_salary_hidden = false;
             }
 
-            // Calculate Realisasi KBM for current month
+            // Realisasi KBM
             $currentMonth = date('Y-m');
             $siswa->realisasi_kbm = \App\Models\Presensi::where('id_tentor', $tentor->id)
                 ->where('id_siswa', $siswa->id)
@@ -118,12 +115,8 @@ class BiayaController extends Controller
                 ->count();
         }
 
-        // Apply Sorting to collection
-        if ($direction == 'asc') {
-            $siswas = $siswas->sortBy($sort);
-        } else {
-            $siswas = $siswas->sortByDesc($sort);
-        }
+        // Apply Sorting
+        $siswas = ($direction == 'asc') ? $siswas->sortBy($sort) : $siswas->sortByDesc($sort);
 
         return view('admin.biaya.show', compact('tentor', 'siswas', 'sort', 'direction', 'availablePackages'));
     }
@@ -189,18 +182,21 @@ class BiayaController extends Controller
 
     private function getSalaryData(Tentor $tentor, $month, $sort, $direction)
     {
-        $siswas = $tentor->siswas()
-            ->with(['siswaTarif.tarif'])
-            ->where(function ($query) {
-                $query->whereHas('siswaTarif', function ($q) {
-                    $q->where('is_salary_hidden', false);
-                })->orWhereDoesntHave('siswaTarif');
-            })
-            ->get();
+        $siswas = $tentor->siswas()->get();
+        $filteredSiswas = collect();
 
         foreach ($siswas as $siswa) {
-            $tarif = $siswa->siswaTarif->tarif ?? null;
-            $siswaTarif = $siswa->siswaTarif;
+            // Kita cari manual agar spesifik ke Tentor ini saja
+            $siswaTarif = \App\Models\SiswaTarif::where('id_siswa', $siswa->id)
+                ->where('id_tentor', $tentor->id)
+                ->first();
+
+            // Skip jika diset hidden untuk tentor ini
+            if ($siswaTarif && $siswaTarif->is_salary_hidden) {
+                continue;
+            }
+
+            $tarif = $siswaTarif->tarif ?? null;
 
             if ($tarif) {
                 // Split Kode: "SD 2x" -> Materi: "SD", Paket: "2x"
@@ -254,47 +250,51 @@ class BiayaController extends Controller
                 ->where('id_siswa', $siswa->id)
                 ->whereRaw("DATE_FORMAT(FROM_UNIXTIME(tgl_kbm), '%Y-%m') = ?", [$month])
                 ->count();
+
+            $filteredSiswas->push($siswa);
         }
 
         // Apply Sorting to collection
         if ($direction == 'asc') {
-            $siswas = $siswas->sortBy($sort);
+            return $filteredSiswas->sortBy($sort);
         } else {
-            $siswas = $siswas->sortByDesc($sort);
+            return $filteredSiswas->sortByDesc($sort);
         }
-
-        return $siswas;
     }
 
     public function updatePaket(Request $request)
     {
         $request->validate([
             'id_siswa' => 'required|exists:mdlu6_user,id',
+            'id_tentor' => 'required|exists:ai_tentor,id',
             'id_tarif' => 'required|exists:ai_tarif,id',
         ]);
 
         $idSiswa = $request->id_siswa;
+        $idTentor = $request->id_tentor;
         $idTarif = $request->id_tarif;
 
         // Use firstOrCreate to get existing record or create new one
         // This preserves all existing fields
         $siswaTarif = SiswaTarif::firstOrCreate(
-            ['id_siswa' => $idSiswa]
+            ['id_siswa' => $idSiswa, 'id_tentor' => $idTentor]
         );
 
-        // Only update the tarif, keep other fields intact
+        // Log the update for debugging
+        \Log::info('Package Update Attempt', [
+            'request_siswa_id' => $idSiswa,
+            'request_tentor_id' => $idTentor,
+            'request_tarif_id' => $idTarif,
+            'identified_siswa_tarif_id' => $siswaTarif->id,
+            'identified_tentor_id' => $siswaTarif->id_tentor
+        ]);
+
         $siswaTarif->id_tarif = $idTarif;
         $siswaTarif->save();
 
-        // Log the update for debugging
-        \Log::info('Package updated', [
-            'siswa_id' => $idSiswa,
-            'tarif_id' => $idTarif,
-            'siswa_tarif_id' => $siswaTarif->id,
-            'was_recently_created' => $siswaTarif->wasRecentlyCreated,
-            'is_salary_hidden' => $siswaTarif->is_salary_hidden,
-            'tanggal_masuk' => $siswaTarif->tanggal_masuk,
-            'custom_total_meet' => $siswaTarif->custom_total_meet
+        \Log::info('Package Updated Successfully', [
+            'st_id' => $siswaTarif->id,
+            'new_tarif' => $siswaTarif->id_tarif
         ]);
 
         $tarif = $siswaTarif->tarif;
@@ -339,11 +339,22 @@ class BiayaController extends Controller
     {
         $request->validate([
             'id_siswa' => 'required|exists:mdlu6_user,id',
+            'id_tentor' => 'required|exists:ai_tentor,id',
             'field' => 'required|in:tanggal_masuk,custom_total_meet',
             'value' => 'nullable'
         ]);
 
-        $siswaTarif = SiswaTarif::where('id_siswa', $request->id_siswa)->firstOrFail();
+        $siswaTarif = SiswaTarif::where('id_siswa', $request->id_siswa)
+            ->where('id_tentor', $request->id_tentor)
+            ->firstOrFail();
+
+        \Log::info('Custom Data Update Attempt', [
+            'id_siswa' => $request->id_siswa,
+            'id_tentor' => $request->id_tentor,
+            'field' => $request->field,
+            'value' => $request->value,
+            'identified_st_id' => $siswaTarif->id
+        ]);
 
         // Update field
         if ($request->field == 'tanggal_masuk') {
@@ -352,6 +363,10 @@ class BiayaController extends Controller
             $siswaTarif->custom_total_meet = $request->value > 0 ? (int) $request->value : null;
         }
         $siswaTarif->save();
+
+        \Log::info('Custom Data Updated Successfully', [
+            'st_id' => $siswaTarif->id
+        ]);
 
         // Recalculate billing
         $tarif = $siswaTarif->tarif;
@@ -402,11 +417,12 @@ class BiayaController extends Controller
     {
         $request->validate([
             'id_siswa' => 'required|exists:mdlu6_user,id',
+            'id_tentor' => 'required|exists:ai_tentor,id',
             'status' => 'required|boolean'
         ]);
 
         $siswaTarif = SiswaTarif::firstOrCreate(
-            ['id_siswa' => $request->id_siswa]
+            ['id_siswa' => $request->id_siswa, 'id_tentor' => $request->id_tentor]
         );
 
         $siswaTarif->is_salary_hidden = (bool) $request->status;

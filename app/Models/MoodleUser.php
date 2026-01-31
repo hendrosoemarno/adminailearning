@@ -58,9 +58,14 @@ class MoodleUser extends Authenticatable
 
     public $timestamps = false; // Easier to just disable unless we need them.
 
-    public function siswaTarif()
+    public function siswaTarifs()
     {
-        return $this->hasOne(SiswaTarif::class, 'id_siswa');
+        return $this->hasMany(SiswaTarif::class, 'id_siswa');
+    }
+
+    public function getSiswaTarifForTentor($tentorId)
+    {
+        return $this->siswaTarifs()->where('id_tentor', $tentorId)->first();
     }
 
     // If we need to write:
