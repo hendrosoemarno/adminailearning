@@ -48,10 +48,10 @@ class BiayaController extends Controller
         $siswas = $tentor->siswas()->with(['siswaTarif.tarif'])->get();
 
         foreach ($siswas as $siswa) {
-            $tarif = $siswa->siswaTarif->tarif ?? null;
             $siswaTarif = $siswa->siswaTarif;
+            $tarif = ($siswaTarif && $siswaTarif->tarif) ? $siswaTarif->tarif : null;
 
-            if ($tarif) {
+            if ($tarif && $siswaTarif) {
                 // Get custom values or defaults
                 $customTotalMeet = $siswaTarif->custom_total_meet;
                 $tanggalMasuk = $siswaTarif->tanggal_masuk;
@@ -280,6 +280,14 @@ class BiayaController extends Controller
             ['id_siswa' => $idSiswa],
             ['id_tarif' => $idTarif]
         );
+
+        // Log the update for debugging
+        \Log::info('Package updated', [
+            'siswa_id' => $idSiswa,
+            'tarif_id' => $idTarif,
+            'siswa_tarif_id' => $siswaTarif->id,
+            'was_recently_created' => $siswaTarif->wasRecentlyCreated
+        ]);
 
         $tarif = $siswaTarif->tarif;
 
