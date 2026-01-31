@@ -44,7 +44,9 @@ class TentorSiswaController extends Controller
             $query->where(function ($q) use ($studentSearch) {
                 $q->where('firstname', 'like', "%{$studentSearch}%")
                     ->orWhere('lastname', 'like', "%{$studentSearch}%")
-                    ->orWhere('username', 'like', "%{$studentSearch}%");
+                    ->orWhere('username', 'like', "%{$studentSearch}%")
+                    ->orWhere(DB::raw("CONCAT(firstname, ' ', lastname)"), 'like', "%{$studentSearch}%")
+                    ->orWhere(DB::raw("CONCAT(lastname, ' ', firstname)"), 'like', "%{$studentSearch}%");
             });
         }
 

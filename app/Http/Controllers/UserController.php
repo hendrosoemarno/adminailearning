@@ -4,6 +4,9 @@ namespace App\Http\Controllers;
 
 use App\Models\MoodleUser;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
+
 
 class UserController extends Controller
 {
@@ -23,10 +26,13 @@ class UserController extends Controller
 
         if ($search) {
             $query->where(function ($q) use ($search) {
-                $q->where('username', 'like', "%{$search}%")
-                    ->orWhere('firstname', 'like', "%{$search}%")
+                // Assuming $studentSearch is meant to be $search based on context and variable availability
+                // and correcting the syntax error from the provided snippet.
+                $q->where('firstname', 'like', "%{$search}%")
                     ->orWhere('lastname', 'like', "%{$search}%")
-                    ->orWhere(\Illuminate\Support\Facades\DB::raw("CONCAT(firstname, ' ', lastname)"), 'like', "%{$search}%");
+                    ->orWhere('username', 'like', "%{$search}%")
+                    ->orWhere(DB::raw("CONCAT(firstname, ' ', lastname)"), 'like', "%{$search}%")
+                    ->orWhere(DB::raw("CONCAT(lastname, ' ', firstname)"), 'like', "%{$search}%");
             });
         }
 

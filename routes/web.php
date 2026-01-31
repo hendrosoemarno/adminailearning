@@ -64,6 +64,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/biaya/{tentor}/salary/export', [\App\Http\Controllers\BiayaController::class, 'salaryExport'])->name('biaya.salary.export');
     Route::post('/biaya/update-paket', [\App\Http\Controllers\BiayaController::class, 'updatePaket'])->name('biaya.update-paket');
     Route::post('/biaya/update-custom', [\App\Http\Controllers\BiayaController::class, 'updateCustomData'])->name('biaya.update-custom');
+    Route::post('/biaya/toggle-salary', [\App\Http\Controllers\BiayaController::class, 'toggleSalaryStatus'])->name('biaya.toggle-salary');
 
     // Tarif Management
     Route::get('/tarifs/history', [\App\Http\Controllers\TarifController::class, 'history'])->name('tarifs.history');
@@ -72,6 +73,9 @@ Route::middleware('auth')->group(function () {
 
 // Tentor Portal Routes
 Route::prefix('portal')->group(function () {
+    Route::get('/', function () {
+        return redirect()->route('tentor.login');
+    });
     Route::get('/register', [\App\Http\Controllers\TentorAuthController::class, 'showRegistrationForm'])->name('tentor.register');
     Route::post('/register', [\App\Http\Controllers\TentorAuthController::class, 'register']);
     Route::get('/login', [\App\Http\Controllers\TentorAuthController::class, 'showLoginForm'])->name('tentor.login');

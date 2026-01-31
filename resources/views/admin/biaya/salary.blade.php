@@ -155,7 +155,17 @@
                             <td class="p-4 text-sm text-slate-400 italic">{{ $siswa->rencana_kbm }}</td>
                             <td class="p-4 text-sm text-slate-500">{{ $siswa->perhitungan }}</td>
                             <td class="p-4 text-center">
-                                <span class="bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 px-3 py-1 rounded-full text-xs font-bold">
+                                @php
+                                    $bgColor = 'bg-slate-700/50 text-slate-400';
+                                    if ($siswa->realisasi_kbm < ($siswa->total_meet * 0.5)) {
+                                        $bgColor = 'bg-red-500/10 text-red-500 border border-red-500/20';
+                                    } elseif ($siswa->realisasi_kbm < $siswa->total_meet) {
+                                        $bgColor = 'bg-amber-500/10 text-amber-500 border border-amber-500/20';
+                                    } elseif ($siswa->realisasi_kbm >= $siswa->total_meet && $siswa->total_meet > 0) {
+                                        $bgColor = 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20';
+                                    }
+                                @endphp
+                                <span class="px-3 py-1 rounded-full text-xs font-bold {{ $bgColor }}">
                                     {{ $siswa->realisasi_kbm }}
                                 </span>
                             </td>

@@ -16,7 +16,8 @@ class SiswaTarif extends Model
         'id_tarif',
         'tanggal_masuk',
         'custom_total_meet',
-        'keterangan'
+        'keterangan',
+        'is_salary_hidden'
     ];
 
     public $timestamps = false;

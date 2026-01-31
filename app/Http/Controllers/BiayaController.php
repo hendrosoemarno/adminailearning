@@ -95,6 +95,7 @@ class BiayaController extends Controller
                 $siswa->tanggal_masuk = $tanggalMasuk;
                 $siswa->custom_total_meet = $customTotalMeet;
                 $siswa->is_custom = ($customTotalMeet !== null || $tanggalMasuk !== null);
+                $siswa->is_salary_hidden = (bool) ($siswaTarif->is_salary_hidden ?? false);
             } else {
                 $siswa->biaya = 0;
                 $siswa->ai_learning = 0;
@@ -106,7 +107,15 @@ class BiayaController extends Controller
                 $siswa->tanggal_masuk = null;
                 $siswa->custom_total_meet = null;
                 $siswa->is_custom = false;
+                $siswa->is_salary_hidden = false;
             }
+
+            // Calculate Realisasi KBM for current month
+            $currentMonth = date('Y-m');
+            $siswa->realisasi_kbm = \App\Models\Presensi::where('id_tentor', $tentor->id)
+                ->where('id_siswa', $siswa->id)
+                ->whereRaw("DATE_FORMAT(FROM_UNIXTIME(tgl_kbm), '%Y-%m') = ?", [$currentMonth])
+                ->count();
         }
 
         // Apply Sorting to collection
@@ -180,7 +189,14 @@ class BiayaController extends Controller
 
     private function getSalaryData(Tentor $tentor, $month, $sort, $direction)
     {
-        $siswas = $tentor->siswas()->with(['siswaTarif.tarif'])->get();
+        $siswas = $tentor->siswas()
+            ->with(['siswaTarif.tarif'])
+            ->where(function ($query) {
+                $query->whereHas('siswaTarif', function ($q) {
+                    $q->where('is_salary_hidden', false);
+                })->orWhereDoesntHave('siswaTarif');
+            })
+            ->get();
 
         foreach ($siswas as $siswa) {
             $tarif = $siswa->siswaTarif->tarif ?? null;
@@ -260,25 +276,45 @@ class BiayaController extends Controller
         $idSiswa = $request->id_siswa;
         $idTarif = $request->id_tarif;
 
-        SiswaTarif::updateOrCreate(
+        $siswaTarif = SiswaTarif::updateOrCreate(
             ['id_siswa' => $idSiswa],
             ['id_tarif' => $idTarif]
         );
 
-        $tarif = Tarif::find($idTarif);
+        $tarif = $siswaTarif->tarif;
 
-        // Calculate response data
+        // Recalculate billing based on new tarif but KEEP custom data if any
         preg_match('/\d+/', $tarif->kode, $matches);
         $multiplier = isset($matches[0]) ? (int) $matches[0] : 0;
-        $totalMeet = $multiplier * 4;
+        $defaultTotalMeet = $multiplier * 4;
+
+        // Use custom or default
+        $totalMeet = $siswaTarif->custom_total_meet ?? $defaultTotalMeet;
+        $meetRatio = $defaultTotalMeet > 0 ? $totalMeet / $defaultTotalMeet : 1;
+
+        // Calculate proportions
+        $gaji = $tarif->tentor * $meetRatio;
+        $manajemen = $tarif->manajemen * $meetRatio;
+
+        // Calculate Aplikasi
+        $aplikasi = $tarif->aplikasi;
+        if ($siswaTarif->tanggal_masuk) {
+            $day = (int) date('d', strtotime($siswaTarif->tanggal_masuk));
+            if ($day > 20) {
+                $aplikasi = $aplikasi * 0.5;
+            } elseif ($day >= 11 && $day <= 20) {
+                $aplikasi = $aplikasi * (2 / 3);
+            }
+        }
 
         return response()->json([
             'success' => true,
             'data' => [
-                'biaya' => $tarif->aplikasi + $tarif->manajemen + $tarif->tentor,
-                'ai_learning' => $tarif->aplikasi + $tarif->manajemen,
-                'gaji_tentor' => $tarif->tentor,
-                'total_meet' => $totalMeet . ' Pertemuan'
+                'biaya' => $gaji + $manajemen + $aplikasi,
+                'ai_learning' => $manajemen + $aplikasi,
+                'gaji_tentor' => $gaji,
+                'total_meet' => $totalMeet,
+                'default_total_meet' => $defaultTotalMeet
             ]
         ]);
     }
@@ -343,6 +379,26 @@ class BiayaController extends Controller
                 'default_total_meet' => $defaultTotalMeet,
                 'is_custom' => ($siswaTarif->custom_total_meet !== null || $siswaTarif->tanggal_masuk !== null)
             ]
+        ]);
+    }
+
+    public function toggleSalaryStatus(Request $request)
+    {
+        $request->validate([
+            'id_siswa' => 'required|exists:mdlu6_user,id',
+            'status' => 'required|boolean'
+        ]);
+
+        $siswaTarif = SiswaTarif::firstOrCreate(
+            ['id_siswa' => $request->id_siswa]
+        );
+
+        $siswaTarif->is_salary_hidden = (bool) $request->status;
+        $siswaTarif->save();
+
+        return response()->json([
+            'success' => true,
+            'is_salary_hidden' => $siswaTarif->is_salary_hidden
         ]);
     }
 }

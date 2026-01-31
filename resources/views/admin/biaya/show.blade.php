@@ -120,6 +120,12 @@
                                 @endif
                             </a>
                         </th>
+                        <th class="p-4 text-xs font-bold text-slate-400 uppercase tracking-wider text-center">
+                            Realisasi KBM
+                        </th>
+                        <th class="p-4 text-xs font-bold text-slate-400 uppercase tracking-wider text-center">
+                            Slip Gaji
+                        </th>
                     </tr>
                 </thead>
                 <tbody class="divide-y divide-slate-700/50">
@@ -168,18 +174,46 @@
                                         onchange="updateCustomData({{ $siswa->id }}, 'custom_total_meet', this.value)"
                                         class="w-16 text-center bg-slate-900 border border-slate-700 text-white text-xs rounded px-2 py-1 outline-none focus:ring-1 focus:ring-blue-500"
                                         id="meet-input-{{ $siswa->id }}">
-                                    <span class="text-xs text-slate-500">/ {{ $siswa->default_total_meet }}</span>
+                                    <span class="text-xs text-slate-500">/ <span id="default-meet-{{ $siswa->id }}">{{ $siswa->default_total_meet }}</span></span>
                                     @if($siswa->is_custom)
-                                        <span class="text-xs text-amber-400" title="Custom">🟡</span>
+                                        <span class="text-xs text-amber-400" id="custom-indicator-{{ $siswa->id }}" title="Custom">🟡</span>
                                     @else
-                                        <span class="text-xs text-green-400" title="Default">🟢</span>
+                                        <span class="text-xs text-green-400" id="custom-indicator-{{ $siswa->id }}" title="Default">🟢</span>
                                     @endif
                                 </div>
+                            </td>
+                            <td class="p-4 text-center">
+                                @php
+                                    $percentage = $siswa->total_meet > 0 ? ($siswa->realisasi_kbm / $siswa->total_meet) * 100 : 0;
+                                    $bgColor = 'bg-slate-700/50 text-slate-400';
+                                    if ($siswa->realisasi_kbm < ($siswa->total_meet * 0.5)) {
+                                        $bgColor = 'bg-red-500/10 text-red-500 border border-red-500/20';
+                                    } elseif ($siswa->realisasi_kbm < $siswa->total_meet) {
+                                        $bgColor = 'bg-amber-500/10 text-amber-500 border border-amber-500/20';
+                                    } elseif ($siswa->realisasi_kbm >= $siswa->total_meet && $siswa->total_meet > 0) {
+                                        $bgColor = 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20';
+                                    }
+                                @endphp
+                                <span class="px-3 py-1 rounded-full text-xs font-bold {{ $bgColor }}">
+                                    {{ $siswa->realisasi_kbm }}
+                                </span>
+                            </td>
+                            <td class="p-4 text-center">
+                                <button onclick="toggleSalary({{ $siswa->id }}, this)" 
+                                    data-active="{{ $siswa->is_salary_hidden ? 'false' : 'true' }}"
+                                    class="p-2 rounded-lg transition-all {{ $siswa->is_salary_hidden ? 'bg-red-500/10 text-red-500 border border-red-500/20' : 'bg-blue-500/10 text-blue-500 border border-blue-500/20' }}"
+                                    title="{{ $siswa->is_salary_hidden ? 'Klik untuk aktifkan di Gaji Tentor' : 'Klik untuk keluarkan dari Gaji Tentor' }}">
+                                    @if($siswa->is_salary_hidden)
+                                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                                    @else
+                                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+                                    @endif
+                                </button>
                             </td>
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="8" class="p-12 text-center text-slate-500">
+                            <td colspan="10" class="p-12 text-center text-slate-500">
                                 Tidak ada siswa yang terhubung dengan tentor ini.
                             </td>
                         </tr>
@@ -266,7 +300,9 @@
                     document.getElementById('biaya-' + siswaId).textContent = formatRupiah(data.data.biaya);
                     document.getElementById('ai-learning-' + siswaId).textContent = formatRupiah(data.data.ai_learning);
                     document.getElementById('gaji-tentor-' + siswaId).textContent = formatRupiah(data.data.gaji_tentor);
-                    document.getElementById('total-meet-' + siswaId).textContent = data.data.total_meet;
+                    // Update meet inputs
+                    document.getElementById('meet-input-' + siswaId).value = data.data.total_meet;
+                    document.getElementById('default-meet-' + siswaId).textContent = data.data.default_total_meet;
 
                     // Update Summary
                     updateSummary();
@@ -335,6 +371,46 @@
                 alert('Terjadi kesalahan saat memperbarui data.');
             })
             .finally(() => {
+                rowPulse(siswaId, false);
+            });
+        }
+        function toggleSalary(siswaId, btn) {
+            const isActive = btn.getAttribute('data-active') === 'true';
+            const newStatus = !isActive; // true means hidden (excluded)
+
+            rowPulse(siswaId, true);
+            btn.disabled = true;
+
+            fetch('{{ route("biaya.toggle-salary") }}', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                },
+                body: JSON.stringify({
+                    id_siswa: siswaId,
+                    status: isActive ? 1 : 0 // if it WAS active, we send 1 to hide it
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    const isNowHidden = data.is_salary_hidden;
+                    btn.setAttribute('data-active', isNowHidden ? 'false' : 'true');
+                    
+                    if (isNowHidden) {
+                        btn.className = 'p-2 rounded-lg transition-all bg-red-500/10 text-red-500 border border-red-500/20';
+                        btn.innerHTML = '<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>';
+                        btn.title = 'Klik untuk aktifkan di Gaji Tentor';
+                    } else {
+                        btn.className = 'p-2 rounded-lg transition-all bg-blue-500/10 text-blue-500 border border-blue-500/20';
+                        btn.innerHTML = '<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>';
+                        btn.title = 'Klik untuk keluarkan dari Gaji Tentor';
+                    }
+                }
+            })
+            .finally(() => {
+                btn.disabled = false;
                 rowPulse(siswaId, false);
             });
         }

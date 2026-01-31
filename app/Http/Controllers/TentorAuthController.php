@@ -53,11 +53,24 @@ class TentorAuthController extends Controller
     public function login(Request $request)
     {
         $credentials = $request->validate([
-            'email' => 'required|email',
+            'email' => 'required',
             'password' => 'required',
         ]);
 
+        // 1. Try normal Bcrypt attempt (Laravel Default)
         if (Auth::guard('tentor')->attempt($credentials, $request->remember)) {
+            $request->session()->regenerate();
+            return redirect()->intended(route('tentor.dashboard'));
+        }
+
+        // 2. Fallback for legacy MD5 passwords
+        $user = Tentor::where('email', $credentials['email'])->first();
+        if ($user && $user->password === md5($credentials['password'])) {
+            // Upgrade to Bcrypt for future logins
+            $user->password = Hash::make($credentials['password']);
+            $user->save();
+
+            Auth::guard('tentor')->login($user, $request->remember);
             $request->session()->regenerate();
             return redirect()->intended(route('tentor.dashboard'));
         }

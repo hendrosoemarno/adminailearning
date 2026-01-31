@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
+
 
 class LoginController extends Controller
 {
@@ -88,7 +90,8 @@ class LoginController extends Controller
                 $q->where('u.username', 'like', "%{$search}%")
                     ->orWhere('u.firstname', 'like', "%{$search}%")
                     ->orWhere('u.lastname', 'like', "%{$search}%")
-                    ->orWhere(\Illuminate\Support\Facades\DB::raw("CONCAT(u.firstname, ' ', u.lastname)"), 'like', "%{$search}%")
+                    ->orWhere(DB::raw("CONCAT(u.firstname, ' ', u.lastname)"), 'like', "%{$search}%")
+                    ->orWhere(DB::raw("CONCAT(u.lastname, ' ', u.firstname)"), 'like', "%{$search}%")
                     ->orWhere('q.name', 'like', "%{$search}%")
                     ->orWhere('c.fullname', 'like', "%{$search}%");
             });
