@@ -166,7 +166,7 @@
                                     }
                                 @endphp
                                 <span class="px-3 py-1 rounded-full text-xs font-bold {{ $bgColor }}">
-                                    {{ $siswa->realisasi_kbm }}
+                                    {{ $siswa->realisasi_kbm }}x Pertemuan
                                 </span>
                             </td>
                             <td class="p-4 text-sm text-white font-bold">Rp {{ number_format($siswa->total, 0, ',', '.') }}</td>
