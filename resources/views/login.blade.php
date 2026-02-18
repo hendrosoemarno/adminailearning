@@ -114,6 +114,14 @@
             box-shadow: 0 0 0 2px rgba(6, 182, 212, 0.15);
         }
 
+        .password-container {
+            position: relative;
+        }
+
+        .password-container input {
+            padding-right: 45px;
+        }
+
         button {
             width: 100%;
             padding: 12px;
@@ -140,16 +148,22 @@
             right: 12px;
             top: 50%;
             transform: translateY(-50%);
+            background: none;
+            border: none;
+            padding: 0;
+            margin: 0;
             cursor: pointer;
             color: var(--text-secondary);
-            opacity: 0.5;
-            transition: opacity 0.2s;
+            opacity: 0.7;
+            transition: all 0.2s;
             display: flex;
             align-items: center;
+            z-index: 10;
         }
 
         .password-toggle:hover {
             opacity: 1;
+            color: var(--accent);
         }
 
         .error {
@@ -191,24 +205,17 @@
             </div>
 
             <div class="form-group">
-                <div style="position: relative;">
+                <div class="password-container">
                     <input type="password" name="password" id="password" placeholder="Password" required>
-                    <div class="password-toggle" onclick="togglePassword('password', this)" style="top: 50%;">
-                        <svg class="eye-icon w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"
-                            id="eye-open">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z">
-                            </path>
+                    <button type="button" class="password-toggle" onclick="togglePassword('password', this)">
+                        <svg class="eye-icon w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" id="eye-open" style="width: 20px; height: 20px;">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
                         </svg>
-                        <svg class="eye-icon w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"
-                            id="eye-closed" style="display: none;">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.542-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l18 18">
-                            </path>
+                        <svg class="eye-icon w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" id="eye-closed" style="display: none; width: 20px; height: 20px;">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.542-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l18 18"></path>
                         </svg>
-                    </div>
+                    </button>
                 </div>
                 @error('password')
                     <div class="error">{{ $message }}</div>
