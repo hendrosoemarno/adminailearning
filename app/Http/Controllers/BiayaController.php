@@ -93,6 +93,7 @@ class BiayaController extends Controller
                 $siswa->custom_total_meet = $customTotalMeet;
                 $siswa->is_custom = ($customTotalMeet !== null || $tanggalMasuk !== null);
                 $siswa->is_salary_hidden = (bool) ($siswaTarif->is_salary_hidden ?? false);
+                $siswa->sort_order = $siswaTarif->sort_order;
             } else {
                 $siswa->biaya = 0;
                 $siswa->ai_learning = 0;
@@ -105,6 +106,7 @@ class BiayaController extends Controller
                 $siswa->custom_total_meet = null;
                 $siswa->is_custom = false;
                 $siswa->is_salary_hidden = false;
+                $siswa->sort_order = 0;
             }
 
             // Realisasi KBM
@@ -116,7 +118,13 @@ class BiayaController extends Controller
         }
 
         // Apply Sorting
-        $siswas = ($direction == 'asc') ? $siswas->sortBy($sort) : $siswas->sortByDesc($sort);
+        if (!$request->has('sort')) {
+            $siswas = $siswas->sortBy(function ($siswa) {
+                return [$siswa->sort_order, $siswa->firstname];
+            });
+        } else {
+            $siswas = ($direction == 'asc') ? $siswas->sortBy($sort) : $siswas->sortByDesc($sort);
+        }
 
         return view('admin.biaya.show', compact('tentor', 'siswas', 'sort', 'direction', 'availablePackages'));
     }
@@ -251,10 +259,18 @@ class BiayaController extends Controller
                 ->whereRaw("DATE_FORMAT(FROM_UNIXTIME(tgl_kbm), '%Y-%m') = ?", [$month])
                 ->count();
 
+            $siswa->sort_order = $siswaTarif ? $siswaTarif->sort_order : 0;
+
             $filteredSiswas->push($siswa);
         }
 
         // Apply Sorting to collection
+        if ($sort == 'id' && !request()->has('sort')) { // Default sort
+            return $filteredSiswas->sortBy(function ($siswa) {
+                return [$siswa->sort_order, $siswa->firstname];
+            });
+        }
+
         if ($direction == 'asc') {
             return $filteredSiswas->sortBy($sort);
         } else {
@@ -432,5 +448,23 @@ class BiayaController extends Controller
             'success' => true,
             'is_salary_hidden' => $siswaTarif->is_salary_hidden
         ]);
+    }
+
+    public function updateOrder(Request $request)
+    {
+        $request->validate([
+            'id_tentor' => 'required|exists:ai_tentor,id',
+            'order' => 'required|array',
+            'order.*' => 'required|integer',
+        ]);
+
+        foreach ($request->order as $index => $idSiswa) {
+            SiswaTarif::updateOrCreate(
+                ['id_siswa' => $idSiswa, 'id_tentor' => $request->id_tentor],
+                ['sort_order' => $index]
+            );
+        }
+
+        return response()->json(['success' => true]);
     }
 }

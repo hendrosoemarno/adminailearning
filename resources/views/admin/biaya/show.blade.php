@@ -23,6 +23,7 @@
             <table class="w-full text-left border-collapse">
                 <thead>
                     <tr class="bg-slate-900/50 border-b border-slate-700">
+                        <th class="p-4 w-10"></th>
                         <th class="p-4 text-xs font-bold text-slate-400 uppercase tracking-wider">
                             <a href="{{ request()->fullUrlWithQuery(['sort' => 'id', 'direction' => ($sort == 'id' && $direction == 'asc') ? 'desc' : 'asc']) }}" class="flex items-center gap-1 hover:text-white transition-colors">
                                 User ID
@@ -128,9 +129,12 @@
                         </th>
                     </tr>
                 </thead>
-                <tbody class="divide-y divide-slate-700/50">
+                <tbody class="divide-y divide-slate-700/50" id="sortable-students">
                     @forelse($siswas as $siswa)
                         <tr class="hover:bg-slate-700/20 transition-colors" data-siswa-id="{{ $siswa->id }}">
+                            <td class="p-4 cursor-move text-slate-600 hover:text-slate-400">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 8h16M4 16h16"></path></svg>
+                            </td>
                             <td class="p-4 text-sm font-mono text-slate-400">#{{ $siswa->id }}</td>
                             <td class="p-4">
                                 <div class="font-medium text-white">{{ $siswa->firstname }} {{ $siswa->lastname }}</div>
@@ -247,7 +251,42 @@
     </div>
     @endif
 
+    <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.js"></script>
     <script>
+        // Init Sortable
+        const el = document.getElementById('sortable-students');
+        if (el) {
+            Sortable.create(el, {
+                animation: 150,
+                handle: '.cursor-move',
+                onEnd: function() {
+                    let order = [];
+                    document.querySelectorAll('#sortable-students tr[data-siswa-id]').forEach(row => {
+                        order.push(row.getAttribute('data-siswa-id'));
+                    });
+
+                    // Send to server
+                    fetch('{{ route("biaya.update-order") }}', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                        },
+                        body: JSON.stringify({
+                            id_tentor: {{ $tentor->id }},
+                            order: order
+                        })
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            console.log('Order updated');
+                        }
+                    });
+                }
+            });
+        }
+
         function formatRupiah(number) {
             return 'Rp ' + new Intl.NumberFormat('id-ID').format(number);
         }
