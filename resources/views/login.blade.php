@@ -116,6 +116,8 @@
 
         .password-container {
             position: relative;
+            display: block;
+            width: 100%;
         }
 
         .password-container input {
@@ -148,10 +150,11 @@
             right: 12px;
             top: 50%;
             transform: translateY(-50%);
-            background: none;
+            background: none !important;
             border: none;
             padding: 0;
-            margin: 0;
+            margin: 0 !important;
+            width: auto !important;
             cursor: pointer;
             color: var(--text-secondary);
             opacity: 0.7;
@@ -159,11 +162,13 @@
             display: flex;
             align-items: center;
             z-index: 10;
+            box-shadow: none !important;
         }
 
         .password-toggle:hover {
             opacity: 1;
             color: var(--accent);
+            transform: translateY(-50%) scale(1.1);
         }
 
         .error {
