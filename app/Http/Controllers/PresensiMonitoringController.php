@@ -20,13 +20,89 @@ class PresensiMonitoringController extends Controller
         7 => 'Ahad'
     ];
 
-    public function index()
+    public function index(Request $request)
     {
-        $logs = PresensiMonitoring::with(['admin', 'tentor', 'siswa'])
-            ->orderBy('tgl_input', 'desc')
-            ->get();
+        $sort = $request->input('sort', 'tgl_input');
+        $direction = $request->input('direction', 'desc');
 
-        return view('admin.presensi-monitoring.index', compact('logs'));
+        $query = PresensiMonitoring::with(['admin', 'tentor', 'siswa']);
+
+        // Handle sorting
+        if ($sort === 'admin') {
+            $query->leftJoin('useradmins', 'ai_presensi_monitoring.id_useradmin', '=', 'useradmins.id')
+                ->orderBy('useradmins.nama', $direction)
+                ->select('ai_presensi_monitoring.*');
+        } elseif ($sort === 'tentor') {
+            $query->leftJoin('ai_tentor', 'ai_presensi_monitoring.id_tentor', '=', 'ai_tentor.id')
+                ->orderBy('ai_tentor.nama', $direction)
+                ->select('ai_presensi_monitoring.*');
+        } elseif ($sort === 'siswa') {
+            $query->leftJoin('mdlu6_user', 'ai_presensi_monitoring.id_siswa', '=', 'mdlu6_user.id')
+                ->orderBy('mdlu6_user.firstname', $direction)
+                ->select('ai_presensi_monitoring.*');
+        } else {
+            $query->orderBy($sort, $direction);
+        }
+
+        $logs = $query->get();
+
+        return view('admin.presensi-monitoring.index', compact('logs', 'sort', 'direction'));
+    }
+
+    public function export(Request $request)
+    {
+        $sort = $request->input('sort', 'tgl_input');
+        $direction = $request->input('direction', 'desc');
+
+        $query = PresensiMonitoring::with(['admin', 'tentor', 'siswa']);
+
+        if ($sort === 'admin') {
+            $query->leftJoin('useradmins', 'ai_presensi_monitoring.id_useradmin', '=', 'useradmins.id')
+                ->orderBy('useradmins.nama', $direction)
+                ->select('ai_presensi_monitoring.*');
+        } elseif ($sort === 'tentor') {
+            $query->leftJoin('ai_tentor', 'ai_presensi_monitoring.id_tentor', '=', 'ai_tentor.id')
+                ->orderBy('ai_tentor.nama', $direction)
+                ->select('ai_presensi_monitoring.*');
+        } elseif ($sort === 'siswa') {
+            $query->leftJoin('mdlu6_user', 'ai_presensi_monitoring.id_siswa', '=', 'mdlu6_user.id')
+                ->orderBy('mdlu6_user.firstname', $direction)
+                ->select('ai_presensi_monitoring.*');
+        } else {
+            $query->orderBy($sort, $direction);
+        }
+
+        $logs = $query->get();
+
+        $fileName = 'Log_Monitoring_' . date('Y-m-d_H-i-s') . '.csv';
+        $headers = [
+            "Content-type" => "text/csv",
+            "Content-Disposition" => "attachment; filename=$fileName",
+            "Pragma" => "no-cache",
+            "Cache-Control" => "must-revalidate, post-check=0, pre-check=0",
+            "Expires" => "0"
+        ];
+
+        $columns = ['Waktu Input', 'Administrator', 'Tentor', 'Siswa', 'Tgl Monitoring'];
+
+        $callback = function () use ($logs, $columns) {
+            $file = fopen('php://output', 'w');
+            fputcsv($file, $columns);
+
+            foreach ($logs as $log) {
+                fputcsv($file, [
+                    date('d-m-Y H:i:s', $log->tgl_input),
+                    $log->admin->nama ?? '-',
+                    $log->tentor->nama ?? '-',
+                    $log->siswa->firstname ?? '-',
+                    date('d-m-Y', $log->tgl_monitoring),
+                ]);
+            }
+
+            fclose($file);
+        };
+
+        return response()->stream($callback, 200, $headers);
     }
 
     public function create()

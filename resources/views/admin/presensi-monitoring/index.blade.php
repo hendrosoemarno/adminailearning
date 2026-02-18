@@ -8,13 +8,23 @@
             <h1 class="text-3xl font-bold text-white tracking-tight mb-2">Data Log Monitoring</h1>
             <p class="text-slate-400">Riwayat monitoring yang telah dicatat oleh administrator.</p>
         </div>
-        <a href="{{ route('presensi-monitoring.create') }}"
-            class="inline-flex items-center px-6 py-3 bg-emerald-600 hover:bg-emerald-500 text-white font-bold rounded-xl shadow-lg transition-all transform hover:-translate-y-1">
-            <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
-            </svg>
-            Catat Monitoring Baru
-        </a>
+        <div class="flex items-center gap-3">
+            <a href="{{ route('presensi-monitoring.export', request()->query()) }}"
+                class="px-4 py-2 bg-emerald-600/10 text-emerald-500 hover:bg-emerald-600 hover:text-white rounded-lg border border-emerald-600/20 transition-all font-semibold flex items-center gap-2">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path>
+                </svg>
+                Export CSV
+            </a>
+            <a href="{{ route('presensi-monitoring.create') }}"
+                class="inline-flex items-center px-6 py-3 bg-emerald-600 hover:bg-emerald-500 text-white font-bold rounded-xl shadow-lg transition-all transform hover:-translate-y-1">
+                <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
+                </svg>
+                Catat Monitoring Baru
+            </a>
+        </div>
     </div>
 
     <div class="bg-slate-800/50 backdrop-blur-sm border border-slate-700 rounded-2xl shadow-xl overflow-hidden">
@@ -22,11 +32,71 @@
             <table class="w-full text-left border-collapse">
                 <thead>
                     <tr class="bg-slate-900/50 border-b border-slate-700">
-                        <th class="p-4 text-xs font-bold text-slate-400 uppercase tracking-widest">Waktu Input</th>
-                        <th class="p-4 text-xs font-bold text-slate-400 uppercase tracking-widest">Administrator</th>
-                        <th class="p-4 text-xs font-bold text-slate-400 uppercase tracking-widest">Tentor</th>
-                        <th class="p-4 text-xs font-bold text-slate-400 uppercase tracking-widest">Siswa</th>
-                        <th class="p-4 text-xs font-bold text-slate-400 uppercase tracking-widest">Tgl Monitoring</th>
+                        <th class="p-4 text-xs font-bold text-slate-400 uppercase tracking-widest">
+                            <a href="{{ request()->fullUrlWithQuery(['sort' => 'tgl_input', 'direction' => ($sort == 'tgl_input' && $direction == 'asc') ? 'desc' : 'asc']) }}"
+                                class="flex items-center gap-1 hover:text-white transition-colors">
+                                Waktu Input
+                                @if($sort == 'tgl_input')
+                                    <svg class="w-3 h-3 {{ $direction == 'asc' ? '' : 'rotate-180' }}" fill="none"
+                                        stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 15l7-7 7 7">
+                                        </path>
+                                    </svg>
+                                @endif
+                            </a>
+                        </th>
+                        <th class="p-4 text-xs font-bold text-slate-400 uppercase tracking-widest">
+                            <a href="{{ request()->fullUrlWithQuery(['sort' => 'admin', 'direction' => ($sort == 'admin' && $direction == 'asc') ? 'desc' : 'asc']) }}"
+                                class="flex items-center gap-1 hover:text-white transition-colors">
+                                Administrator
+                                @if($sort == 'admin')
+                                    <svg class="w-3 h-3 {{ $direction == 'asc' ? '' : 'rotate-180' }}" fill="none"
+                                        stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 15l7-7 7 7">
+                                        </path>
+                                    </svg>
+                                @endif
+                            </a>
+                        </th>
+                        <th class="p-4 text-xs font-bold text-slate-400 uppercase tracking-widest">
+                            <a href="{{ request()->fullUrlWithQuery(['sort' => 'tentor', 'direction' => ($sort == 'tentor' && $direction == 'asc') ? 'desc' : 'asc']) }}"
+                                class="flex items-center gap-1 hover:text-white transition-colors">
+                                Tentor
+                                @if($sort == 'tentor')
+                                    <svg class="w-3 h-3 {{ $direction == 'asc' ? '' : 'rotate-180' }}" fill="none"
+                                        stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 15l7-7 7 7">
+                                        </path>
+                                    </svg>
+                                @endif
+                            </a>
+                        </th>
+                        <th class="p-4 text-xs font-bold text-slate-400 uppercase tracking-widest">
+                            <a href="{{ request()->fullUrlWithQuery(['sort' => 'siswa', 'direction' => ($sort == 'siswa' && $direction == 'asc') ? 'desc' : 'asc']) }}"
+                                class="flex items-center gap-1 hover:text-white transition-colors">
+                                Siswa
+                                @if($sort == 'siswa')
+                                    <svg class="w-3 h-3 {{ $direction == 'asc' ? '' : 'rotate-180' }}" fill="none"
+                                        stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 15l7-7 7 7">
+                                        </path>
+                                    </svg>
+                                @endif
+                            </a>
+                        </th>
+                        <th class="p-4 text-xs font-bold text-slate-400 uppercase tracking-widest">
+                            <a href="{{ request()->fullUrlWithQuery(['sort' => 'tgl_monitoring', 'direction' => ($sort == 'tgl_monitoring' && $direction == 'asc') ? 'desc' : 'asc']) }}"
+                                class="flex items-center gap-1 hover:text-white transition-colors">
+                                Tgl Monitoring
+                                @if($sort == 'tgl_monitoring')
+                                    <svg class="w-3 h-3 {{ $direction == 'asc' ? '' : 'rotate-180' }}" fill="none"
+                                        stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 15l7-7 7 7">
+                                        </path>
+                                    </svg>
+                                @endif
+                            </a>
+                        </th>
                         <th class="p-4 text-xs font-bold text-slate-400 uppercase tracking-widest text-center">Aksi</th>
                     </tr>
                 </thead>

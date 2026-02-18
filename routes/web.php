@@ -51,6 +51,7 @@ Route::middleware('auth')->group(function () {
 
     // Presensi Monitoring
     Route::get('/presensi-monitoring', [\App\Http\Controllers\PresensiMonitoringController::class, 'index'])->name('presensi-monitoring.index');
+    Route::get('/presensi-monitoring/export', [\App\Http\Controllers\PresensiMonitoringController::class, 'export'])->name('presensi-monitoring.export');
     Route::get('/presensi-monitoring/create', [\App\Http\Controllers\PresensiMonitoringController::class, 'create'])->name('presensi-monitoring.create');
     Route::post('/presensi-monitoring', [\App\Http\Controllers\PresensiMonitoringController::class, 'store'])->name('presensi-monitoring.store');
     Route::get('/presensi-monitoring/{id}/edit', [\App\Http\Controllers\PresensiMonitoringController::class, 'edit'])->name('presensi-monitoring.edit');
