@@ -18,7 +18,8 @@ class SiswaTarif extends Model
         'tanggal_masuk',
         'custom_total_meet',
         'keterangan',
-        'is_salary_hidden'
+        'is_salary_hidden',
+        'sort_order'
     ];
 
     public $timestamps = false;
