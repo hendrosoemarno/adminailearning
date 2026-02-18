@@ -9,7 +9,13 @@
             <p class="text-slate-400">Rincian paket dan biaya kursus untuk seluruh siswa yang diampu.</p>
         </div>
         <div class="flex items-center gap-3">
-            <a href="{{ route('biaya.salary', $tentor) }}" class="px-4 py-2 bg-amber-600/10 text-amber-500 hover:bg-amber-600 hover:text-white rounded-lg border border-amber-600/20 transition-all font-semibold">
+            <form method="GET" action="{{ route('biaya.show', $tentor) }}" class="flex items-center gap-2">
+                <input type="month" name="month" value="{{ $month }}" onchange="this.form.submit()"
+                    class="bg-slate-900 border border-slate-700 rounded-lg px-4 py-2 text-white outline-none focus:ring-2 focus:ring-blue-500 transition-all">
+                @if(request('sort')) <input type="hidden" name="sort" value="{{ request('sort') }}"> @endif
+                @if(request('direction')) <input type="hidden" name="direction" value="{{ request('direction') }}"> @endif
+            </form>
+            <a href="{{ route('biaya.salary', array_merge(['tentor' => $tentor->id], request()->all())) }}" class="px-4 py-2 bg-amber-600/10 text-amber-500 hover:bg-amber-600 hover:text-white rounded-lg border border-amber-600/20 transition-all font-semibold">
                 Lihat Gaji
             </a>
             <a href="{{ route('biaya.index') }}" class="px-4 py-2 bg-slate-800 text-slate-300 hover:text-white rounded-lg border border-slate-700 transition-all">

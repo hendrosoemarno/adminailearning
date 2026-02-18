@@ -41,6 +41,7 @@ class BiayaController extends Controller
     {
         $sort = $request->input('sort', 'firstname');
         $direction = $request->input('direction', 'asc');
+        $month = $request->input('month', date('Y-m'));
 
         // Ambil semua paket yang sesuai dengan PENGATURAN mapel tentor
         // Pakai lowercase untuk keamanan
@@ -110,10 +111,9 @@ class BiayaController extends Controller
             }
 
             // Realisasi KBM
-            $currentMonth = date('Y-m');
             $siswa->realisasi_kbm = \App\Models\Presensi::where('id_tentor', $tentor->id)
                 ->where('id_siswa', $siswa->id)
-                ->whereRaw("DATE_FORMAT(FROM_UNIXTIME(tgl_kbm), '%Y-%m') = ?", [$currentMonth])
+                ->whereRaw("DATE_FORMAT(FROM_UNIXTIME(tgl_kbm), '%Y-%m') = ?", [$month])
                 ->count();
         }
 
@@ -126,7 +126,7 @@ class BiayaController extends Controller
             $siswas = ($direction == 'asc') ? $siswas->sortBy($sort) : $siswas->sortByDesc($sort);
         }
 
-        return view('admin.biaya.show', compact('tentor', 'siswas', 'sort', 'direction', 'availablePackages'));
+        return view('admin.biaya.show', compact('tentor', 'siswas', 'sort', 'direction', 'availablePackages', 'month'));
     }
 
     public function salary(Request $request, Tentor $tentor)
