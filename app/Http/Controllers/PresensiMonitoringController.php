@@ -29,17 +29,17 @@ class PresensiMonitoringController extends Controller
 
         // Handle sorting
         if ($sort === 'admin') {
-            $query->leftJoin('useradmins', 'ai_presensi_monitoring.id_useradmin', '=', 'useradmins.id')
-                ->orderBy('useradmins.nama', $direction)
-                ->select('ai_presensi_monitoring.*');
+            $query->leftJoin('ai_useradmin', 'ai__presensi_monitoring.id_useradmin', '=', 'ai_useradmin.id')
+                ->orderBy('ai_useradmin.nama', $direction)
+                ->select('ai__presensi_monitoring.*');
         } elseif ($sort === 'tentor') {
-            $query->leftJoin('ai_tentor', 'ai_presensi_monitoring.id_tentor', '=', 'ai_tentor.id')
+            $query->leftJoin('ai_tentor', 'ai__presensi_monitoring.id_tentor', '=', 'ai_tentor.id')
                 ->orderBy('ai_tentor.nama', $direction)
-                ->select('ai_presensi_monitoring.*');
+                ->select('ai__presensi_monitoring.*');
         } elseif ($sort === 'siswa') {
-            $query->leftJoin('mdlu6_user', 'ai_presensi_monitoring.id_siswa', '=', 'mdlu6_user.id')
+            $query->leftJoin('mdlu6_user', 'ai__presensi_monitoring.id_siswa', '=', 'mdlu6_user.id')
                 ->orderBy('mdlu6_user.firstname', $direction)
-                ->select('ai_presensi_monitoring.*');
+                ->select('ai__presensi_monitoring.*');
         } else {
             $query->orderBy($sort, $direction);
         }
@@ -57,17 +57,17 @@ class PresensiMonitoringController extends Controller
         $query = PresensiMonitoring::with(['admin', 'tentor', 'siswa']);
 
         if ($sort === 'admin') {
-            $query->leftJoin('useradmins', 'ai_presensi_monitoring.id_useradmin', '=', 'useradmins.id')
-                ->orderBy('useradmins.nama', $direction)
-                ->select('ai_presensi_monitoring.*');
+            $query->leftJoin('ai_useradmin', 'ai__presensi_monitoring.id_useradmin', '=', 'ai_useradmin.id')
+                ->orderBy('ai_useradmin.nama', $direction)
+                ->select('ai__presensi_monitoring.*');
         } elseif ($sort === 'tentor') {
-            $query->leftJoin('ai_tentor', 'ai_presensi_monitoring.id_tentor', '=', 'ai_tentor.id')
+            $query->leftJoin('ai_tentor', 'ai__presensi_monitoring.id_tentor', '=', 'ai_tentor.id')
                 ->orderBy('ai_tentor.nama', $direction)
-                ->select('ai_presensi_monitoring.*');
+                ->select('ai__presensi_monitoring.*');
         } elseif ($sort === 'siswa') {
-            $query->leftJoin('mdlu6_user', 'ai_presensi_monitoring.id_siswa', '=', 'mdlu6_user.id')
+            $query->leftJoin('mdlu6_user', 'ai__presensi_monitoring.id_siswa', '=', 'mdlu6_user.id')
                 ->orderBy('mdlu6_user.firstname', $direction)
-                ->select('ai_presensi_monitoring.*');
+                ->select('ai__presensi_monitoring.*');
         } else {
             $query->orderBy($sort, $direction);
         }
