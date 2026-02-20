@@ -353,6 +353,10 @@
                                         class="flex items-center px-4 py-2 rounded-lg text-sm {{ request()->routeIs('biaya.billing') ? 'text-blue-400 font-bold' : 'text-slate-400 hover:bg-slate-800 hover:text-slate-100' }}">
                                         <span class="sidebar-label">Tagihan WA</span>
                                     </a>
+                                    <a href="{{ route('biaya.student-list') }}"
+                                        class="flex items-center px-4 py-2 rounded-lg text-sm {{ request()->routeIs('biaya.student-list') ? 'text-blue-400 font-bold' : 'text-slate-400 hover:bg-slate-800 hover:text-slate-100' }}">
+                                        <span class="sidebar-label">Daftar Kontak Siswa</span>
+                                    </a>
                                 </div>
                             </div>
                             <a href="{{ route('tarifs.index') }}"
