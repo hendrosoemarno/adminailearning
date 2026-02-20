@@ -37,10 +37,13 @@
                                 d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
                         </svg>
                     </div>
-                    <input type="text" name="search" id="search" placeholder="Nama siswa..." value="{{ $search }}"
+                    <input type="text" name="search" id="search" placeholder="Nama siswa atau orang tua..."
+                        value="{{ $search }}"
                         class="w-full bg-slate-900 border border-slate-700 rounded-lg pl-10 pr-4 py-2 text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all">
                 </div>
             </div>
+            <input type="hidden" name="sort" value="{{ $sort }}">
+            <input type="hidden" name="direction" value="{{ $direction }}">
             <button type="submit"
                 class="px-6 py-2 bg-blue-600 hover:bg-blue-500 text-white font-semibold rounded-lg transition-all shadow-lg shadow-blue-500/20">
                 Filter
@@ -54,16 +57,93 @@
             <table class="w-full text-left border-collapse">
                 <thead>
                     <tr class="bg-slate-900/60 border-b border-slate-700">
-                        <th class="p-5 text-xs font-bold text-slate-400 uppercase tracking-widest">Siswa</th>
-                        <th class="p-5 text-xs font-bold text-slate-400 uppercase tracking-widest">Orang Tua</th>
-                        <th class="p-5 text-xs font-bold text-slate-400 uppercase tracking-widest">WhatsApp</th>
-                        <th class="p-5 text-xs font-bold text-slate-400 uppercase tracking-widest">Kursus</th>
-                        <th class="p-5 text-xs font-bold text-slate-400 uppercase tracking-widest">Tentor</th>
+                        <th class="p-5 text-xs font-bold text-slate-400 uppercase tracking-widest text-center w-20">Tanda
+                        </th>
+                        <th class="p-5 text-xs font-bold text-slate-400 uppercase tracking-widest">
+                            <a href="{{ request()->fullUrlWithQuery(['sort' => 'nama_siswa', 'direction' => ($sort == 'nama_siswa' && $direction == 'asc') ? 'desc' : 'asc']) }}"
+                                class="flex items-center gap-2 hover:text-white transition-colors">
+                                Siswa
+                                @if($sort == 'nama_siswa')
+                                    <svg class="w-3 h-3 {{ $direction == 'desc' ? 'rotate-180' : '' }}" fill="currentColor"
+                                        viewBox="0 0 20 20">
+                                        <path fill-rule="evenodd"
+                                            d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
+                                            clip-rule="evenodd"></path>
+                                    </svg>
+                                @endif
+                            </a>
+                        </th>
+                        <th class="p-5 text-xs font-bold text-slate-400 uppercase tracking-widest">
+                            <a href="{{ request()->fullUrlWithQuery(['sort' => 'nama_ortu', 'direction' => ($sort == 'nama_ortu' && $direction == 'asc') ? 'desc' : 'asc']) }}"
+                                class="flex items-center gap-2 hover:text-white transition-colors">
+                                Orang Tua
+                                @if($sort == 'nama_ortu')
+                                    <svg class="w-3 h-3 {{ $direction == 'desc' ? 'rotate-180' : '' }}" fill="currentColor"
+                                        viewBox="0 0 20 20">
+                                        <path fill-rule="evenodd"
+                                            d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
+                                            clip-rule="evenodd"></path>
+                                    </svg>
+                                @endif
+                            </a>
+                        </th>
+                        <th class="p-5 text-xs font-bold text-slate-400 uppercase tracking-widest">
+                            <a href="{{ request()->fullUrlWithQuery(['sort' => 'wa_ortu', 'direction' => ($sort == 'wa_ortu' && $direction == 'asc') ? 'desc' : 'asc']) }}"
+                                class="flex items-center gap-2 hover:text-white transition-colors">
+                                WhatsApp
+                                @if($sort == 'wa_ortu')
+                                    <svg class="w-3 h-3 {{ $direction == 'desc' ? 'rotate-180' : '' }}" fill="currentColor"
+                                        viewBox="0 0 20 20">
+                                        <path fill-rule="evenodd"
+                                            d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
+                                            clip-rule="evenodd"></path>
+                                    </svg>
+                                @endif
+                            </a>
+                        </th>
+                        <th class="p-5 text-xs font-bold text-slate-400 uppercase tracking-widest">
+                            <a href="{{ request()->fullUrlWithQuery(['sort' => 'kursus', 'direction' => ($sort == 'kursus' && $direction == 'asc') ? 'desc' : 'asc']) }}"
+                                class="flex items-center gap-2 hover:text-white transition-colors">
+                                Kursus
+                                @if($sort == 'kursus')
+                                    <svg class="w-3 h-3 {{ $direction == 'desc' ? 'rotate-180' : '' }}" fill="currentColor"
+                                        viewBox="0 0 20 20">
+                                        <path fill-rule="evenodd"
+                                            d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
+                                            clip-rule="evenodd"></path>
+                                    </svg>
+                                @endif
+                            </a>
+                        </th>
+                        <th class="p-5 text-xs font-bold text-slate-400 uppercase tracking-widest">
+                            <a href="{{ request()->fullUrlWithQuery(['sort' => 'tentor', 'direction' => ($sort == 'tentor' && $direction == 'asc') ? 'desc' : 'asc']) }}"
+                                class="flex items-center gap-2 hover:text-white transition-colors">
+                                Tentor
+                                @if($sort == 'tentor')
+                                    <svg class="w-3 h-3 {{ $direction == 'desc' ? 'rotate-180' : '' }}" fill="currentColor"
+                                        viewBox="0 0 20 20">
+                                        <path fill-rule="evenodd"
+                                            d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
+                                            clip-rule="evenodd"></path>
+                                    </svg>
+                                @endif
+                            </a>
+                        </th>
                     </tr>
                 </thead>
                 <tbody class="divide-y divide-slate-700/50">
                     @forelse($studentData as $data)
-                        <tr class="hover:bg-slate-700/20 transition-colors">
+                        <tr id="row-{{ $data->id }}"
+                            class="hover:bg-slate-700/20 transition-colors {{ $data->cek ? 'bg-blue-500/5' : '' }}">
+                            <td class="p-5 text-center">
+                                <button onclick="toggleMark({{ $data->id }})" id="mark-btn-{{ $data->id }}"
+                                    class="w-8 h-8 rounded-lg flex items-center justify-center transition-all border {{ $data->cek ? 'bg-blue-500 border-blue-400 text-white shadow-lg shadow-blue-500/40' : 'bg-slate-800 border-slate-700 text-slate-500 hover:border-slate-500' }}">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3"
+                                            d="M5 13l4 4L19 7"></path>
+                                    </svg>
+                                </button>
+                            </td>
                             <td class="p-5">
                                 <div class="flex items-center gap-3">
                                     <div
@@ -102,7 +182,7 @@
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="5" class="p-20 text-center">
+                            <td colspan="6" class="p-20 text-center">
                                 <div class="flex flex-col items-center">
                                     <svg class="w-12 h-12 text-slate-600 mb-4" fill="none" stroke="currentColor"
                                         viewBox="0 0 24 24">
@@ -118,4 +198,37 @@
             </table>
         </div>
     </div>
+
+    <script>
+        async function toggleMark(studentId) {
+            const btn = document.getElementById(`mark-btn-${studentId}`);
+            const row = document.getElementById(`row-${studentId}`);
+            const isMarked = btn.classList.contains('bg-blue-500');
+            const newValue = isMarked ? 0 : 1;
+
+            btn.disabled = true;
+
+            try {
+                const response = await fetch('{{ route('biaya.toggle-student-mark') }}', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': '{{ csrf_token() }}' },
+                    body: JSON.stringify({ id: studentId, cek: newValue })
+                });
+
+                if (response.ok) {
+                    if (newValue) {
+                        btn.className = 'w-8 h-8 rounded-lg flex items-center justify-center transition-all border bg-blue-500 border-blue-400 text-white shadow-lg shadow-blue-500/40';
+                        row.classList.add('bg-blue-500/5');
+                    } else {
+                        btn.className = 'w-8 h-8 rounded-lg flex items-center justify-center transition-all border bg-slate-800 border-slate-700 text-slate-500 hover:border-slate-500';
+                        row.classList.remove('bg-blue-500/5');
+                    }
+                }
+            } catch (error) {
+                console.error('Error toggling mark:', error);
+            } finally {
+                btn.disabled = false;
+            }
+        }
+    </script>
 @endsection

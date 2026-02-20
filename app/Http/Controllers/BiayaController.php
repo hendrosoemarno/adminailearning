@@ -167,6 +167,8 @@ class BiayaController extends Controller
     public function studentList(Request $request)
     {
         $search = $request->input('search');
+        $sort = $request->input('sort', 'nama_siswa');
+        $direction = $request->input('direction', 'asc');
 
         $query = MoodleUser::join('ai_user_detil', 'mdlu6_user.id', '=', 'ai_user_detil.id')
             ->whereExists(function ($query) {
@@ -174,16 +176,26 @@ class BiayaController extends Controller
                     ->from('ai_tentor_siswa')
                     ->whereRaw('mdlu6_user.id = ai_tentor_siswa.id_siswa');
             })
-            ->select('mdlu6_user.*', 'ai_user_detil.wa_ortu', 'ai_user_detil.nama_ortu');
+            ->select('mdlu6_user.*', 'ai_user_detil.wa_ortu', 'ai_user_detil.nama_ortu', 'ai_user_detil.cek');
 
         if ($search) {
             $query->where(function ($q) use ($search) {
                 $q->where('firstname', 'like', "%{$search}%")
-                    ->orWhere('lastname', 'like', "%{$search}%");
+                    ->orWhere('lastname', 'like', "%{$search}%")
+                    ->orWhere('ai_user_detil.nama_ortu', 'like', "%{$search}%");
             });
         }
 
-        $siswas = $query->orderBy('firstname', 'asc')->get();
+        // Handle sorting
+        if ($sort == 'nama_ortu') {
+            $query->orderBy('ai_user_detil.nama_ortu', $direction);
+        } elseif ($sort == 'wa_ortu') {
+            $query->orderBy('ai_user_detil.wa_ortu', $direction);
+        } else {
+            $query->orderBy('firstname', $direction);
+        }
+
+        $siswas = $query->get();
         $studentData = [];
 
         foreach ($siswas as $siswa) {
@@ -202,11 +214,31 @@ class BiayaController extends Controller
                 'nama_ortu' => $siswa->nama_ortu ?? '-',
                 'wa_ortu' => $siswa->wa_ortu ?? '-',
                 'kursus' => implode(', ', array_unique($courses)),
-                'tentor' => implode(', ', array_unique($tentorNames))
+                'tentor' => implode(', ', array_unique($tentorNames)),
+                'cek' => $siswa->cek
             ];
         }
 
-        return view('admin.biaya.student_list', compact('studentData', 'search'));
+        // Collection level sorting for derived fields if needed
+        if ($sort == 'kursus') {
+            $studentData = collect($studentData)->sortBy('kursus', SORT_NATURAL | SORT_FLAG_CASE, $direction == 'desc')->values()->all();
+        } elseif ($sort == 'tentor') {
+            $studentData = collect($studentData)->sortBy('tentor', SORT_NATURAL | SORT_FLAG_CASE, $direction == 'desc')->values()->all();
+        }
+
+        return view('admin.biaya.student_list', compact('studentData', 'search', 'sort', 'direction'));
+    }
+
+    public function toggleStudentMark(Request $request)
+    {
+        $request->validate([
+            'id' => 'required|exists:ai_user_detil,id',
+            'cek' => 'required|boolean'
+        ]);
+
+        \DB::table('ai_user_detil')->where('id', $request->id)->update(['cek' => $request->cek]);
+
+        return response()->json(['success' => true]);
     }
 
     private function applyStudentCosts($siswa, $tentor, $month)
