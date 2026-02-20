@@ -317,9 +317,40 @@
                                 class="flex items-center px-4 py-2 rounded-lg text-sm {{ request()->routeIs('useradmins.*') ? 'text-blue-400' : 'text-slate-400 hover:bg-slate-800 hover:text-slate-100' }}">
                                 <span class="sidebar-label">Kelola Admin</span>
                             </a>
-                            <a href="{{ route('biaya.index') }}" class="flex items-center px-4 py-2 rounded-lg text-sm {{ request()->routeIs('biaya.*') ? 'text-blue-400' : 'text-slate-400 hover:bg-slate-800 hover:text-slate-100' }}">
-                                <span class="sidebar-label">Biaya</span>
-                            </a>
+                            <div class="space-y-1">
+                                <button type="button" onclick="toggleSubmenu('biaya-menu')"
+                                    class="w-full flex items-center justify-between px-4 py-3 rounded-lg group transition-all duration-200 {{ request()->routeIs('biaya.*') ? 'bg-blue-500/10 text-blue-400' : 'text-slate-400 hover:bg-slate-800 hover:text-slate-100' }}">
+                                    <div class="flex items-center">
+                                        <div class="flex-shrink-0">
+                                            <svg class="w-5 h-5 {{ request()->routeIs('biaya.*') ? 'text-blue-400' : 'text-slate-500 group-hover:text-slate-300' }}"
+                                                fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                    d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z">
+                                                </path>
+                                            </svg>
+                                        </div>
+                                        <span
+                                            class="font-medium ml-3 sidebar-label transition-all duration-300 whitespace-nowrap">Biaya</span>
+                                    </div>
+                                    <svg id="biaya-menu-arrow"
+                                        class="w-4 h-4 transition-transform duration-200 sidebar-label {{ request()->routeIs('biaya.*') ? 'rotate-180' : '' }}"
+                                        fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M19 9l-7 7-7-7"></path>
+                                    </svg>
+                                </button>
+                                <div id="biaya-menu"
+                                    class="{{ request()->routeIs('biaya.*') ? '' : 'hidden' }} pl-4 space-y-1 overflow-hidden">
+                                    <a href="{{ route('biaya.index') }}"
+                                        class="flex items-center px-4 py-2 rounded-lg text-sm {{ request()->routeIs('biaya.index') || request()->routeIs('biaya.show') ? 'text-blue-400 font-bold' : 'text-slate-400 hover:bg-slate-800 hover:text-slate-100' }}">
+                                        <span class="sidebar-label">Tabel Per Tentor</span>
+                                    </a>
+                                    <a href="{{ route('biaya.summary') }}"
+                                        class="flex items-center px-4 py-2 rounded-lg text-sm {{ request()->routeIs('biaya.summary') ? 'text-blue-400 font-bold' : 'text-slate-400 hover:bg-slate-800 hover:text-slate-100' }}">
+                                        <span class="sidebar-label">Tabel Keseluruhan</span>
+                                    </a>
+                                </div>
+                            </div>
                             <a href="{{ route('tarifs.index') }}"
                                 class="flex items-center px-4 py-2 rounded-lg text-sm {{ request()->routeIs('tarifs.*') ? 'text-blue-400' : 'text-slate-400 hover:bg-slate-800 hover:text-slate-100' }}">
                                 <span class="sidebar-label">Kelola Tarif</span>
@@ -467,7 +498,7 @@
         function toggleSubmenu(id) {
             const menu = document.getElementById(id);
             const arrow = document.getElementById(id + '-arrow');
- if (menu.classList.contains('hidden')) {
+            if (menu.classList.contains('hidden')) {
                 menu.classList.remove('hidden');
                 arrow.classList.add('rotate-180');
             } else {
