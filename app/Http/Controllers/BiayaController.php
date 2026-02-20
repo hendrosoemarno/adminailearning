@@ -44,14 +44,63 @@ class BiayaController extends Controller
         $month = $request->input('month', date('Y-m'));
 
         // Ambil semua paket yang sesuai dengan PENGATURAN mapel tentor
-        // Pakai lowercase untuk keamanan
         $mapel = strtolower($tentor->mapel);
         $availablePackages = Tarif::where('mapel', $mapel)->orderBy('kode', 'asc')->get();
 
+        $siswas = $this->calculateStudentCosts($tentor, $month);
+
+        // Apply Sorting
+        if (!$request->has('sort')) {
+            $siswas = $siswas->sortBy(function ($siswa) {
+                return [$siswa->sort_order, $siswa->firstname];
+            });
+        } else {
+            $siswas = ($direction == 'asc') ? $siswas->sortBy($sort) : $siswas->sortByDesc($sort);
+        }
+
+        return view('admin.biaya.show', compact('tentor', 'siswas', 'sort', 'direction', 'availablePackages', 'month'));
+    }
+
+    public function summary(Request $request)
+    {
+        $month = $request->input('month', date('Y-m'));
+
+        $subjects = [
+            'mat' => 'Matematika',
+            'bing' => 'Bahasa Inggris',
+            'coding' => 'Coding'
+        ];
+
+        $data = [];
+
+        foreach ($subjects as $key => $label) {
+            $tentors = Tentor::where('mapel', $key)->where('aktif', 1)->orderBy('nama', 'asc')->get();
+
+            foreach ($tentors as $tentor) {
+                $siswas = $this->calculateStudentCosts($tentor, $month);
+
+                // Only add if there are students
+                if ($siswas->count() > 0) {
+                    $siswas = $siswas->sortBy(function ($siswa) {
+                        return [$siswa->sort_order, $siswa->firstname];
+                    });
+
+                    $data[$label][] = [
+                        'tentor' => $tentor,
+                        'siswas' => $siswas
+                    ];
+                }
+            }
+        }
+
+        return view('admin.biaya.summary', compact('data', 'month', 'subjects'));
+    }
+
+    private function calculateStudentCosts(Tentor $tentor, $month)
+    {
         $siswas = $tentor->siswas()->get();
 
         foreach ($siswas as $siswa) {
-            // Kita cari manual agar spesifik ke Tentor ini saja
             $siswaTarif = SiswaTarif::where('id_siswa', $siswa->id)
                 ->where('id_tentor', $tentor->id)
                 ->first();
@@ -59,11 +108,9 @@ class BiayaController extends Controller
             $tarif = ($siswaTarif && $siswaTarif->tarif) ? $siswaTarif->tarif : null;
 
             if ($tarif && $siswaTarif) {
-                // Get custom values or defaults
                 $customTotalMeet = $siswaTarif->custom_total_meet;
                 $tanggalMasuk = $siswaTarif->tanggal_masuk;
 
-                // Calculate default total meet
                 preg_match('/\d+/', $tarif->kode, $matches);
                 $multiplier = isset($matches[0]) ? (int) $matches[0] : 0;
                 $defaultTotalMeet = $multiplier * 4;
@@ -110,23 +157,13 @@ class BiayaController extends Controller
                 $siswa->sort_order = 0;
             }
 
-            // Realisasi KBM
             $siswa->realisasi_kbm = \App\Models\Presensi::where('id_tentor', $tentor->id)
                 ->where('id_siswa', $siswa->id)
                 ->whereRaw("DATE_FORMAT(FROM_UNIXTIME(tgl_kbm), '%Y-%m') = ?", [$month])
                 ->count();
         }
 
-        // Apply Sorting
-        if (!$request->has('sort')) {
-            $siswas = $siswas->sortBy(function ($siswa) {
-                return [$siswa->sort_order, $siswa->firstname];
-            });
-        } else {
-            $siswas = ($direction == 'asc') ? $siswas->sortBy($sort) : $siswas->sortByDesc($sort);
-        }
-
-        return view('admin.biaya.show', compact('tentor', 'siswas', 'sort', 'direction', 'availablePackages', 'month'));
+        return $siswas;
     }
 
     public function salary(Request $request, Tentor $tentor)
