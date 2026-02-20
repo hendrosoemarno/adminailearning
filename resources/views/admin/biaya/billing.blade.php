@@ -60,6 +60,12 @@
                 </thead>
                 <tbody class="divide-y divide-slate-700/50">
                     @forelse($billingData as $data)
+                        @php
+                            $waNumber = preg_replace('/[^0-9]/', '', $data->wa_ortu);
+                            if (strpos($waNumber, '0') === 0) {
+                                $waNumber = '62' . substr($waNumber, 1);
+                            }
+                        @endphp
                         <tr class="hover:bg-slate-700/20 transition-colors">
                             <td class="p-4">
                                 <div class="font-medium text-white">{{ $data->nama_siswa }}</div>
@@ -77,33 +83,15 @@
                             </td>
                             <td class="p-4">
                                 <div class="flex items-center justify-center">
-                                    @php
-                                        // Formatting values for WA
-                                        $monthText = Carbon\Carbon::parse($month)->isoFormat('MMMM');
-                                        $yearText = Carbon\Carbon::parse($month)->isoFormat('YYYY');
-
-                                        $mathText = $data->subjects['mat'] > 0 ? 'Rp' . number_format($data->subjects['mat'], 0, ',', '.') : '-';
-                                        $englishText = $data->subjects['bing'] > 0 ? 'Rp' . number_format($data->subjects['bing'], 0, ',', '.') : '-';
-                                        $codingText = $data->subjects['coding'] > 0 ? 'Rp' . number_format($data->subjects['coding'], 0, ',', '.') : '-';
-                                        $totalText = 'Rp' . number_format($data->total, 0, ',', '.');
-
-                                        $message = "بِســـمِ اللّٰـــهِ الرَّحْــــمٰنِ الرَّحِــــيمِ\nالسَّلاَمُ عَلَيْكُمْ وَرَحْمَةُ اللّٰهِ وَبَرَكَاتُهُ\n\nAyah dan Bunda yang kami hormati, Berikut kami sampaikan tagihan untuk ananda *{$data->nama_siswa}* bulan {$monthText} tahun {$yearText} :\n\n*Math:* {$mathText}\n*English:* {$englishText}\n*Junior Coder:* {$codingText}\n---------------------------------------------\n*Total: {$totalText}*\n\nPembayaran dapat dilakukan melalui:\n✅ BSI – No. Rek. 7306156987 a.n. Hendro Soemarno\n✅ BNI – No. Rek. 0261716072 a.n. Hendro Soemarno\n\nCatatan Penting:\n• Mohon konfirmasi setelah melakukan pembayaran.\n• *Pembayaran paling lambat dilakukan tanggal 5 setiap bulannya.*\n• Apabila tidak melanjutkan belajar di AI Learning, mohon konfirmasi maksimal tanggal 1 setiap bulannya.\n\nTerima kasih atas perhatian dan kerja sama Ayah Bunda.\nJazaakumullaahu khayran.";
-
-                                        // Clean WA number
-                                        $waNumber = preg_replace('/[^0-9]/', '', $data->wa_ortu);
-                                        // If starts with 0, change to 62
-                                        if (strpos($waNumber, '0') === 0) {
-                                            $waNumber = '62' . substr($waNumber, 1);
-                                        }
-                                    @endphp
-                                    <a href="https://wa.me/{{ $waNumber }}?text={{ rawurlencode($message) }}" target="_blank"
+                                    <button type="button"
+                                        onclick="sendWA('{{ $waNumber }}', '{{ addslashes($data->nama_siswa) }}', {{ $data->subjects['mat'] }}, {{ $data->subjects['bing'] }}, {{ $data->subjects['coding'] }}, {{ $data->total }})"
                                         class="inline-flex items-center px-4 py-2 bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold rounded-lg transition-all transform hover:scale-105 shadow-lg shadow-emerald-500/20">
                                         <svg class="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 24 24">
                                             <path
                                                 d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L0 24l6.335-1.662c1.72.937 3.659 1.431 5.63 1.432h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z" />
                                         </svg>
                                         Kirim Tagihan
-                                    </a>
+                                    </button>
                                 </div>
                             </td>
                         </tr>
@@ -123,4 +111,49 @@
             </table>
         </div>
     </div>
+
+    <script>
+        function formatRupiah(angka) {
+            return 'Rp' + angka.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+        }
+
+        function sendWA(waNumber, namaSiswa, mat, bing, coding, total) {
+            var monthNames = ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'];
+            var monthValue = '{{ $month }}';
+            var parts = monthValue.split('-');
+            var bulan = monthNames[parseInt(parts[1]) - 1];
+            var tahun = parts[0];
+
+            var mathText = mat > 0 ? formatRupiah(mat) : '-';
+            var englishText = bing > 0 ? formatRupiah(bing) : '-';
+            var codingText = coding > 0 ? formatRupiah(coding) : '-';
+            var totalText = formatRupiah(total);
+
+            var message = '\u0628\u0650\u0633\u0640\u0640\u0640\u0645\u0650 \u0627\u0644\u0644\u0651\u0670\u0640\u0640\u0640\u0647\u0650 \u0627\u0644\u0631\u0651\u064e\u062d\u0652\u0640\u0640\u0640\u0640\u0645\u0670\u0646\u0650 \u0627\u0644\u0631\u0651\u064e\u062d\u0650\u0640\u0640\u0640\u0640\u064a\u0645\u0650' + '\n'
+                + '\u0627\u0644\u0633\u0651\u064e\u0644\u0627\u064e\u0645\u064f \u0639\u064e\u0644\u064e\u064a\u0652\u0643\u064f\u0645\u0652 \u0648\u064e\u0631\u064e\u062d\u0652\u0645\u064e\u0629\u064f \u0627\u0644\u0644\u0651\u0670\u0647\u0650 \u0648\u064e\u0628\u064e\u0631\u064e\u0643\u064e\u0627\u062a\u064f\u0647\u064f' + '\n'
+                + '\n'
+                + 'Ayah dan Bunda yang kami hormati, Berikut kami sampaikan tagihan untuk ananda *' + namaSiswa + '* bulan ' + bulan + ' tahun ' + tahun + ' :' + '\n'
+                + '\n'
+                + '*Math:* ' + mathText + '\n'
+                + '*English:* ' + englishText + '\n'
+                + '*Junior Coder:* ' + codingText + '\n'
+                + '---------------------------------------------' + '\n'
+                + '*Total: ' + totalText + '*' + '\n'
+                + '\n'
+                + 'Pembayaran dapat dilakukan melalui:' + '\n'
+                + '\u2705 BSI \u2013 No. Rek. 7306156987 a.n. Hendro Soemarno' + '\n'
+                + '\u2705 BNI \u2013 No. Rek. 0261716072 a.n. Hendro Soemarno' + '\n'
+                + '\n'
+                + 'Catatan Penting:' + '\n'
+                + '\u2022 Mohon konfirmasi setelah melakukan pembayaran.' + '\n'
+                + '\u2022 *Pembayaran paling lambat dilakukan tanggal 5 setiap bulannya.*' + '\n'
+                + '\u2022 Apabila tidak melanjutkan belajar di AI Learning, mohon konfirmasi maksimal tanggal 1 setiap bulannya.' + '\n'
+                + '\n'
+                + 'Terima kasih atas perhatian dan kerja sama Ayah Bunda.' + '\n'
+                + 'Jazaakumullaahu khayran.';
+
+            var url = 'https://wa.me/' + waNumber + '?text=' + encodeURIComponent(message);
+            window.open(url, '_blank');
+        }
+    </script>
 @endsection
