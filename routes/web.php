@@ -61,6 +61,7 @@ Route::middleware('auth')->group(function () {
     // Biaya Management
     Route::get('/biaya', [\App\Http\Controllers\BiayaController::class, 'index'])->name('biaya.index');
     Route::get('/biaya/summary', [\App\Http\Controllers\BiayaController::class, 'summary'])->name('biaya.summary');
+    Route::get('/biaya/billing', [\App\Http\Controllers\BiayaController::class, 'billing'])->name('biaya.billing');
     Route::get('/biaya/{tentor}', [\App\Http\Controllers\BiayaController::class, 'show'])->name('biaya.show');
     Route::get('/biaya/{tentor}/salary', [\App\Http\Controllers\BiayaController::class, 'salary'])->name('biaya.salary');
     Route::get('/biaya/{tentor}/salary/export', [\App\Http\Controllers\BiayaController::class, 'salaryExport'])->name('biaya.salary.export');

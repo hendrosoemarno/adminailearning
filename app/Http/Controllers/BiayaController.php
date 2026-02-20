@@ -47,7 +47,10 @@ class BiayaController extends Controller
         $mapel = strtolower($tentor->mapel);
         $availablePackages = Tarif::where('mapel', $mapel)->orderBy('kode', 'asc')->get();
 
-        $siswas = $this->calculateStudentCosts($tentor, $month);
+        $siswas = $tentor->siswas()->get();
+        foreach ($siswas as $siswa) {
+            $this->applyStudentCosts($siswa, $tentor, $month);
+        }
 
         // Apply Sorting
         if (!$request->has('sort')) {
@@ -77,7 +80,10 @@ class BiayaController extends Controller
             $tentors = Tentor::where('mapel', $key)->where('aktif', 1)->orderBy('nama', 'asc')->get();
 
             foreach ($tentors as $tentor) {
-                $siswas = $this->calculateStudentCosts($tentor, $month);
+                $siswas = $tentor->siswas()->get();
+                foreach ($siswas as $siswa) {
+                    $this->applyStudentCosts($siswa, $tentor, $month);
+                }
 
                 // Only add if there are students
                 if ($siswas->count() > 0) {
@@ -96,74 +102,137 @@ class BiayaController extends Controller
         return view('admin.biaya.summary', compact('data', 'month', 'subjects'));
     }
 
-    private function calculateStudentCosts(Tentor $tentor, $month)
+    public function billing(Request $request)
     {
-        $siswas = $tentor->siswas()->get();
+        $month = $request->input('month', date('Y-m'));
+        $search = $request->input('search');
 
-        foreach ($siswas as $siswa) {
-            $siswaTarif = SiswaTarif::where('id_siswa', $siswa->id)
-                ->where('id_tentor', $tentor->id)
-                ->first();
+        // Join to get students who have a relationship in ai_tentor_siswa
+        $query = MoodleUser::whereExists(function ($query) {
+            $query->select(\DB::raw(1))
+                ->from('ai_tentor_siswa')
+                ->whereRaw('mdlu6_user.id = ai_tentor_siswa.id_siswa');
+        });
 
-            $tarif = ($siswaTarif && $siswaTarif->tarif) ? $siswaTarif->tarif : null;
-
-            if ($tarif && $siswaTarif) {
-                $customTotalMeet = $siswaTarif->custom_total_meet;
-                $tanggalMasuk = $siswaTarif->tanggal_masuk;
-
-                preg_match('/\d+/', $tarif->kode, $matches);
-                $multiplier = isset($matches[0]) ? (int) $matches[0] : 0;
-                $defaultTotalMeet = $multiplier * 4;
-
-                $totalMeet = $customTotalMeet ?? $defaultTotalMeet;
-                $meetRatio = $defaultTotalMeet > 0 ? $totalMeet / $defaultTotalMeet : 1;
-
-                $gaji = $tarif->tentor * $meetRatio;
-                $manajemen = $tarif->manajemen * $meetRatio;
-                $aplikasi = $tarif->aplikasi;
-
-                if ($tanggalMasuk) {
-                    $day = (int) date('d', strtotime($tanggalMasuk));
-                    if ($day > 20)
-                        $aplikasi *= 0.5;
-                    elseif ($day >= 11)
-                        $aplikasi *= (2 / 3);
-                }
-
-                $siswa->biaya = $gaji + $manajemen + $aplikasi;
-                $siswa->ai_learning = $manajemen + $aplikasi;
-                $siswa->gaji_tentor = $gaji;
-                $siswa->paket_kode = $tarif->kode;
-                $siswa->id_tarif = $tarif->id;
-                $siswa->total_meet = $totalMeet;
-                $siswa->default_total_meet = $defaultTotalMeet;
-                $siswa->tanggal_masuk = $tanggalMasuk;
-                $siswa->custom_total_meet = $customTotalMeet;
-                $siswa->is_custom = ($customTotalMeet !== null || $tanggalMasuk !== null);
-                $siswa->is_salary_hidden = (bool) ($siswaTarif->is_salary_hidden ?? false);
-                $siswa->sort_order = $siswaTarif->sort_order;
-            } else {
-                $siswa->biaya = 0;
-                $siswa->ai_learning = 0;
-                $siswa->gaji_tentor = 0;
-                $siswa->paket_kode = '-';
-                $siswa->id_tarif = null;
-                $siswa->total_meet = 0;
-                $siswa->default_total_meet = 0;
-                $siswa->tanggal_masuk = null;
-                $siswa->custom_total_meet = null;
-                $siswa->is_custom = false;
-                $siswa->is_salary_hidden = false;
-                $siswa->sort_order = 0;
-            }
-
-            $siswa->realisasi_kbm = \App\Models\Presensi::where('id_tentor', $tentor->id)
-                ->where('id_siswa', $siswa->id)
-                ->whereRaw("DATE_FORMAT(FROM_UNIXTIME(tgl_kbm), '%Y-%m') = ?", [$month])
-                ->count();
+        if ($search) {
+            $query->where(function ($q) use ($search) {
+                $q->where('firstname', 'like', "%{$search}%")
+                    ->orWhere('lastname', 'like', "%{$search}%");
+            });
         }
 
-        return $siswas;
+        $siswas = $query->orderBy('firstname', 'asc')->get();
+        $billingData = [];
+
+        foreach ($siswas as $siswa) {
+            $detil = \DB::table('ai_user_detil')->where('id', $siswa->id)->first();
+
+            $item = [
+                'id' => $siswa->id,
+                'nama_siswa' => $siswa->firstname . ' ' . $siswa->lastname,
+                'nama_ortu' => $detil->nama_ortu ?? '-',
+                'wa_ortu' => $detil->wa_ortu ?? '-',
+                'subjects' => [
+                    'mat' => 0,
+                    'bing' => 0,
+                    'coding' => 0
+                ],
+                'total' => 0
+            ];
+
+            $tentors = $siswa->tentors()->get();
+            foreach ($tentors as $tentor) {
+                $costData = $this->getStudentCost($siswa, $tentor, $month);
+                $mapel = strtolower($tentor->mapel);
+                if (isset($item['subjects'][$mapel])) {
+                    $item['subjects'][$mapel] += $costData['biaya'];
+                }
+                $item['total'] += $costData['biaya'];
+            }
+
+            if ($item['total'] > 0) {
+                $billingData[] = (object) $item;
+            }
+        }
+
+        return view('admin.biaya.billing', compact('billingData', 'month', 'search'));
+    }
+
+    private function applyStudentCosts($siswa, $tentor, $month)
+    {
+        $data = $this->getStudentCost($siswa, $tentor, $month);
+        foreach ($data as $key => $value) {
+            $siswa->$key = $value;
+        }
+    }
+
+    private function getStudentCost($siswa, $tentor, $month)
+    {
+        $siswaTarif = SiswaTarif::where('id_siswa', $siswa->id)
+            ->where('id_tentor', $tentor->id)
+            ->first();
+
+        $tarif = ($siswaTarif && $siswaTarif->tarif) ? $siswaTarif->tarif : null;
+
+        $result = [
+            'biaya' => 0,
+            'ai_learning' => 0,
+            'gaji_tentor' => 0,
+            'paket_kode' => '-',
+            'id_tarif' => null,
+            'total_meet' => 0,
+            'default_total_meet' => 0,
+            'tanggal_masuk' => null,
+            'custom_total_meet' => null,
+            'is_custom' => false,
+            'is_salary_hidden' => false,
+            'sort_order' => 0,
+            'realisasi_kbm' => 0
+        ];
+
+        if ($tarif && $siswaTarif) {
+            $customTotalMeet = $siswaTarif->custom_total_meet;
+            $tanggalMasuk = $siswaTarif->tanggal_masuk;
+
+            preg_match('/\d+/', $tarif->kode, $matches);
+            $multiplier = isset($matches[0]) ? (int) $matches[0] : 0;
+            $defaultTotalMeet = $multiplier * 4;
+
+            $totalMeet = $customTotalMeet ?? $defaultTotalMeet;
+            $meetRatio = $defaultTotalMeet > 0 ? $totalMeet / $defaultTotalMeet : 1;
+
+            $gaji = $tarif->tentor * $meetRatio;
+            $manajemen = $tarif->manajemen * $meetRatio;
+            $aplikasi = $tarif->aplikasi;
+
+            if ($tanggalMasuk) {
+                $day = (int) date('d', strtotime($tanggalMasuk));
+                if ($day > 20)
+                    $aplikasi *= 0.5;
+                elseif ($day >= 11)
+                    $aplikasi *= (2 / 3);
+            }
+
+            $result['biaya'] = $gaji + $manajemen + $aplikasi;
+            $result['ai_learning'] = $manajemen + $aplikasi;
+            $result['gaji_tentor'] = $gaji;
+            $result['paket_kode'] = $tarif->kode;
+            $result['id_tarif'] = $tarif->id;
+            $result['total_meet'] = $totalMeet;
+            $result['default_total_meet'] = $defaultTotalMeet;
+            $result['tanggal_masuk'] = $tanggalMasuk;
+            $result['custom_total_meet'] = $customTotalMeet;
+            $result['is_custom'] = ($customTotalMeet !== null || $tanggalMasuk !== null);
+            $result['is_salary_hidden'] = (bool) ($siswaTarif->is_salary_hidden ?? false);
+            $result['sort_order'] = $siswaTarif->sort_order;
+        }
+
+        $result['realisasi_kbm'] = \App\Models\Presensi::where('id_tentor', $tentor->id)
+            ->where('id_siswa', $siswa->id)
+            ->whereRaw("DATE_FORMAT(FROM_UNIXTIME(tgl_kbm), '%Y-%m') = ?", [$month])
+            ->count();
+
+        return $result;
     }
 
     public function salary(Request $request, Tentor $tentor)

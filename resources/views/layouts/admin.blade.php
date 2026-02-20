@@ -349,6 +349,10 @@
                                         class="flex items-center px-4 py-2 rounded-lg text-sm {{ request()->routeIs('biaya.summary') ? 'text-blue-400 font-bold' : 'text-slate-400 hover:bg-slate-800 hover:text-slate-100' }}">
                                         <span class="sidebar-label">Tabel Keseluruhan</span>
                                     </a>
+                                    <a href="{{ route('biaya.billing') }}"
+                                        class="flex items-center px-4 py-2 rounded-lg text-sm {{ request()->routeIs('biaya.billing') ? 'text-blue-400 font-bold' : 'text-slate-400 hover:bg-slate-800 hover:text-slate-100' }}">
+                                        <span class="sidebar-label">Tagihan WA</span>
+                                    </a>
                                 </div>
                             </div>
                             <a href="{{ route('tarifs.index') }}"
