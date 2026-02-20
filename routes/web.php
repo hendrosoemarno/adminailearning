@@ -69,6 +69,7 @@ Route::middleware('auth')->group(function () {
     Route::post('/biaya/update-custom', [\App\Http\Controllers\BiayaController::class, 'updateCustomData'])->name('biaya.update-custom');
     Route::post('/biaya/toggle-salary', [\App\Http\Controllers\BiayaController::class, 'toggleSalaryStatus'])->name('biaya.toggle-salary');
     Route::post('/biaya/update-order', [\App\Http\Controllers\BiayaController::class, 'updateOrder'])->name('biaya.update-order');
+    Route::post('/biaya/save-option', [\App\Http\Controllers\BiayaController::class, 'saveOption'])->name('biaya.save-option');
 
     // Tarif Management
     Route::get('/tarifs/history', [\App\Http\Controllers\TarifController::class, 'history'])->name('tarifs.history');

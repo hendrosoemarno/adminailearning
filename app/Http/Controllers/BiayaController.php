@@ -155,7 +155,11 @@ class BiayaController extends Controller
             }
         }
 
-        return view('admin.biaya.billing', compact('billingData', 'month', 'search'));
+        $template = \App\Models\Option::get('wa_billing_template');
+        $msgBulan = \App\Models\Option::get('wa_billing_msg_bulan');
+        $msgTahun = \App\Models\Option::get('wa_billing_msg_tahun');
+
+        return view('admin.biaya.billing', compact('billingData', 'month', 'search', 'template', 'msgBulan', 'msgTahun'));
     }
 
     private function applyStudentCosts($siswa, $tentor, $month)
@@ -570,6 +574,18 @@ class BiayaController extends Controller
                 ['sort_order' => $index]
             );
         }
+
+        return response()->json(['success' => true]);
+    }
+
+    public function saveOption(Request $request)
+    {
+        $request->validate([
+            'key' => 'required|string',
+            'value' => 'nullable|string'
+        ]);
+
+        \App\Models\Option::set($request->key, $request->value);
 
         return response()->json(['success' => true]);
     }
