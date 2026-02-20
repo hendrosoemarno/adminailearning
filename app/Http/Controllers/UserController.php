@@ -14,6 +14,7 @@ class UserController extends Controller
     {
         $search = $request->input('search');
         $status = $request->input('status', 'active'); // Default to active
+        $perPage = $request->input('per_page', 20);
         $sort = $request->input('sort', 'username');
         $direction = $request->input('direction', 'asc');
 
@@ -53,11 +54,15 @@ class UserController extends Controller
             });
         }
 
-        $users = $query->orderBy($sort, $direction)
-            ->paginate(20)
-            ->appends($request->all());
+        $query->orderBy($sort, $direction);
 
-        return view('user.index', compact('users', 'search', 'sort', 'direction', 'status'));
+        if ($perPage === 'all') {
+            $users = $query->paginate(9999)->appends($request->all());
+        } else {
+            $users = $query->paginate((int) $perPage)->appends($request->all());
+        }
+
+        return view('user.index', compact('users', 'search', 'sort', 'direction', 'status', 'perPage'));
     }
 
     public function edit($id)

@@ -18,7 +18,7 @@
     <!-- Search -->
     <div class="bg-slate-800/50 backdrop-blur-sm border border-slate-700 p-6 rounded-xl shadow-lg mb-8">
         <form method="GET" action="{{ route('dashboard') }}" class="flex flex-col md:flex-row gap-4 items-end">
-            <div class="flex-1 grid grid-cols-1 md:grid-cols-4 gap-4">
+            <div class="flex-1 grid grid-cols-1 md:grid-cols-5 gap-4">
                 <div class="md:col-span-3 flex flex-col gap-1">
                     <label for="search" class="text-sm font-medium text-slate-400">Search</label>
                     <div class="relative">
@@ -42,13 +42,23 @@
                         <option value="suspended" {{ $status == 'suspended' ? 'selected' : '' }}>Suspended</option>
                     </select>
                 </div>
+                <div class="flex flex-col gap-1">
+                    <label for="per_page" class="text-sm font-medium text-slate-400">Tampilkan</label>
+                    <select name="per_page" id="per_page" onchange="this.form.submit()"
+                        class="w-full bg-slate-900 border border-slate-700 rounded-lg px-4 py-2 text-white focus:ring-2 focus:ring-blue-500 outline-none transition-all">
+                        <option value="20" {{ $perPage == '20' ? 'selected' : '' }}>20</option>
+                        <option value="50" {{ $perPage == '50' ? 'selected' : '' }}>50</option>
+                        <option value="100" {{ $perPage == '100' ? 'selected' : '' }}>100</option>
+                        <option value="all" {{ $perPage == 'all' ? 'selected' : '' }}>Semua</option>
+                    </select>
+                </div>
             </div>
             <div class="w-full md:w-auto flex items-center gap-3 mt-4 md:mt-0">
                 <button type="submit"
                     class="w-full md:w-auto px-6 py-2 bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-blue-500 hover:to-cyan-500 text-white font-semibold rounded-lg shadow-lg hover:shadow-blue-500/25 transition-all duration-200">
                     Filter
                 </button>
-                @if(request('search') || $status != 'active')
+                @if(request('search') || $status != 'active' || $perPage != '20')
                     <a href="{{ route('dashboard') }}"
                         class="text-slate-400 hover:text-white text-sm whitespace-nowrap transition-colors py-2">Reset</a>
                 @endif
