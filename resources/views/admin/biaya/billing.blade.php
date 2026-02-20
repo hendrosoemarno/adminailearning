@@ -46,37 +46,106 @@
     </div>
 
     <!-- Message Configuration -->
-    <div
-        class="bg-slate-800/30 border border-slate-700/50 p-6 rounded-xl mb-8 flex flex-col md:flex-row items-center gap-6">
-        <div class="flex items-center gap-3">
-            <svg class="w-5 h-5 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                    d="M11 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m3 7h3m-3 4h3m-6-4h.01M9 16h.01">
-                </path>
-            </svg>
-            <span class="text-sm font-bold text-slate-300 uppercase tracking-wider">Pengaturan Pesan:</span>
+    <div class="bg-slate-800/30 border border-slate-700/50 p-6 rounded-2xl mb-8 space-y-6">
+        <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+            <div class="flex items-center gap-3">
+                <div class="p-2 bg-blue-500/20 rounded-lg text-blue-400">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m3 7h3m-3 4h3m-6-4h.01M9 16h.01"></path>
+                    </svg>
+                </div>
+                <span class="text-sm font-bold text-slate-300 uppercase tracking-wider">Pengaturan Pesan & Template</span>
+            </div>
+            <div class="flex items-center gap-4">
+                <div class="flex items-center gap-2">
+                    <label class="text-xs text-slate-500 uppercase font-bold">Bulan:</label>
+                    <select id="msg-bulan-select" onchange="renderAllMessages()" class="bg-slate-900 border border-slate-700 rounded-lg px-3 py-1.5 text-sm text-white focus:ring-2 focus:ring-blue-500 outline-none">
+                        @foreach(['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','September','Oktober','November','Desember'] as $m)
+                            @php
+                                $monthNames = ['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','September','Oktober','November','Desember'];
+                                $parts = explode('-', $month);
+                                $currentMonthName = $monthNames[(int)$parts[1] - 1];
+                            @endphp
+                            <option value="{{ $m }}" {{ $currentMonthName == $m ? 'selected' : '' }}>{{ $m }}</option>
+                        @endforeach
+                    </select>
+                </div>
+                <div class="flex items-center gap-2">
+                    <label class="text-xs text-slate-500 uppercase font-bold">Tahun:</label>
+                    <select id="msg-tahun-select" onchange="renderAllMessages()" class="bg-slate-900 border border-slate-700 rounded-lg px-3 py-1.5 text-sm text-white focus:ring-2 focus:ring-blue-500 outline-none">
+                        @for($y = date('Y')-1; $y <= date('Y')+1; $y++)
+                            <option value="{{ $y }}" {{ $parts[0] == $y ? 'selected' : '' }}>{{ $y }}</option>
+                        @endfor
+                    </select>
+                </div>
+            </div>
         </div>
-        <div class="flex flex-wrap items-center gap-4">
-            <div class="flex items-center gap-2">
-                <label class="text-xs text-slate-500 uppercase font-bold">Bulan:</label>
-                <select id="msg-bulan-select" onchange="updateMessageDefaults()"
-                    class="bg-slate-900 border border-slate-700 rounded-lg px-3 py-1.5 text-sm text-white focus:ring-2 focus:ring-blue-500 outline-none">
-                    @foreach(['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'] as $m)
-                        <option value="{{ $m }}" {{ (isset($bulan) && $bulan == $m) ? 'selected' : '' }}>{{ $m }}</option>
-                    @endforeach
-                </select>
+
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <div class="lg:col-span-2">
+                <label for="template-editor" class="block text-xs font-bold text-slate-500 uppercase tracking-widest mb-2">Edit Template Pesan:</label>
+                <textarea id="template-editor" rows="12" oninput="renderAllMessages()"
+                    class="w-full bg-slate-900/80 border border-slate-700 rounded-xl p-4 text-sm text-slate-300 font-sans leading-relaxed focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all">بِســـمِ اللّٰـــهِ  الرَّحْــــمٰنِ الرَّحِــــيمِ
+السَّلاَمُ عَلَيْكُمْ وَرَحْمَةُ اللّٰهِ وَبَرَكَاتُهُ
+
+Ayah dan Bunda yang kami hormati, Berikut kami sampaikan tagihan untuk ananda *{nama}* bulan {bulan} tahun {tahun}    :
+
+*Math:* {math}
+*English:* {english}
+*Junior Coder:* {coding}
+---------------------------------------------
+*Total: {total}*
+
+Pembayaran dapat dilakukan melalui:
+✅ BSI – No. Rek. 7306156987 a.n. Hendro Soemarno
+✅ BNI – No. Rek. 0261716072 a.n. Hendro Soemarno
+
+Catatan Penting:
+• Mohon konfirmasi setelah melakukan pembayaran.
+• *Pembayaran paling lambat dilakukan tanggal 5 setiap bulannya.*
+• Apabila tidak melanjutkan belajar di AI Learning, mohon konfirmasi maksimal tanggal 1 setiap bulannya.
+
+Terima kasih atas perhatian dan kerja sama Ayah Bunda.
+Jazaakumullaahu khayran.</textarea>
             </div>
-            <div class="flex items-center gap-2">
-                <label class="text-xs text-slate-500 uppercase font-bold">Tahun:</label>
-                <select id="msg-tahun-select" onchange="updateMessageDefaults()"
-                    class="bg-slate-900 border border-slate-700 rounded-lg px-3 py-1.5 text-sm text-white focus:ring-2 focus:ring-blue-500 outline-none">
-                    @for($y = date('Y') - 1; $y <= date('Y') + 1; $y++)
-                        <option value="{{ $y }}" {{ (isset($tahun) && $tahun == $y) ? 'selected' : '' }}>{{ $y }}</option>
-                    @endfor
-                </select>
-            </div>
-            <div class="text-[10px] text-slate-500 italic ml-2">
-                *Mengubah ini akan mengupdate tulisan "bulan" dan "tahun" di semua draf pesan di bawah.
+            <div class="bg-slate-900/50 rounded-xl p-4 border border-slate-700/50">
+                <span class="block text-xs font-bold text-slate-500 uppercase tracking-widest mb-4">Placeholders Tersedia:</span>
+                <div class="space-y-3">
+                    <div class="flex items-center justify-between text-xs p-2 bg-slate-950 rounded border border-slate-800">
+                        <code class="text-blue-400 font-bold">{nama}</code>
+                        <span class="text-slate-500">Nama Siswa</span>
+                    </div>
+                    <div class="flex items-center justify-between text-xs p-2 bg-slate-950 rounded border border-slate-800">
+                        <code class="text-blue-400 font-bold">{bulan}</code>
+                        <span class="text-slate-500">Bulan Pilihan</span>
+                    </div>
+                    <div class="flex items-center justify-between text-xs p-2 bg-slate-950 rounded border border-slate-800">
+                        <code class="text-blue-400 font-bold">{tahun}</code>
+                        <span class="text-slate-500">Tahun Pilihan</span>
+                    </div>
+                    <div class="flex items-center justify-between text-xs p-2 bg-slate-950 rounded border border-slate-800">
+                        <code class="text-blue-400 font-bold">{math}</code>
+                        <span class="text-slate-500">Tagihan Math</span>
+                    </div>
+                    <div class="flex items-center justify-between text-xs p-2 bg-slate-950 rounded border border-slate-800">
+                        <code class="text-blue-400 font-bold">{english}</code>
+                        <span class="text-slate-500">Tagihan English</span>
+                    </div>
+                    <div class="flex items-center justify-between text-xs p-2 bg-slate-950 rounded border border-slate-800">
+                        <code class="text-blue-400 font-bold">{coding}</code>
+                        <span class="text-slate-500">Tagihan Coding</span>
+                    </div>
+                    <div class="flex items-center justify-between text-xs p-2 bg-slate-950 rounded border border-slate-800">
+                        <code class="text-blue-400 font-bold">{total}</code>
+                        <span class="text-slate-500">Total Tagihan</span>
+                    </div>
+                </div>
+                <div class="mt-6 p-3 bg-blue-500/10 border border-blue-500/20 rounded-lg">
+                    <div class="flex gap-2 items-start">
+                        <svg class="w-4 h-4 text-blue-400 mt-0.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                        <p class="text-[10px] text-slate-400 leading-relaxed">Gunakan placeholder di atas dalam draf Anda. Mereka akan otomatis diganti dengan data siswa saat Anda menyalin atau melihat draf di bawah.</p>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
@@ -84,110 +153,93 @@
     <div class="space-y-6 pb-12">
         @forelse($billingData as $data)
             @php
-                $monthNames = ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'];
                 $parts = explode('-', $month);
-                $bulan = $monthNames[(int) $parts[1] - 1];
-                $tahun = $parts[0];
-
                 $mathText = $data->subjects['mat'] > 0 ? 'Rp' . number_format($data->subjects['mat'], 0, ',', '.') : '-';
                 $englishText = $data->subjects['bing'] > 0 ? 'Rp' . number_format($data->subjects['bing'], 0, ',', '.') : '-';
                 $codingText = $data->subjects['coding'] > 0 ? 'Rp' . number_format($data->subjects['coding'], 0, ',', '.') : '-';
                 $totalText = 'Rp' . number_format($data->total, 0, ',', '.');
             @endphp
-
-            <div
-                class="bg-slate-800/40 border border-slate-700 rounded-2xl overflow-hidden shadow-sm hover:border-slate-600 transition-all">
-                <div
-                    class="p-6 border-b border-slate-700 flex flex-col md:flex-row md:items-center justify-between gap-4 bg-slate-900/40">
+            
+            <div class="student-card bg-slate-800/40 border border-slate-700 rounded-2xl overflow-hidden shadow-sm hover:border-slate-600 transition-all"
+                data-id="{{ $data->id }}"
+                data-nama="{{ $data->nama_siswa }}"
+                data-math="{{ $mathText }}"
+                data-english="{{ $englishText }}"
+                data-coding="{{ $codingText }}"
+                data-total="{{ $totalText }}">
+                
+                <div class="p-6 border-b border-slate-700 flex flex-col md:flex-row md:items-center justify-between gap-4 bg-slate-900/40">
                     <div class="flex items-center gap-4">
-                        <div
-                            class="w-12 h-12 rounded-full bg-emerald-500/10 flex items-center justify-center text-emerald-500 text-xl font-bold">
+                        <div class="w-12 h-12 rounded-full bg-emerald-500/10 flex items-center justify-center text-emerald-500 text-xl font-bold">
                             {{ substr($data->nama_siswa, 0, 1) }}
                         </div>
                         <div>
                             <h3 class="text-white font-bold text-lg leading-tight">{{ $data->nama_siswa }}</h3>
                             <div class="flex items-center gap-4 mt-1">
-                                <span class="text-xs text-slate-400">Ortu: <span
-                                        class="text-slate-200">{{ $data->nama_ortu }}</span></span>
-                                <span class="text-xs text-slate-400">WA: <span
-                                        class="text-emerald-400 font-mono">{{ $data->wa_ortu }}</span></span>
+                                <span class="text-xs text-slate-400">Ortu: <span class="text-slate-200">{{ $data->nama_ortu }}</span></span>
+                                <span class="text-xs text-slate-400">WA: <span class="text-emerald-400 font-mono">{{ $data->wa_ortu }}</span></span>
                             </div>
                         </div>
                     </div>
                     <div class="flex items-center gap-3">
-                        <button onclick="copyToClipboard('msg-{{ $data->id }}')"
+                        <button onclick="copyToClipboard('msg-{{ $data->id }}')" 
                             class="flex items-center gap-2 px-6 py-2.5 bg-emerald-600 hover:bg-emerald-500 text-white text-sm font-bold rounded-xl transition-all shadow-lg shadow-emerald-500/20 active:scale-95">
-                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01">
-                                </path>
-                            </svg>
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"></path></svg>
                             Salin Draf Pesan
                         </button>
                     </div>
                 </div>
                 <div class="p-6 bg-slate-950/20">
-                    <div class="text-[10px] text-slate-500 uppercase font-bold tracking-widest mb-3">Tampilan Pesan WA:</div>
-                    <div id="msg-{{ $data->id }}"
-                        class="whitespace-pre-wrap font-sans text-sm text-slate-300 bg-slate-950/80 p-8 rounded-2xl border border-slate-700/50 leading-relaxed shadow-inner select-all">
-                        بِســـمِ اللّٰـــهِ الرَّحْــــمٰنِ الرَّحِــــيمِ
-                        السَّلاَمُ عَلَيْكُمْ وَرَحْمَةُ اللّٰهِ وَبَرَكَاتُهُ
-
-                        Ayah dan Bunda yang kami hormati, Berikut kami sampaikan tagihan untuk ananda *{{ $data->nama_siswa }}*
-                        bulan <span class="msg-bulan-label">{{ $bulan }}</span> tahun <span
-                            class="msg-tahun-label">{{ $tahun }}</span> :
-
-                        *Math:* {{ $mathText }}
-                        *English:* {{ $englishText }}
-                        *Junior Coder:* {{ $codingText }}
-                        ---------------------------------------------
-                        *Total: {{ $totalText }}*
-
-                        Pembayaran dapat dilakukan melalui:
-                        ✅ BSI – No. Rek. 7306156987 a.n. Hendro Soemarno
-                        ✅ BNI – No. Rek. 0261716072 a.n. Hendro Soemarno
-
-                        Catatan Penting:
-                        • Mohon konfirmasi setelah melakukan pembayaran.
-                        • *Pembayaran paling lambat dilakukan tanggal 5 setiap bulannya.*
-                        • Apabila tidak melanjutkan belajar di AI Learning, mohon konfirmasi maksimal tanggal 1 setiap bulannya.
-
-                        Terima kasih atas perhatian dan kerja sama Ayah Bunda.
-                        Jazaakumullaahu khayran.</div>
+                    <div class="text-[10px] text-slate-500 uppercase font-bold tracking-widest mb-3 text-center lg:text-left">Tampilan Pesan WA:</div>
+                    <div id="msg-{{ $data->id }}" class="msg-content whitespace-pre-wrap font-sans text-sm text-slate-300 bg-slate-950/80 p-8 rounded-2xl border border-slate-700/50 leading-relaxed shadow-inner select-all"></div>
                 </div>
             </div>
         @empty
             <div class="bg-slate-800/50 p-20 rounded-3xl border border-slate-700 border-dashed text-center">
-                <svg class="w-16 h-16 text-slate-600 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                        d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                </svg>
+                <svg class="w-16 h-16 text-slate-600 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
                 <p class="text-slate-500 text-lg">Tidak ada data tagihan yang sesuai dengan filter atau pencarian Anda.</p>
             </div>
         @endforelse
     </div>
 
     <script>
-        function updateMessageDefaults() {
+        function renderAllMessages() {
+            const template = document.getElementById('template-editor').value;
             const bulan = document.getElementById('msg-bulan-select').value;
             const tahun = document.getElementById('msg-tahun-select').value;
-
-            document.querySelectorAll('.msg-bulan-label').forEach(el => el.innerText = bulan);
-            document.querySelectorAll('.msg-tahun-label').forEach(el => el.innerText = tahun);
+            
+            document.querySelectorAll('.student-card').forEach(card => {
+                const id = card.getAttribute('data-id');
+                const nama = card.getAttribute('data-nama');
+                const math = card.getAttribute('data-math');
+                const english = card.getAttribute('data-english');
+                const coding = card.getAttribute('data-coding');
+                const total = card.getAttribute('data-total');
+                
+                let message = template
+                    .replace(/{nama}/g, nama)
+                    .replace(/{bulan}/g, bulan)
+                    .replace(/{tahun}/g, tahun)
+                    .replace(/{math}/g, math)
+                    .replace(/{english}/g, english)
+                    .replace(/{coding}/g, coding)
+                    .replace(/{total}/g, total);
+                
+                document.getElementById(`msg-${id}`).innerText = message;
+            });
         }
 
         function copyToClipboard(elementId) {
             const el = document.getElementById(elementId);
             const text = el.innerText;
-
+            
             navigator.clipboard.writeText(text).then(() => {
-                // Show a nice toast or feedback
                 const btn = event.currentTarget;
                 const originalText = btn.innerHTML;
                 btn.innerHTML = '<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg> Berhasil Disalin!';
                 btn.classList.remove('bg-emerald-600');
                 btn.classList.add('bg-blue-600');
-
+                
                 setTimeout(() => {
                     btn.innerHTML = originalText;
                     btn.classList.remove('bg-blue-600');
@@ -197,5 +249,10 @@
                 alert('Gagal menyalin text. Silakan salin secara manual.');
             });
         }
+
+        // Initial render
+        document.addEventListener('DOMContentLoaded', function() {
+            renderAllMessages();
+        });
     </script>
 @endsection
