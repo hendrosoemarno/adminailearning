@@ -87,7 +87,7 @@
                                         $codingText = $data->subjects['coding'] > 0 ? 'Rp' . number_format($data->subjects['coding'], 0, ',', '.') : '-';
                                         $totalText = 'Rp' . number_format($data->total, 0, ',', '.');
 
-                                        $message = "بِســـمِ اللّٰـــهِ  الرَّحْــــمٰنِ الرَّحِــــيمِ\nالسَّلاَمُ عَلَيْكُمْ وَرَحْمَةُ اللّٰهِ وَبَرَكَاتُهُ\n\nAyah dan Bunda yang kami hormati, Berikut kami sampaikan tagihan untuk ananda *{$data->nama_siswa}* bulan {$monthText} tahun {$yearText}    :\n\n*Math:* {$mathText}\n*English:* {$englishText}\n*Junior Coder:* {$codingText}\n---------------------------------------------\n*Total: {$totalText}*\n\nPembayaran dapat dilakukan melalui:\n✅ BSI – No. Rek. 7306156987 a.n. Hendro Soemarno\n✅ BNI – No. Rek. 0261716072 a.n. Hendro Soemarno\n\nCatatan Penting:\n• Mohon konfirmasi setelah melakukan pembayaran.\n• *Pembayaran paling lambat dilakukan tanggal 5 setiap bulannya.*\n• Apabila tidak melanjutkan belajar di AI Learning, mohon konfirmasi maksimal tanggal 1 setiap bulannya.\n\nTerima kasih atas perhatian dan kerja sama Ayah Bunda.\nJazaakumullaahu khayran.";
+                                        $message = "بِســـمِ اللّٰـــهِ الرَّحْــــمٰنِ الرَّحِــــيمِ\nالسَّلاَمُ عَلَيْكُمْ وَرَحْمَةُ اللّٰهِ وَبَرَكَاتُهُ\n\nAyah dan Bunda yang kami hormati, Berikut kami sampaikan tagihan untuk ananda *{$data->nama_siswa}* bulan {$monthText} tahun {$yearText} :\n\n*Math:* {$mathText}\n*English:* {$englishText}\n*Junior Coder:* {$codingText}\n---------------------------------------------\n*Total: {$totalText}*\n\nPembayaran dapat dilakukan melalui:\n✅ BSI – No. Rek. 7306156987 a.n. Hendro Soemarno\n✅ BNI – No. Rek. 0261716072 a.n. Hendro Soemarno\n\nCatatan Penting:\n• Mohon konfirmasi setelah melakukan pembayaran.\n• *Pembayaran paling lambat dilakukan tanggal 5 setiap bulannya.*\n• Apabila tidak melanjutkan belajar di AI Learning, mohon konfirmasi maksimal tanggal 1 setiap bulannya.\n\nTerima kasih atas perhatian dan kerja sama Ayah Bunda.\nJazaakumullaahu khayran.";
 
                                         // Clean WA number
                                         $waNumber = preg_replace('/[^0-9]/', '', $data->wa_ortu);
@@ -96,7 +96,7 @@
                                             $waNumber = '62' . substr($waNumber, 1);
                                         }
                                     @endphp
-                                    <a href="https://wa.me/{{ $waNumber }}?text={{ urlencode($message) }}" target="_blank"
+                                    <a href="https://wa.me/{{ $waNumber }}?text={{ rawurlencode($message) }}" target="_blank"
                                         class="inline-flex items-center px-4 py-2 bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold rounded-lg transition-all transform hover:scale-105 shadow-lg shadow-emerald-500/20">
                                         <svg class="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 24 24">
                                             <path
