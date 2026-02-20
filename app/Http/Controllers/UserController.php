@@ -13,6 +13,7 @@ class UserController extends Controller
     public function index(Request $request)
     {
         $search = $request->input('search');
+        $status = $request->input('status', 'active'); // Default to active
         $sort = $request->input('sort', 'username');
         $direction = $request->input('direction', 'asc');
 
@@ -29,10 +30,17 @@ class UserController extends Controller
                 'mdlu6_user.firstname',
                 'mdlu6_user.lastname',
                 'mdlu6_user.firstaccess',
+                'mdlu6_user.suspended',
                 'ai_user_detil.wa_ortu',
                 'ai_user_detil.kelas',
                 'ai_user_detil.nama_ortu'
             );
+
+        if ($status === 'active') {
+            $query->where('mdlu6_user.suspended', 0);
+        } elseif ($status === 'suspended') {
+            $query->where('mdlu6_user.suspended', 1);
+        }
 
         if ($search) {
             $query->where(function ($q) use ($search) {
@@ -49,7 +57,7 @@ class UserController extends Controller
             ->paginate(20)
             ->appends($request->all());
 
-        return view('user.index', compact('users', 'search', 'sort', 'direction'));
+        return view('user.index', compact('users', 'search', 'sort', 'direction', 'status'));
     }
 
     public function edit($id)
