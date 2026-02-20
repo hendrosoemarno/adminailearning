@@ -10,10 +10,23 @@ use Illuminate\Support\Facades\DB;
 
 class TarifController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $tarifs = Tarif::all();
-        return view('admin.tarif.index', compact('tarifs'));
+        $sort = $request->input('sort', 'mapel');
+        $direction = $request->input('direction', 'asc');
+
+        $query = Tarif::query();
+
+        if ($sort === 'total') {
+            $query->select('*', DB::raw('(aplikasi + manajemen + tentor) AS total_sum'))
+                ->orderBy('total_sum', $direction);
+        } else {
+            $query->orderBy($sort, $direction);
+        }
+
+        $tarifs = $query->get();
+
+        return view('admin.tarif.index', compact('tarifs', 'sort', 'direction'));
     }
 
     public function create()

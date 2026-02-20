@@ -32,13 +32,84 @@
             <table class="w-full text-left border-collapse">
                 <thead>
                     <tr class="bg-slate-900/50 border-b border-slate-700">
-                        <th class="p-4 text-xs font-bold text-slate-400 uppercase tracking-widest">Mapel</th>
-                        <th class="p-4 text-xs font-bold text-slate-400 uppercase tracking-widest text-center">Kode</th>
-                        <th class="p-4 text-xs font-bold text-slate-400 uppercase tracking-widest text-center">Aplikasi</th>
-                        <th class="p-4 text-xs font-bold text-slate-400 uppercase tracking-widest text-center">Manajemen
+                        <th class="p-4 text-xs font-bold text-slate-400 uppercase tracking-widest">
+                            <a href="{{ request()->fullUrlWithQuery(['sort' => 'mapel', 'direction' => ($sort == 'mapel' && $direction == 'asc') ? 'desc' : 'asc']) }}"
+                                class="flex items-center gap-1 hover:text-white transition-colors">
+                                Mapel
+                                @if($sort == 'mapel')
+                                    <svg class="w-3 h-3 {{ $direction == 'asc' ? '' : 'rotate-180' }}" fill="none"
+                                        stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 15l7-7 7 7">
+                                        </path>
+                                    </svg>
+                                @endif
+                            </a>
                         </th>
-                        <th class="p-4 text-xs font-bold text-slate-400 uppercase tracking-widest text-center">Tentor</th>
-                        <th class="p-4 text-xs font-bold text-slate-400 uppercase tracking-widest text-center">Total</th>
+                        <th class="p-4 text-xs font-bold text-slate-400 uppercase tracking-widest text-center">
+                            <a href="{{ request()->fullUrlWithQuery(['sort' => 'kode', 'direction' => ($sort == 'kode' && $direction == 'asc') ? 'desc' : 'asc']) }}"
+                                class="flex items-center justify-center gap-1 hover:text-white transition-colors">
+                                Kode
+                                @if($sort == 'kode')
+                                    <svg class="w-3 h-3 {{ $direction == 'asc' ? '' : 'rotate-180' }}" fill="none"
+                                        stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 15l7-7 7 7">
+                                        </path>
+                                    </svg>
+                                @endif
+                            </a>
+                        </th>
+                        <th class="p-4 text-xs font-bold text-slate-400 uppercase tracking-widest text-center">
+                            <a href="{{ request()->fullUrlWithQuery(['sort' => 'aplikasi', 'direction' => ($sort == 'aplikasi' && $direction == 'asc') ? 'desc' : 'asc']) }}"
+                                class="flex items-center justify-center gap-1 hover:text-white transition-colors">
+                                Aplikasi
+                                @if($sort == 'aplikasi')
+                                    <svg class="w-3 h-3 {{ $direction == 'asc' ? '' : 'rotate-180' }}" fill="none"
+                                        stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 15l7-7 7 7">
+                                        </path>
+                                    </svg>
+                                @endif
+                            </a>
+                        </th>
+                        <th class="p-4 text-xs font-bold text-slate-400 uppercase tracking-widest text-center">
+                            <a href="{{ request()->fullUrlWithQuery(['sort' => 'manajemen', 'direction' => ($sort == 'manajemen' && $direction == 'asc') ? 'desc' : 'asc']) }}"
+                                class="flex items-center justify-center gap-1 hover:text-white transition-colors">
+                                Manajemen
+                                @if($sort == 'manajemen')
+                                    <svg class="w-3 h-3 {{ $direction == 'asc' ? '' : 'rotate-180' }}" fill="none"
+                                        stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 15l7-7 7 7">
+                                        </path>
+                                    </svg>
+                                @endif
+                            </a>
+                        </th>
+                        <th class="p-4 text-xs font-bold text-slate-400 uppercase tracking-widest text-center">
+                            <a href="{{ request()->fullUrlWithQuery(['sort' => 'tentor', 'direction' => ($sort == 'tentor' && $direction == 'asc') ? 'desc' : 'asc']) }}"
+                                class="flex items-center justify-center gap-1 hover:text-white transition-colors">
+                                Tentor
+                                @if($sort == 'tentor')
+                                    <svg class="w-3 h-3 {{ $direction == 'asc' ? '' : 'rotate-180' }}" fill="none"
+                                        stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 15l7-7 7 7">
+                                        </path>
+                                    </svg>
+                                @endif
+                            </a>
+                        </th>
+                        <th class="p-4 text-xs font-bold text-slate-400 uppercase tracking-widest text-center">
+                            <a href="{{ request()->fullUrlWithQuery(['sort' => 'total', 'direction' => ($sort == 'total' && $direction == 'asc') ? 'desc' : 'asc']) }}"
+                                class="flex items-center justify-center gap-1 hover:text-white transition-colors">
+                                Total
+                                @if($sort == 'total')
+                                    <svg class="w-3 h-3 {{ $direction == 'asc' ? '' : 'rotate-180' }}" fill="none"
+                                        stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 15l7-7 7 7">
+                                        </path>
+                                    </svg>
+                                @endif
+                            </a>
+                        </th>
                         <th class="p-4 text-xs font-bold text-slate-400 uppercase tracking-widest text-center">Aksi</th>
                     </tr>
                 </thead>
@@ -53,11 +124,14 @@
                             </td>
                             <td class="p-4 text-center font-mono text-slate-300">{{ $tarif->kode }}</td>
                             <td class="p-4 text-center text-emerald-400 font-bold">Rp
-                                {{ number_format($tarif->aplikasi, 0, ',', '.') }}</td>
+                                {{ number_format($tarif->aplikasi, 0, ',', '.') }}
+                            </td>
                             <td class="p-4 text-center text-amber-400 font-bold">Rp
-                                {{ number_format($tarif->manajemen, 0, ',', '.') }}</td>
+                                {{ number_format($tarif->manajemen, 0, ',', '.') }}
+                            </td>
                             <td class="p-4 text-center text-blue-400 font-bold">Rp
-                                {{ number_format($tarif->tentor, 0, ',', '.') }}</td>
+                                {{ number_format($tarif->tentor, 0, ',', '.') }}
+                            </td>
                             <td class="p-4 text-center">
                                 <span class="text-white font-bold">Rp
                                     {{ number_format($tarif->aplikasi + $tarif->manajemen + $tarif->tentor, 0, ',', '.') }}</span>
