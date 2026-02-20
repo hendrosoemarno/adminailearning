@@ -8,6 +8,13 @@
         <p class="text-slate-400">List of registered users</p>
     </div>
 
+    @if(session('success'))
+        <div class="mb-6 p-4 bg-emerald-500/10 border border-emerald-500/20 rounded-xl flex items-center gap-3 text-emerald-400">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+            <span class="font-medium">{{ session('success') }}</span>
+        </div>
+    @endif
+
     <!-- Search -->
     <div class="bg-slate-800/50 backdrop-blur-sm border border-slate-700 p-6 rounded-xl shadow-lg mb-8">
         <form method="GET" action="{{ route('dashboard') }}" class="flex flex-col md:flex-row gap-4 items-end">
@@ -46,14 +53,16 @@
                     <tr class="bg-slate-900/50 border-b border-slate-700">
                         @php
                             $headers = [
-                                'id' => 'User ID',
+                                'id' => 'ID',
                                 'username' => 'Username',
-                                'firstname' => 'Nama User',
-                                'firstaccess' => 'First Access'
+                                'firstname' => 'Nama Siswa',
+                                'kelas' => 'Kelas',
+                                'wa_ortu' => 'WA Ortu',
+                                'firstaccess' => 'Akses Terakhir'
                             ];
                         @endphp
                         @foreach($headers as $key => $label)
-                            <th class="p-4 text-xs font-bold text-slate-400 uppercase tracking-wider {{ $key == 'id' ? 'w-24' : '' }}">
+                            <th class="p-4 text-xs font-bold text-slate-400 uppercase tracking-wider {{ $key == 'id' ? 'w-16' : '' }}">
                                 <a href="{{ request()->fullUrlWithQuery(['sort' => $key, 'direction' => ($sort == $key && $direction == 'asc') ? 'desc' : 'asc']) }}" class="flex items-center gap-1 hover:text-white transition-colors">
                                     {{ $label }}
                                     @if($sort == $key)
@@ -66,6 +75,7 @@
                                 </a>
                             </th>
                         @endforeach
+                        <th class="p-4 text-xs font-bold text-slate-400 uppercase tracking-wider text-right">Aksi</th>
                     </tr>
                 </thead>
                 <tbody class="divide-y divide-slate-700/50">
@@ -73,14 +83,30 @@
                         <tr class="hover:bg-slate-700/20 transition-colors">
                             <td class="p-4 text-sm text-slate-400 font-mono">{{ $user->id }}</td>
                             <td class="p-4 text-sm text-blue-400 font-semibold font-mono">{{ $user->username }}</td>
-                            <td class="p-4 text-sm text-white font-medium">{{ $user->firstname }} {{ $user->lastname }}</td>
+                            <td class="p-4">
+                                <span class="text-sm text-white font-medium block">{{ $user->firstname }} {{ $user->lastname }}</span>
+                                <span class="text-[10px] text-slate-500 uppercase font-bold">{{ $user->nama_ortu ?? '-' }}</span>
+                            </td>
+                            <td class="p-4 text-sm text-slate-300">
+                                {{ $user->kelas ?? '-' }}
+                            </td>
+                            <td class="p-4">
+                                <span class="text-sm text-emerald-400 font-mono">{{ $user->wa_ortu ?? '-' }}</span>
+                            </td>
                             <td class="p-4 text-sm text-slate-400">
-                                {{ $user->firstaccess ? date('Y-m-d H:i', $user->firstaccess) : '-' }}
+                                {{ $user->firstaccess ? date('d/m/Y H:i', $user->firstaccess) : '-' }}
+                            </td>
+                            <td class="p-4 text-right">
+                                <a href="{{ route('user.edit', $user->id) }}" 
+                                    class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-blue-500/10 text-blue-400 hover:bg-blue-500 hover:text-white rounded-lg transition-all text-xs font-bold border border-blue-500/20">
+                                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m3 7h3m-3 4h3m-6-4h.01M9 16h.01"></path></svg>
+                                    Edit
+                                </a>
                             </td>
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="3" class="p-12 text-center text-slate-500">
+                            <td colspan="7" class="p-12 text-center text-slate-500">
                                 No users found.
                             </td>
                         </tr>

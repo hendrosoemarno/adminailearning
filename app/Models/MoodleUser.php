@@ -73,6 +73,11 @@ class MoodleUser extends Authenticatable
         return $this->belongsToMany(Tentor::class, 'ai_tentor_siswa', 'id_siswa', 'id_tentor');
     }
 
+    public function detil()
+    {
+        return $this->hasOne(UserDetil::class, 'id');
+    }
+
     // If we need to write:
     // protected $dateFormat = 'U';
 }

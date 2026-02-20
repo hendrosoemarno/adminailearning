@@ -24,6 +24,8 @@ Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
 
 Route::middleware('auth')->group(function () {
     Route::get('/dashboard', [\App\Http\Controllers\UserController::class, 'index'])->name('dashboard');
+    Route::get('/user/{id}/edit', [\App\Http\Controllers\UserController::class, 'edit'])->name('user.edit');
+    Route::put('/user/{id}', [\App\Http\Controllers\UserController::class, 'update'])->name('user.update');
     Route::get('/quiz-attempts', [\App\Http\Controllers\LoginController::class, 'dashboard'])->name('quiz-attempts');
     Route::resource('tentors', \App\Http\Controllers\TentorController::class);
     Route::resource('useradmins', \App\Http\Controllers\AdminUserController::class);
