@@ -58,7 +58,10 @@
             </div>
             <div class="flex items-center gap-3">
                 <button onclick="resetTemplate()" class="px-3 py-1.5 bg-slate-700 hover:bg-slate-600 text-slate-300 text-[10px] font-bold uppercase rounded-lg transition-all border border-slate-600">
-                    Reset Ke Default
+                    Reset
+                </button>
+                <button id="save-settings-btn" onclick="saveSettings()" class="px-4 py-1.5 bg-blue-600 hover:bg-blue-500 text-white text-[10px] font-bold uppercase rounded-lg transition-all shadow-lg shadow-blue-500/20">
+                    Simpan Perubahan
                 </button>
                 <div class="flex items-center gap-4 border-l border-slate-700 pl-4">
                     <div class="flex items-center gap-2">
@@ -93,7 +96,7 @@
                 <label for="template-editor" class="block text-xs font-bold text-slate-500 uppercase tracking-widest mb-2">Edit Template Pesan:</label>
                 <textarea id="template-editor" rows="12" oninput="renderAllMessages()"
                     class="w-full bg-slate-900/80 border border-slate-700 rounded-xl p-4 text-sm text-slate-300 font-sans leading-relaxed focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all">@if($template){{ $template }}@else بِســـمِ اللّٰـــهِ  الرَّحْــــمٰنِ الرَّحِــــيمِ
-السَّلاَمُ عَلَيْكُمْ وَرَحْمَةُ اللّٰهِ وَبَرَكَاتُهُ
+السَّلاَمُ عَلَيْكُمْ وَرَحْمَةُ اللّٰهِ وَبَرَكَATُهُ
 
 Ayah dan Bunda yang kami hormati, Berikut kami sampaikan tagihan untuk ananda *{nama}* bulan {bulan} tahun {tahun}    :
 
@@ -201,8 +204,8 @@ Jazaakumullaahu khayran. @endif</textarea>
     </div>
 
     <script>
-        const DEFAULT_TEMPLATE = `بِســـمِ اللّٰـــهِ  الرَّحْــــمٰنِ الرَّحِــــيمِ
-السَّلاَمُ عَلَيْكُمْ وَرَحْمَةُ اللّٰهِ وَبَرَكَاتُهُ
+        const DEFAULT_TEMPLATE = `بِســـمِ اللّٰـــهِ  الرَّحْــــmٰنِ الرَّحِــــيمِ
+السَّلاَمُ عَلَيْكُمْ وَرَحْمَةُ اللّٰهِ وَبَرَكَATُهُ
 
 Ayah dan Bunda yang kami hormati, Berikut kami sampaikan tagihan untuk ananda *{nama}* bulan {bulan} tahun {tahun}    :
 
@@ -224,31 +227,58 @@ Catatan Penting:
 Terima kasih atas perhatian dan kerja sama Ayah Bunda.
 Jazaakumullaahu khayran.`;
 
-        let saveTimeout;
+        async function saveSettings() {
+            const btn = document.getElementById('save-settings-btn');
+            const originalHTML = btn.innerHTML;
+            
+            btn.disabled = true;
+            btn.innerHTML = '<svg class="w-4 h-4 animate-spin" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg> Menyimpan...';
 
-        function saveToDB(key, value) {
-            clearTimeout(saveTimeout);
-            saveTimeout = setTimeout(() => {
-                fetch('{{ route('biaya.save-option') }}', {
+            const template = document.getElementById('template-editor').value;
+            const bulan = document.getElementById('msg-bulan-select').value;
+            const tahun = document.getElementById('msg-tahun-select').value;
+
+            try {
+                // Save Template
+                await fetch('{{ route('biaya.save-option') }}', {
                     method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'X-CSRF-TOKEN': '{{ csrf_token() }}'
-                    },
-                    body: JSON.stringify({ key, value })
+                    headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': '{{ csrf_token() }}' },
+                    body: JSON.stringify({ key: 'wa_billing_template', value: template })
                 });
-            }, 1000);
+
+                // Save Bulan
+                await fetch('{{ route('biaya.save-option') }}', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': '{{ csrf_token() }}' },
+                    body: JSON.stringify({ key: 'wa_billing_msg_bulan', value: bulan })
+                });
+
+                // Save Tahun
+                await fetch('{{ route('biaya.save-option') }}', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': '{{ csrf_token() }}' },
+                    body: JSON.stringify({ key: 'wa_billing_msg_tahun', value: tahun })
+                });
+
+                btn.innerHTML = 'Berhasil Disimpan!';
+                btn.classList.replace('bg-blue-600', 'bg-emerald-600');
+                
+                setTimeout(() => {
+                    btn.innerHTML = originalHTML;
+                    btn.classList.replace('bg-emerald-600', 'bg-blue-600');
+                    btn.disabled = false;
+                }, 2000);
+            } catch (error) {
+                alert('Gagal menyimpan pengaturan.');
+                btn.innerHTML = originalHTML;
+                btn.disabled = false;
+            }
         }
 
         function renderAllMessages() {
             const template = document.getElementById('template-editor').value;
             const bulan = document.getElementById('msg-bulan-select').value;
             const tahun = document.getElementById('msg-tahun-select').value;
-
-            // Save to DB
-            saveToDB('wa_billing_template', template);
-            saveToDB('wa_billing_msg_bulan', bulan);
-            saveToDB('wa_billing_msg_tahun', tahun);
             
             document.querySelectorAll('.student-card').forEach(card => {
                 const id = card.getAttribute('data-id');
