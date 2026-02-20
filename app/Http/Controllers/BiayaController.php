@@ -9,6 +9,7 @@ use App\Models\SiswaTarif;
 use App\Models\Presensi;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
+use App\Models\WaSentStatus;
 
 class BiayaController extends Controller
 {
@@ -137,7 +138,8 @@ class BiayaController extends Controller
                     'bing' => 0,
                     'coding' => 0
                 ],
-                'total' => 0
+                'total' => 0,
+                'is_sent' => WaSentStatus::where('student_id', $siswa->id)->where('month', $month)->value('is_sent') ?? false
             ];
 
             $tentors = $siswa->tentors()->get();
@@ -586,6 +588,22 @@ class BiayaController extends Controller
         ]);
 
         \App\Models\Option::set($request->key, $request->value);
+
+        return response()->json(['success' => true]);
+    }
+
+    public function toggleWaStatus(Request $request)
+    {
+        $request->validate([
+            'student_id' => 'required|exists:mdlu6_user,id',
+            'month' => 'required|string',
+            'is_sent' => 'required|boolean'
+        ]);
+
+        \App\Models\WaSentStatus::updateOrCreate(
+            ['student_id' => $request->student_id, 'month' => $request->month],
+            ['is_sent' => $request->is_sent]
+        );
 
         return response()->json(['success' => true]);
     }

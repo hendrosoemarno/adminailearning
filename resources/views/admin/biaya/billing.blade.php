@@ -95,7 +95,7 @@
             <div class="lg:col-span-2">
                 <label for="template-editor" class="block text-xs font-bold text-slate-500 uppercase tracking-widest mb-2">Edit Template Pesan:</label>
                 <textarea id="template-editor" rows="12" oninput="renderAllMessages()"
-                    class="w-full bg-slate-900/80 border border-slate-700 rounded-xl p-4 text-sm text-slate-300 font-sans leading-relaxed focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all">@if($template){{ $template }}@else بِســـمِ اللّٰـــهِ  الرَّحْــــمٰنِ الرَّحِــــيمِ
+                    class="w-full bg-slate-900/80 border border-slate-700 rounded-xl p-4 text-sm text-slate-300 font-sans leading-relaxed focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all">@if($template){{ $template }}@else بِســـمِ اللّٰـــهِ  الرَّحْــــmٰنِ الرَّحِــــيمِ
 السَّلاَمُ عَلَيْكُمْ وَرَحْمَةُ اللّٰهِ وَبَرَكَATُهُ
 
 Ayah dan Bunda yang kami hormati, Berikut kami sampaikan tagihan untuk ananda *{nama}* bulan {bulan} tahun {tahun}    :
@@ -115,7 +115,7 @@ Catatan Penting:
 • *Pembayaran paling lambat dilakukan tanggal 5 setiap bulannya.*
 • Apabila tidak melanjutkan belajar di AI Learning, mohon konfirmasi maksimal tanggal 1 setiap bulannya.
 
-Terima kasih atas perhatian dan kerja sama Ayah Bunda.
+Teria kasih atas perhatian dan kerja sama Ayah Bunda.
 Jazaakumullaahu khayran. @endif</textarea>
             </div>
             <div class="bg-slate-900/50 rounded-xl p-4 border border-slate-700/50">
@@ -161,20 +161,28 @@ Jazaakumullaahu khayran. @endif</textarea>
                 $englishText = $data->subjects['bing'] > 0 ? 'Rp' . number_format($data->subjects['bing'], 0, ',', '.') : '-';
                 $codingText = $data->subjects['coding'] > 0 ? 'Rp' . number_format($data->subjects['coding'], 0, ',', '.') : '-';
                 $totalText = 'Rp' . number_format($data->total, 0, ',', '.');
+                $isSent = $data->is_sent ?? false;
             @endphp
             
-            <div class="student-card bg-slate-800/40 border border-slate-700 rounded-2xl overflow-hidden shadow-sm hover:border-slate-600 transition-all"
+            <div id="card-{{ $data->id }}" class="student-card {{ $isSent ? 'border-emerald-500/50 bg-emerald-500/5' : 'bg-slate-800/40 border-slate-700' }} border rounded-2xl overflow-hidden shadow-sm hover:border-slate-600 transition-all"
                 data-id="{{ $data->id }}"
                 data-nama="{{ $data->nama_siswa }}"
                 data-math="{{ $mathText }}"
                 data-english="{{ $englishText }}"
                 data-coding="{{ $codingText }}"
-                data-total="{{ $totalText }}">
+                data-total="{{ $totalText }}"
+                data-sent="{{ $isSent ? '1' : '0' }}">
                 
-                <div class="p-6 border-b border-slate-700 flex flex-col md:flex-row md:items-center justify-between gap-4 bg-slate-900/40">
+                <div class="p-6 border-b border-slate-700 flex flex-col md:flex-row md:items-center justify-between gap-4 {{ $isSent ? 'bg-emerald-950/20' : 'bg-slate-900/40' }}">
                     <div class="flex items-center gap-4">
-                        <div class="w-12 h-12 rounded-full bg-emerald-500/10 flex items-center justify-center text-emerald-500 text-xl font-bold">
-                            {{ substr($data->nama_siswa, 0, 1) }}
+                        <div class="relative">
+                            <div class="w-12 h-12 rounded-full {{ $isSent ? 'bg-emerald-500 text-white' : 'bg-emerald-500/10 text-emerald-500' }} flex items-center justify-center text-xl font-bold transition-all">
+                                @if($isSent)
+                                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>
+                                @else
+                                    {{ substr($data->nama_siswa, 0, 1) }}
+                                @endif
+                            </div>
                         </div>
                         <div>
                             <h3 class="text-white font-bold text-lg leading-tight">{{ $data->nama_siswa }}</h3>
@@ -185,10 +193,22 @@ Jazaakumullaahu khayran. @endif</textarea>
                         </div>
                     </div>
                     <div class="flex items-center gap-3">
-                        <button onclick="copyToClipboard('msg-{{ $data->id }}')" 
+                        <button id="toggle-btn-{{ $data->id }}" onclick="toggleSentStatus({{ $data->id }})" 
+                            class="flex items-center gap-2 px-4 py-2 {{ $isSent ? 'bg-emerald-600/20 text-emerald-400 border border-emerald-500/50' : 'bg-slate-700 text-slate-300 border border-slate-600 hover:bg-slate-600' }} text-xs font-bold rounded-xl transition-all active:scale-95">
+                            <span class="status-icon-{{ $data->id }}">
+                                @if($isSent)
+                                    <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"></path></svg>
+                                @else
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                                @endif
+                            </span>
+                            <span class="status-text-{{ $data->id }}">{{ $isSent ? 'Sudah Terkirim' : 'Tandai Terkirim' }}</span>
+                        </button>
+
+                        <button onclick="copyToClipboardAndMark({{ $data->id }})" 
                             class="flex items-center gap-2 px-6 py-2.5 bg-emerald-600 hover:bg-emerald-500 text-white text-sm font-bold rounded-xl transition-all shadow-lg shadow-emerald-500/20 active:scale-95">
                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"></path></svg>
-                            Salin Draf Pesan
+                            Salin Draf
                         </button>
                     </div>
                 </div>
@@ -204,7 +224,7 @@ Jazaakumullaahu khayran. @endif</textarea>
     </div>
 
     <script>
-        const DEFAULT_TEMPLATE = `بِســـمِ اللّٰـــهِ  الرَّحْــــmٰنِ الرَّحِــــيمِ
+        const DEFAULT_TEMPLATE = `بِســـmِ اللّٰـــهِ  الرَّحْــــmٰنِ الرَّحِــــيمِ
 السَّلاَمُ عَلَيْكُمْ وَرَحْمَةُ اللّٰهِ وَبَرَكَATُهُ
 
 Ayah dan Bunda yang kami hormati, Berikut kami sampaikan tagihan untuk ananda *{nama}* bulan {bulan} tahun {tahun}    :
@@ -224,13 +244,12 @@ Catatan Penting:
 • *Pembayaran paling lambat dilakukan tanggal 5 setiap bulannya.*
 • Apabila tidak melanjutkan belajar di AI Learning, mohon konfirmasi maksimal tanggal 1 setiap bulannya.
 
-Terima kasih atas perhatian dan kerja sama Ayah Bunda.
+Teria kasih atas perhatian dan kerja sama Ayah Bunda.
 Jazaakumullaahu khayran.`;
 
         async function saveSettings() {
             const btn = document.getElementById('save-settings-btn');
             const originalHTML = btn.innerHTML;
-            
             btn.disabled = true;
             btn.innerHTML = '<svg class="w-4 h-4 animate-spin" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg> Menyimpan...';
 
@@ -239,30 +258,23 @@ Jazaakumullaahu khayran.`;
             const tahun = document.getElementById('msg-tahun-select').value;
 
             try {
-                // Save Template
                 await fetch('{{ route('biaya.save-option') }}', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': '{{ csrf_token() }}' },
                     body: JSON.stringify({ key: 'wa_billing_template', value: template })
                 });
-
-                // Save Bulan
                 await fetch('{{ route('biaya.save-option') }}', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': '{{ csrf_token() }}' },
                     body: JSON.stringify({ key: 'wa_billing_msg_bulan', value: bulan })
                 });
-
-                // Save Tahun
                 await fetch('{{ route('biaya.save-option') }}', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': '{{ csrf_token() }}' },
                     body: JSON.stringify({ key: 'wa_billing_msg_tahun', value: tahun })
                 });
-
                 btn.innerHTML = 'Berhasil Disimpan!';
                 btn.classList.replace('bg-blue-600', 'bg-emerald-600');
-                
                 setTimeout(() => {
                     btn.innerHTML = originalHTML;
                     btn.classList.replace('bg-emerald-600', 'bg-blue-600');
@@ -301,22 +313,77 @@ Jazaakumullaahu khayran.`;
             });
         }
 
-        function resetTemplate() {
-            if(confirm('Apakah Anda yakin ingin mengembalikan template ke pengaturan awal?')) {
-                document.getElementById('template-editor').value = DEFAULT_TEMPLATE;
-                renderAllMessages();
+        async function toggleSentStatus(studentId, forcedValue = null) {
+            const card = document.getElementById(`card-${studentId}`);
+            const btn = document.getElementById(`toggle-btn-${studentId}`);
+            const currentStatus = card.getAttribute('data-sent') === '1';
+            const newStatus = forcedValue !== null ? forcedValue : !currentStatus;
+
+            if (newStatus === currentStatus) return;
+
+            try {
+                const response = await fetch('{{ route('biaya.toggle-wa-status') }}', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': '{{ csrf_token() }}' },
+                    body: JSON.stringify({
+                        student_id: studentId,
+                        month: '{{ $month }}',
+                        is_sent: newStatus
+                    })
+                });
+
+                if (response.ok) {
+                    card.setAttribute('data-sent', newStatus ? '1' : '0');
+                    
+                    // Update UI
+                    if (newStatus) {
+                        card.classList.replace('bg-slate-800/40', 'bg-emerald-500/5');
+                        card.classList.replace('border-slate-700', 'border-emerald-500/50');
+                        btn.innerHTML = '<span class="status-icon-' + studentId + '"><svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"></path></svg></span> <span>Sudah Terkirim</span>';
+                        btn.className = 'flex items-center gap-2 px-4 py-2 bg-emerald-600/20 text-emerald-400 border border-emerald-500/50 text-xs font-bold rounded-xl transition-all active:scale-95';
+                        
+                        // Update initial circle
+                        const initialCircle = card.querySelector('.w-12.h-12');
+                        initialCircle.innerHTML = '<svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>';
+                        initialCircle.className = 'w-12 h-12 rounded-full bg-emerald-500 text-white flex items-center justify-center text-xl font-bold transition-all';
+                    } else {
+                        card.classList.replace('bg-emerald-500/5', 'bg-slate-800/40');
+                        card.classList.replace('border-emerald-500/50', 'border-slate-700');
+                        btn.innerHTML = '<span class="status-icon-' + studentId + '"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg></span> <span>Tandai Terkirim</span>';
+                        btn.className = 'flex items-center gap-2 px-4 py-2 bg-slate-700 text-slate-300 border border-slate-600 hover:bg-slate-600 text-xs font-bold rounded-xl transition-all active:scale-95';
+                        
+                        // Update initial circle
+                        const initialCircle = card.querySelector('.w-12.h-12');
+                        initialCircle.innerText = card.getAttribute('data-nama').substring(0, 1);
+                        initialCircle.className = 'w-12 h-12 rounded-full bg-emerald-500/10 text-emerald-500 flex items-center justify-center text-xl font-bold transition-all';
+                    }
+                }
+            } catch (error) {
+                console.error('Gagal update status:', error);
             }
         }
 
-        function copyToClipboard(elementId) {
-            const el = document.getElementById(elementId);
+        function copyToClipboardAndMark(studentId) {
+            const el = document.getElementById(`msg-${studentId}`);
             const text = el.innerText;
+            
             navigator.clipboard.writeText(text).then(() => {
+                // Auto mark as sent
+                toggleSentStatus(studentId, true);
+
+                // Feedback on button
                 const btn = event.currentTarget;
                 const originalText = btn.innerHTML;
                 btn.innerHTML = '<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg> Tersalin!';
                 setTimeout(() => btn.innerHTML = originalText, 2000);
             });
+        }
+
+        function resetTemplate() {
+            if(confirm('Apakah Anda yakin ingin mengembalikan template ke pengaturan awal?')) {
+                document.getElementById('template-editor').value = DEFAULT_TEMPLATE;
+                renderAllMessages();
+            }
         }
 
         document.addEventListener('DOMContentLoaded', () => renderAllMessages());
