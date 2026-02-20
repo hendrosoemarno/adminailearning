@@ -103,6 +103,75 @@ class BiayaController extends Controller
         return view('admin.biaya.summary', compact('data', 'month', 'subjects'));
     }
 
+    public function summaryExport(Request $request)
+    {
+        $month = $request->input('month', date('Y-m'));
+        $fileName = 'Ringkasan_Biaya_Siswa_' . $month . '.csv';
+
+        $subjects = [
+            'mat' => 'Matematika',
+            'bing' => 'Bahasa Inggris',
+            'coding' => 'Coding'
+        ];
+
+        $headers = [
+            "Content-type" => "text/csv",
+            "Content-Disposition" => "attachment; filename=$fileName",
+            "Pragma" => "no-cache",
+            "Cache-Control" => "must-revalidate, post-check=0, pre-check=0",
+            "Expires" => "0"
+        ];
+
+        $callback = function () use ($subjects, $month) {
+            $file = fopen('php://output', 'w');
+
+            // BOM for Excel
+            fputs($file, "\xEF\xBB\xBF");
+
+            // Header Utama
+            fputcsv($file, ['RINGKASAN BIAYA SISWA KESELURUHAN - PERIODE ' . $month]);
+            fputcsv($file, []);
+
+            // Column Headers
+            fputcsv($file, ['Subject', 'Tentor', 'Nama Siswa', 'Paket', 'Biaya (Omzet)', 'AI Learning', 'Gaji Tentor', 'Meet', 'Realisasi']);
+
+            foreach ($subjects as $key => $label) {
+                $tentors = Tentor::where('mapel', $key)->where('aktif', 1)->orderBy('nama', 'asc')->get();
+
+                foreach ($tentors as $tentor) {
+                    $siswas = $tentor->siswas()->get();
+                    foreach ($siswas as $siswa) {
+                        $this->applyStudentCosts($siswa, $tentor, $month);
+                    }
+
+                    if ($siswas->count() > 0) {
+                        $siswas = $siswas->sortBy(function ($siswa) {
+                            return [$siswa->sort_order, $siswa->firstname];
+                        });
+
+                        foreach ($siswas as $siswa) {
+                            fputcsv($file, [
+                                $label,
+                                $tentor->nama,
+                                $siswa->firstname . ' ' . $siswa->lastname,
+                                $siswa->paket_kode,
+                                $siswa->biaya,
+                                $siswa->ai_learning,
+                                $siswa->gaji_tentor,
+                                $siswa->total_meet,
+                                $siswa->realisasi_kbm
+                            ]);
+                        }
+                    }
+                }
+            }
+
+            fclose($file);
+        };
+
+        return response()->stream($callback, 200, $headers);
+    }
+
     public function billing(Request $request)
     {
         $month = $request->input('month', date('Y-m'));

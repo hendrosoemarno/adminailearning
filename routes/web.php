@@ -61,6 +61,7 @@ Route::middleware('auth')->group(function () {
     // Biaya Management
     Route::get('/biaya', [\App\Http\Controllers\BiayaController::class, 'index'])->name('biaya.index');
     Route::get('/biaya/summary', [\App\Http\Controllers\BiayaController::class, 'summary'])->name('biaya.summary');
+    Route::get('/biaya/summary/export', [\App\Http\Controllers\BiayaController::class, 'summaryExport'])->name('biaya.summary.export');
     Route::get('/biaya/billing', [\App\Http\Controllers\BiayaController::class, 'billing'])->name('biaya.billing');
     Route::get('/biaya/student-list', [\App\Http\Controllers\BiayaController::class, 'studentList'])->name('biaya.student-list');
     Route::post('/biaya/toggle-student-mark', [\App\Http\Controllers\BiayaController::class, 'toggleStudentMark'])->name('biaya.toggle-student-mark');
