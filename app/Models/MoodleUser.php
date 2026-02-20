@@ -68,6 +68,11 @@ class MoodleUser extends Authenticatable
         return $this->siswaTarifs()->where('id_tentor', $tentorId)->first();
     }
 
+    public function tentors()
+    {
+        return $this->belongsToMany(Tentor::class, 'ai_tentor_siswa', 'id_siswa', 'id_tentor');
+    }
+
     // If we need to write:
     // protected $dateFormat = 'U';
 }
