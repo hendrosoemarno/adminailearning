@@ -684,4 +684,10 @@ class BiayaController extends Controller
 
         return response()->json(['success' => true]);
     }
+
+    public function resetStudentMarks()
+    {
+        \DB::table('ai_user_detil')->update(['cek' => 0]);
+        return response()->json(['success' => true]);
+    }
 }

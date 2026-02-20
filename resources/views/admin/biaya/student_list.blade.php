@@ -44,10 +44,16 @@
             </div>
             <input type="hidden" name="sort" value="{{ $sort }}">
             <input type="hidden" name="direction" value="{{ $direction }}">
-            <button type="submit"
-                class="px-6 py-2 bg-blue-600 hover:bg-blue-500 text-white font-semibold rounded-lg transition-all shadow-lg shadow-blue-500/20">
-                Filter
-            </button>
+            <div class="flex items-center gap-2">
+                <button type="button" onclick="resetAllMarks()"
+                    class="px-6 py-2 bg-slate-700 hover:bg-slate-600 text-slate-300 font-semibold rounded-lg transition-all border border-slate-600">
+                    Reset Semua Tanda
+                </button>
+                <button type="submit"
+                    class="px-6 py-2 bg-blue-600 hover:bg-blue-500 text-white font-semibold rounded-lg transition-all shadow-lg shadow-blue-500/20">
+                    Filter
+                </button>
+            </div>
         </form>
     </div>
 
@@ -228,6 +234,22 @@
                 console.error('Error toggling mark:', error);
             } finally {
                 btn.disabled = false;
+            }
+        }
+
+        async function resetAllMarks() {
+            if (confirm('Apakah Anda yakin ingin menghapus SEMUA tanda di daftar ini?')) {
+                try {
+                    const response = await fetch('{{ route('biaya.reset-student-marks') }}', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': '{{ csrf_token() }}' }
+                    });
+                    if (response.ok) {
+                        window.location.reload();
+                    }
+                } catch (error) {
+                    console.error('Error resetting marks:', error);
+                }
             }
         }
     </script>
