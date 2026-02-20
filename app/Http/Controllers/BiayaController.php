@@ -107,12 +107,14 @@ class BiayaController extends Controller
         $month = $request->input('month', date('Y-m'));
         $search = $request->input('search');
 
-        // Join to get students who have a relationship in ai_tentor_siswa
-        $query = MoodleUser::whereExists(function ($query) {
-            $query->select(\DB::raw(1))
-                ->from('ai_tentor_siswa')
-                ->whereRaw('mdlu6_user.id = ai_tentor_siswa.id_siswa');
-        });
+        // Join to get students who have a relationship in ai_tentor_siswa and sort by wa_ortu
+        $query = MoodleUser::join('ai_user_detil', 'mdlu6_user.id', '=', 'ai_user_detil.id')
+            ->whereExists(function ($query) {
+                $query->select(\DB::raw(1))
+                    ->from('ai_tentor_siswa')
+                    ->whereRaw('mdlu6_user.id = ai_tentor_siswa.id_siswa');
+            })
+            ->select('mdlu6_user.*', 'ai_user_detil.wa_ortu', 'ai_user_detil.nama_ortu');
 
         if ($search) {
             $query->where(function ($q) use ($search) {
@@ -121,17 +123,15 @@ class BiayaController extends Controller
             });
         }
 
-        $siswas = $query->orderBy('firstname', 'asc')->get();
+        $siswas = $query->orderBy('ai_user_detil.wa_ortu', 'asc')->get();
         $billingData = [];
 
         foreach ($siswas as $siswa) {
-            $detil = \DB::table('ai_user_detil')->where('id', $siswa->id)->first();
-
             $item = [
                 'id' => $siswa->id,
                 'nama_siswa' => $siswa->firstname . ' ' . $siswa->lastname,
-                'nama_ortu' => $detil->nama_ortu ?? '-',
-                'wa_ortu' => $detil->wa_ortu ?? '-',
+                'nama_ortu' => $siswa->nama_ortu ?? '-',
+                'wa_ortu' => $siswa->wa_ortu ?? '-',
                 'subjects' => [
                     'mat' => 0,
                     'bing' => 0,
