@@ -91,286 +91,277 @@
     <aside id="sidebar"
         class="fixed inset-y-0 left-0 z-50 w-64 bg-slate-900/90 backdrop-blur-xl border-r border-slate-700/50 transform -translate-x-full md:translate-x-0 transition-all duration-300 ease-in-out md:relative md:flex md:flex-col justify-between shadow-2xl overflow-hidden group">
 
-        <!-- Toggle Button for Desktop -->
-        <button id="sidebar-toggle-btn"
-            class="hidden md:flex absolute -right-3 top-1/2 -translate-y-1/2 w-6 h-12 bg-slate-800 border border-slate-700 rounded-full items-center justify-center text-slate-400 hover:text-white hover:bg-blue-600 transition-all z-50 shadow-lg">
-            <svg id="toggle-icon" class="w-4 h-4 transition-transform duration-300" fill="none" stroke="currentColor"
-                viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
-            </svg>
-        </button>
-
-        <div>
-            <!-- Logo Desktop -->
-            <div
-                class="hidden md:flex items-center justify-between h-16 px-6 border-b border-slate-700/50 overflow-hidden">
+        <!-- Sidebar Header -->
+        <div class="p-6">
+            <div class="flex items-center gap-3">
                 <span id="logo-text"
                     class="text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-cyan-400 tracking-wide whitespace-nowrap transition-all duration-300">
                     AdminPanel
                 </span>
             </div>
+        </div>
 
-            <!-- Navigation -->
-            <nav class="p-4 space-y-2">
-                @if(Auth::guard('tentor')->check() && request()->is('portal*'))
-                    <!-- TENTOR MENU -->
-                    <a href="{{ route('tentor.dashboard') }}"
-                        class="flex items-center px-4 py-3 rounded-lg group transition-all duration-200 {{ request()->routeIs('tentor.dashboard') ? 'bg-blue-500/10 text-blue-400 border border-blue-500/20 shadow-[0_0_15px_rgba(59,130,246,0.15)]' : 'text-slate-400 hover:bg-slate-800 hover:text-slate-100' }}"
-                        title="Dashboard Tentor">
-                        <div class="flex-shrink-0">
-                            <svg class="w-5 h-5 {{ request()->routeIs('tentor.dashboard') ? 'text-blue-400' : 'text-slate-500 group-hover:text-slate-300' }}"
-                                fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6">
-                                </path>
-                            </svg>
-                        </div>
-                        <span class="font-medium ml-3 sidebar-label transition-all duration-300 whitespace-nowrap">Dashboard
-                            Tentor</span>
-                    </a>
-                    <a href="{{ route('tentor.profile.edit') }}"
-                        class="flex items-center px-4 py-3 rounded-lg group transition-all duration-200 {{ request()->routeIs('tentor.profile.edit') ? 'bg-blue-500/10 text-blue-400 border border-blue-500/20 shadow-[0_0_15px_rgba(59,130,246,0.15)]' : 'text-slate-400 hover:bg-slate-800 hover:text-slate-100' }}"
-                        title="Ubah Profil">
-                        <div class="flex-shrink-0">
-                            <svg class="w-5 h-5 {{ request()->routeIs('tentor.profile.edit') ? 'text-blue-400' : 'text-slate-500 group-hover:text-slate-300' }}"
-                                fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
-                            </svg>
-                        </div>
-                        <span class="font-medium ml-3 sidebar-label transition-all duration-300 whitespace-nowrap">Ubah
-                            Profil</span>
-                    </a>
-                    <a href="{{ route('tentor.schedule.index') }}"
-                        class="flex items-center px-4 py-3 rounded-lg group transition-all duration-200 {{ request()->routeIs('tentor.schedule.*') ? 'bg-blue-500/10 text-blue-400 border border-blue-500/20 shadow-[0_0_15px_rgba(59,130,246,0.15)]' : 'text-slate-400 hover:bg-slate-800 hover:text-slate-100' }}"
-                        title="Jadwal Saya">
-                        <div class="flex-shrink-0">
-                            <svg class="w-5 h-5 {{ request()->routeIs('tentor.schedule.*') ? 'text-blue-400' : 'text-slate-500 group-hover:text-slate-300' }}"
-                                fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z">
-                                </path>
-                            </svg>
-                        </div>
-                        <span class="font-medium ml-3 sidebar-label transition-all duration-300 whitespace-nowrap">Jadwal
-                            Saya</span>
-                    </a>
-                    <a href="{{ route('tentor.presensi.index') }}"
-                        class="flex items-center px-4 py-3 rounded-lg group transition-all duration-200 {{ request()->routeIs('tentor.presensi.*') ? 'bg-blue-500/10 text-blue-400 border border-blue-500/20 shadow-[0_0_15px_rgba(59,130,246,0.15)]' : 'text-slate-400 hover:bg-slate-800 hover:text-slate-100' }}"
-                        title="Presensi Mengajar">
-                        <div class="flex-shrink-0">
-                            <svg class="w-5 h-5 {{ request()->routeIs('tentor.presensi.*') ? 'text-blue-400' : 'text-slate-500 group-hover:text-slate-300' }}"
-                                fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01">
-                                </path>
-                            </svg>
-                        </div>
-                        <span class="font-medium ml-3 sidebar-label transition-all duration-300 whitespace-nowrap">Presensi
-                            Mengajar</span>
-                    </a>
-                @else
-                    <!-- DASHBOARD -->
-                    <div class="px-4 pt-4 pb-2">
-                        <span
-                            class="text-[10px] font-bold text-slate-500 uppercase tracking-[0.2em] sidebar-label">Dashboard</span>
+        <!-- Navigation -->
+        <nav class="p-4 space-y-2">
+            @if(Auth::guard('tentor')->check() && request()->is('portal*'))
+                <!-- TENTOR MENU -->
+                <a href="{{ route('tentor.dashboard') }}"
+                    class="flex items-center px-4 py-3 rounded-lg group transition-all duration-200 {{ request()->routeIs('tentor.dashboard') ? 'bg-blue-500/10 text-blue-400 border border-blue-500/20 shadow-[0_0_15px_rgba(59,130,246,0.15)]' : 'text-slate-400 hover:bg-slate-800 hover:text-slate-100' }}"
+                    title="Dashboard Tentor">
+                    <div class="flex-shrink-0">
+                        <svg class="w-5 h-5 {{ request()->routeIs('tentor.dashboard') ? 'text-blue-400' : 'text-slate-500 group-hover:text-slate-300' }}"
+                            fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6">
+                            </path>
+                        </svg>
                     </div>
-                    <a href="{{ route('dashboard') }}"
-                        class="flex items-center px-4 py-3 rounded-lg group transition-all duration-200 {{ request()->routeIs('dashboard') ? 'bg-blue-500/10 text-blue-400 border border-blue-500/20 shadow-[0_0_15px_rgba(59,130,246,0.15)]' : 'text-slate-400 hover:bg-slate-800 hover:text-slate-100' }}"
-                        title="Dashboard Admin">
-                        <div class="flex-shrink-0">
-                            <svg class="w-5 h-5 {{ request()->routeIs('dashboard') ? 'text-blue-400' : 'text-slate-500 group-hover:text-slate-300' }}"
-                                fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z">
-                                </path>
-                            </svg>
-                        </div>
-                        <span
-                            class="font-medium ml-3 sidebar-label transition-all duration-300 whitespace-nowrap">Dashboard</span>
-                    </a>
-
-                    <!-- SISWA -->
-                    <div class="space-y-1">
-                        <button type="button" onclick="toggleSubmenu('siswa-menu')"
-                            class="w-full flex items-center justify-between px-4 py-3 rounded-lg group transition-all duration-200 text-slate-400 hover:bg-slate-800 hover:text-slate-100">
-                            <div class="flex items-center">
-                                <div class="flex-shrink-0">
-                                    <svg class="w-5 h-5 text-slate-500 group-hover:text-slate-300" fill="none"
-                                        stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                            d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z">
-                                        </path>
-                                    </svg>
-                                </div>
-                                <span
-                                    class="font-medium ml-3 sidebar-label transition-all duration-300 whitespace-nowrap">Siswa</span>
-                            </div>
-                            <svg id="siswa-menu-arrow" class="w-4 h-4 transition-transform duration-200 sidebar-label"
-                                fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7">
-                                </path>
-                            </svg>
-                        </button>
-                        <div id="siswa-menu" class="hidden pl-4 space-y-1 overflow-hidden">
-                            <a href="{{ route('quiz-attempts') }}"
-                                class="flex items-center px-4 py-2 rounded-lg text-sm {{ request()->routeIs('quiz-attempts') ? 'text-blue-400' : 'text-slate-400 hover:bg-slate-800 hover:text-slate-100' }}">
-                                <span class="sidebar-label">Quiz Attempts</span>
-                            </a>
-                            <a href="{{ route('dashboard') }}"
-                                class="flex items-center px-4 py-2 rounded-lg text-sm {{ request()->routeIs('dashboard') && !request()->routeIs('quiz-attempts') ? 'text-blue-400' : 'text-slate-400 hover:bg-slate-800 hover:text-slate-100' }}">
-                                <span class="sidebar-label">Data User</span>
-                            </a>
-                            <a href="#"
-                                class="flex items-center px-4 py-2 rounded-lg text-sm text-slate-400 hover:bg-slate-800 hover:text-slate-100">
-                                <span class="sidebar-label">Siswa-Tarif</span>
-                            </a>
-                        </div>
+                    <span class="font-medium ml-3 sidebar-label transition-all duration-300 whitespace-nowrap">Dashboard
+                        Tentor</span>
+                </a>
+                <a href="{{ route('tentor.profile.edit') }}"
+                    class="flex items-center px-4 py-3 rounded-lg group transition-all duration-200 {{ request()->routeIs('tentor.profile.edit') ? 'bg-blue-500/10 text-blue-400 border border-blue-500/20 shadow-[0_0_15px_rgba(59,130,246,0.15)]' : 'text-slate-400 hover:bg-slate-800 hover:text-slate-100' }}"
+                    title="Ubah Profil">
+                    <div class="flex-shrink-0">
+                        <svg class="w-5 h-5 {{ request()->routeIs('tentor.profile.edit') ? 'text-blue-400' : 'text-slate-500 group-hover:text-slate-300' }}"
+                            fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
+                        </svg>
                     </div>
-
-                    <!-- TENTOR -->
-                    <div class="space-y-1">
-                        <button type="button" onclick="toggleSubmenu('tentor-menu')"
-                            class="w-full flex items-center justify-between px-4 py-3 rounded-lg group transition-all duration-200 text-slate-400 hover:bg-slate-800 hover:text-slate-100">
-                            <div class="flex items-center">
-                                <div class="flex-shrink-0">
-                                    <svg class="w-5 h-5 text-slate-500 group-hover:text-slate-300" fill="none"
-                                        stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                            d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z">
-                                        </path>
-                                    </svg>
-                                </div>
-                                <span
-                                    class="font-medium ml-3 sidebar-label transition-all duration-300 whitespace-nowrap">Tentor</span>
-                            </div>
-                            <svg id="tentor-menu-arrow" class="w-4 h-4 transition-transform duration-200 sidebar-label"
-                                fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7">
-                                </path>
-                            </svg>
-                        </button>
-                        <div id="tentor-menu" class="hidden pl-4 space-y-1 overflow-hidden">
-                            <a href="{{ route('tentor-siswa.active') }}"
-                                class="flex items-center px-4 py-2 rounded-lg text-sm {{ request()->routeIs('tentor-siswa.active') ? 'text-blue-400' : 'text-slate-400 hover:bg-slate-800 hover:text-slate-100' }}">
-                                <span class="sidebar-label">Tentor Aktif</span>
-                            </a>
-                            <a href="{{ route('tentor-siswa.all-schedules') }}"
-                                class="flex items-center px-4 py-2 rounded-lg text-sm {{ request()->routeIs('tentor-siswa.all-schedules') ? 'text-blue-400' : 'text-slate-400 hover:bg-slate-800 hover:text-slate-100' }}">
-                                <span class="sidebar-label">Master Jadwal</span>
-                            </a>
-                            <a href="{{ route('tentor-siswa.available', ['mapel' => 'mat']) }}"
-                                class="flex items-center px-4 py-2 rounded-lg text-sm {{ request('mapel') == 'mat' ? 'text-emerald-400' : 'text-slate-400 hover:bg-slate-800 hover:text-slate-100' }}">
-                                <span class="sidebar-label">Jadwal Bisa Mat</span>
-                            </a>
-                            <a href="{{ route('tentor-siswa.available', ['mapel' => 'bing']) }}"
-                                class="flex items-center px-4 py-2 rounded-lg text-sm {{ request('mapel') == 'bing' ? 'text-emerald-400' : 'text-slate-400 hover:bg-slate-800 hover:text-slate-100' }}">
-                                <span class="sidebar-label">Jadwal Bisa Bing</span>
-                            </a>
-                            <a href="{{ route('monitoring.index') }}"
-                                class="flex items-center px-4 py-2 rounded-lg text-sm {{ request()->routeIs('monitoring.*') ? 'text-amber-400' : 'text-slate-400 hover:bg-slate-800 hover:text-slate-100' }}">
-                                <span class="sidebar-label">Monitoring Jadwal</span>
-                            </a>
-                            <a href="{{ route('presensi-monitoring.create') }}"
-                                class="flex items-center px-4 py-2 rounded-lg text-sm {{ request()->routeIs('presensi-monitoring.create') ? 'text-emerald-400' : 'text-slate-400 hover:bg-slate-800 hover:text-slate-100' }}">
-                                <span class="sidebar-label">Telah Monitoring</span>
-                            </a>
-                            <a href="{{ route('presensi-monitoring.index') }}"
-                                class="flex items-center px-4 py-2 rounded-lg text-sm {{ (request()->routeIs('presensi-monitoring.*') && !request()->routeIs('presensi-monitoring.create')) ? 'text-blue-400' : 'text-slate-400 hover:bg-slate-800 hover:text-slate-100' }}">
-                                <span class="sidebar-label">Data Log Monitoring</span>
-                            </a>
-                            <a href="{{ route('presensi.index') }}"
-                                class="flex items-center px-4 py-2 rounded-lg text-sm {{ request()->routeIs('presensi.index') ? 'text-blue-400' : 'text-slate-400 hover:bg-slate-800 hover:text-slate-100' }}">
-                                <span class="sidebar-label">Data Presensi</span>
-                            </a>
-                            <a href="{{ route('tentors.index') }}"
-                                class="flex items-center px-4 py-2 rounded-lg text-sm {{ request()->routeIs('tentors.*') ? 'text-blue-400' : 'text-slate-400 hover:bg-slate-800 hover:text-slate-100' }}">
-                                <span class="sidebar-label">Data Tentor</span>
-                            </a>
-                        </div>
+                    <span class="font-medium ml-3 sidebar-label transition-all duration-300 whitespace-nowrap">Ubah
+                        Profil</span>
+                </a>
+                <a href="{{ route('tentor.schedule.index') }}"
+                    class="flex items-center px-4 py-3 rounded-lg group transition-all duration-200 {{ request()->routeIs('tentor.schedule.*') ? 'bg-blue-500/10 text-blue-400 border border-blue-500/20 shadow-[0_0_15px_rgba(59,130,246,0.15)]' : 'text-slate-400 hover:bg-slate-800 hover:text-slate-100' }}"
+                    title="Jadwal Saya">
+                    <div class="flex-shrink-0">
+                        <svg class="w-5 h-5 {{ request()->routeIs('tentor.schedule.*') ? 'text-blue-400' : 'text-slate-500 group-hover:text-slate-300' }}"
+                            fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z">
+                            </path>
+                        </svg>
                     </div>
+                    <span class="font-medium ml-3 sidebar-label transition-all duration-300 whitespace-nowrap">Jadwal
+                        Saya</span>
+                </a>
+                <a href="{{ route('tentor.presensi.index') }}"
+                    class="flex items-center px-4 py-3 rounded-lg group transition-all duration-200 {{ request()->routeIs('tentor.presensi.*') ? 'bg-blue-500/10 text-blue-400 border border-blue-500/20 shadow-[0_0_15px_rgba(59,130,246,0.15)]' : 'text-slate-400 hover:bg-slate-800 hover:text-slate-100' }}"
+                    title="Presensi Mengajar">
+                    <div class="flex-shrink-0">
+                        <svg class="w-5 h-5 {{ request()->routeIs('tentor.presensi.*') ? 'text-blue-400' : 'text-slate-500 group-hover:text-slate-300' }}"
+                            fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01">
+                            </path>
+                        </svg>
+                    </div>
+                    <span class="font-medium ml-3 sidebar-label transition-all duration-300 whitespace-nowrap">Presensi
+                        Mengajar</span>
+                </a>
+            @else
+                <!-- DASHBOARD -->
+                <div class="px-4 pt-4 pb-2">
+                    <span
+                        class="text-[10px] font-bold text-slate-500 uppercase tracking-[0.2em] sidebar-label">Dashboard</span>
+                </div>
+                <a href="{{ route('dashboard') }}"
+                    class="flex items-center px-4 py-3 rounded-lg group transition-all duration-200 {{ request()->routeIs('dashboard') ? 'bg-blue-500/10 text-blue-400 border border-blue-500/20 shadow-[0_0_15px_rgba(59,130,246,0.15)]' : 'text-slate-400 hover:bg-slate-800 hover:text-slate-100' }}"
+                    title="Dashboard Admin">
+                    <div class="flex-shrink-0">
+                        <svg class="w-5 h-5 {{ request()->routeIs('dashboard') ? 'text-blue-400' : 'text-slate-500 group-hover:text-slate-300' }}"
+                            fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z">
+                            </path>
+                        </svg>
+                    </div>
+                    <span
+                        class="font-medium ml-3 sidebar-label transition-all duration-300 whitespace-nowrap">Dashboard</span>
+                </a>
 
-                    <!-- ADMIN -->
-                    <div class="space-y-1">
-                        <button type="button" onclick="toggleSubmenu('admin-menu')"
-                            class="w-full flex items-center justify-between px-4 py-3 rounded-lg group transition-all duration-200 text-slate-400 hover:bg-slate-800 hover:text-slate-100">
-                            <div class="flex items-center">
-                                <div class="flex-shrink-0">
-                                    <svg class="w-5 h-5 text-slate-500 group-hover:text-slate-300" fill="none"
-                                        stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                            d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z">
-                                        </path>
-                                    </svg>
-                                </div>
-                                <span
-                                    class="font-medium ml-3 sidebar-label transition-all duration-300 whitespace-nowrap">Admin</span>
+                <!-- SISWA -->
+                <div class="space-y-1">
+                    <button type="button" onclick="toggleSubmenu('siswa-menu')"
+                        class="w-full flex items-center justify-between px-4 py-3 rounded-lg group transition-all duration-200 text-slate-400 hover:bg-slate-800 hover:text-slate-100">
+                        <div class="flex items-center">
+                            <div class="flex-shrink-0">
+                                <svg class="w-5 h-5 text-slate-500 group-hover:text-slate-300" fill="none"
+                                    stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z">
+                                    </path>
+                                </svg>
                             </div>
-                            <svg id="admin-menu-arrow" class="w-4 h-4 transition-transform duration-200 sidebar-label"
-                                fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7">
-                                </path>
-                            </svg>
-                        </button>
-                        <div id="admin-menu" class="hidden pl-4 space-y-1 overflow-hidden">
-                            <a href="{{ route('useradmins.index') }}"
-                                class="flex items-center px-4 py-2 rounded-lg text-sm {{ request()->routeIs('useradmins.*') ? 'text-blue-400' : 'text-slate-400 hover:bg-slate-800 hover:text-slate-100' }}">
-                                <span class="sidebar-label">Kelola Admin</span>
-                            </a>
-                            <div class="space-y-1">
-                                <button type="button" onclick="toggleSubmenu('biaya-menu')"
-                                    class="w-full flex items-center justify-between px-4 py-3 rounded-lg group transition-all duration-200 {{ request()->routeIs('biaya.*') ? 'bg-blue-500/10 text-blue-400' : 'text-slate-400 hover:bg-slate-800 hover:text-slate-100' }}">
-                                    <div class="flex items-center">
-                                        <div class="flex-shrink-0">
-                                            <svg class="w-5 h-5 {{ request()->routeIs('biaya.*') ? 'text-blue-400' : 'text-slate-500 group-hover:text-slate-300' }}"
-                                                fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                                    d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z">
-                                                </path>
-                                            </svg>
-                                        </div>
-                                        <span
-                                            class="font-medium ml-3 sidebar-label transition-all duration-300 whitespace-nowrap">Biaya</span>
+                            <span
+                                class="font-medium ml-3 sidebar-label transition-all duration-300 whitespace-nowrap">Siswa</span>
+                        </div>
+                        <svg id="siswa-menu-arrow" class="w-4 h-4 transition-transform duration-200 sidebar-label"
+                            fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7">
+                            </path>
+                        </svg>
+                    </button>
+                    <div id="siswa-menu" class="hidden pl-4 space-y-1 overflow-hidden">
+                        <a href="{{ route('quiz-attempts') }}"
+                            class="flex items-center px-4 py-2 rounded-lg text-sm {{ request()->routeIs('quiz-attempts') ? 'text-blue-400' : 'text-slate-400 hover:bg-slate-800 hover:text-slate-100' }}">
+                            <span class="sidebar-label">Quiz Attempts</span>
+                        </a>
+                        <a href="{{ route('dashboard') }}"
+                            class="flex items-center px-4 py-2 rounded-lg text-sm {{ request()->routeIs('dashboard') && !request()->routeIs('quiz-attempts') ? 'text-blue-400' : 'text-slate-400 hover:bg-slate-800 hover:text-slate-100' }}">
+                            <span class="sidebar-label">Data User</span>
+                        </a>
+                        <a href="#"
+                            class="flex items-center px-4 py-2 rounded-lg text-sm text-slate-400 hover:bg-slate-800 hover:text-slate-100">
+                            <span class="sidebar-label">Siswa-Tarif</span>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- TENTOR -->
+                <div class="space-y-1">
+                    <button type="button" onclick="toggleSubmenu('tentor-menu')"
+                        class="w-full flex items-center justify-between px-4 py-3 rounded-lg group transition-all duration-200 text-slate-400 hover:bg-slate-800 hover:text-slate-100">
+                        <div class="flex items-center">
+                            <div class="flex-shrink-0">
+                                <svg class="w-5 h-5 text-slate-500 group-hover:text-slate-300" fill="none"
+                                    stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z">
+                                    </path>
+                                </svg>
+                            </div>
+                            <span
+                                class="font-medium ml-3 sidebar-label transition-all duration-300 whitespace-nowrap">Tentor</span>
+                        </div>
+                        <svg id="tentor-menu-arrow" class="w-4 h-4 transition-transform duration-200 sidebar-label"
+                            fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7">
+                            </path>
+                        </svg>
+                    </button>
+                    <div id="tentor-menu" class="hidden pl-4 space-y-1 overflow-hidden">
+                        <a href="{{ route('tentor-siswa.active') }}"
+                            class="flex items-center px-4 py-2 rounded-lg text-sm {{ request()->routeIs('tentor-siswa.active') ? 'text-blue-400' : 'text-slate-400 hover:bg-slate-800 hover:text-slate-100' }}">
+                            <span class="sidebar-label">Tentor Aktif</span>
+                        </a>
+                        <a href="{{ route('tentor-siswa.all-schedules') }}"
+                            class="flex items-center px-4 py-2 rounded-lg text-sm {{ request()->routeIs('tentor-siswa.all-schedules') ? 'text-blue-400' : 'text-slate-400 hover:bg-slate-800 hover:text-slate-100' }}">
+                            <span class="sidebar-label">Master Jadwal</span>
+                        </a>
+                        <a href="{{ route('tentor-siswa.available', ['mapel' => 'mat']) }}"
+                            class="flex items-center px-4 py-2 rounded-lg text-sm {{ request('mapel') == 'mat' ? 'text-emerald-400' : 'text-slate-400 hover:bg-slate-800 hover:text-slate-100' }}">
+                            <span class="sidebar-label">Jadwal Bisa Mat</span>
+                        </a>
+                        <a href="{{ route('tentor-siswa.available', ['mapel' => 'bing']) }}"
+                            class="flex items-center px-4 py-2 rounded-lg text-sm {{ request('mapel') == 'bing' ? 'text-emerald-400' : 'text-slate-400 hover:bg-slate-800 hover:text-slate-100' }}">
+                            <span class="sidebar-label">Jadwal Bisa Bing</span>
+                        </a>
+                        <a href="{{ route('monitoring.index') }}"
+                            class="flex items-center px-4 py-2 rounded-lg text-sm {{ request()->routeIs('monitoring.*') ? 'text-amber-400' : 'text-slate-400 hover:bg-slate-800 hover:text-slate-100' }}">
+                            <span class="sidebar-label">Monitoring Jadwal</span>
+                        </a>
+                        <a href="{{ route('presensi-monitoring.create') }}"
+                            class="flex items-center px-4 py-2 rounded-lg text-sm {{ request()->routeIs('presensi-monitoring.create') ? 'text-emerald-400' : 'text-slate-400 hover:bg-slate-800 hover:text-slate-100' }}">
+                            <span class="sidebar-label">Telah Monitoring</span>
+                        </a>
+                        <a href="{{ route('presensi-monitoring.index') }}"
+                            class="flex items-center px-4 py-2 rounded-lg text-sm {{ (request()->routeIs('presensi-monitoring.*') && !request()->routeIs('presensi-monitoring.create')) ? 'text-blue-400' : 'text-slate-400 hover:bg-slate-800 hover:text-slate-100' }}">
+                            <span class="sidebar-label">Data Log Monitoring</span>
+                        </a>
+                        <a href="{{ route('presensi.index') }}"
+                            class="flex items-center px-4 py-2 rounded-lg text-sm {{ request()->routeIs('presensi.index') ? 'text-blue-400' : 'text-slate-400 hover:bg-slate-800 hover:text-slate-100' }}">
+                            <span class="sidebar-label">Data Presensi</span>
+                        </a>
+                        <a href="{{ route('tentors.index') }}"
+                            class="flex items-center px-4 py-2 rounded-lg text-sm {{ request()->routeIs('tentors.*') ? 'text-blue-400' : 'text-slate-400 hover:bg-slate-800 hover:text-slate-100' }}">
+                            <span class="sidebar-label">Data Tentor</span>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- ADMIN -->
+                <div class="space-y-1">
+                    <button type="button" onclick="toggleSubmenu('admin-menu')"
+                        class="w-full flex items-center justify-between px-4 py-3 rounded-lg group transition-all duration-200 text-slate-400 hover:bg-slate-800 hover:text-slate-100">
+                        <div class="flex items-center">
+                            <div class="flex-shrink-0">
+                                <svg class="w-5 h-5 text-slate-500 group-hover:text-slate-300" fill="none"
+                                    stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z">
+                                    </path>
+                                </svg>
+                            </div>
+                            <span
+                                class="font-medium ml-3 sidebar-label transition-all duration-300 whitespace-nowrap">Admin</span>
+                        </div>
+                        <svg id="admin-menu-arrow" class="w-4 h-4 transition-transform duration-200 sidebar-label"
+                            fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7">
+                            </path>
+                        </svg>
+                    </button>
+                    <div id="admin-menu" class="hidden pl-4 space-y-1 overflow-hidden">
+                        <a href="{{ route('useradmins.index') }}"
+                            class="flex items-center px-4 py-2 rounded-lg text-sm {{ request()->routeIs('useradmins.*') ? 'text-blue-400' : 'text-slate-400 hover:bg-slate-800 hover:text-slate-100' }}">
+                            <span class="sidebar-label">Kelola Admin</span>
+                        </a>
+                        <div class="space-y-1">
+                            <button type="button" onclick="toggleSubmenu('biaya-menu')"
+                                class="w-full flex items-center justify-between px-4 py-3 rounded-lg group transition-all duration-200 {{ request()->routeIs('biaya.*') ? 'bg-blue-500/10 text-blue-400' : 'text-slate-400 hover:bg-slate-800 hover:text-slate-100' }}">
+                                <div class="flex items-center">
+                                    <div class="flex-shrink-0">
+                                        <svg class="w-5 h-5 {{ request()->routeIs('biaya.*') ? 'text-blue-400' : 'text-slate-500 group-hover:text-slate-300' }}"
+                                            fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z">
+                                            </path>
+                                        </svg>
                                     </div>
-                                    <svg id="biaya-menu-arrow"
-                                        class="w-4 h-4 transition-transform duration-200 sidebar-label {{ request()->routeIs('biaya.*') ? 'rotate-180' : '' }}"
-                                        fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                            d="M19 9l-7 7-7-7"></path>
-                                    </svg>
-                                </button>
-                                <div id="biaya-menu"
-                                    class="{{ request()->routeIs('biaya.*') ? '' : 'hidden' }} pl-4 space-y-1 overflow-hidden">
-                                    <a href="{{ route('biaya.index') }}"
-                                        class="flex items-center px-4 py-2 rounded-lg text-sm {{ request()->routeIs('biaya.index') || request()->routeIs('biaya.show') ? 'text-blue-400 font-bold' : 'text-slate-400 hover:bg-slate-800 hover:text-slate-100' }}">
-                                        <span class="sidebar-label">Tabel Per Tentor</span>
-                                    </a>
-                                    <a href="{{ route('biaya.summary') }}"
-                                        class="flex items-center px-4 py-2 rounded-lg text-sm {{ request()->routeIs('biaya.summary') ? 'text-blue-400 font-bold' : 'text-slate-400 hover:bg-slate-800 hover:text-slate-100' }}">
-                                        <span class="sidebar-label">Tabel Keseluruhan</span>
-                                    </a>
-                                    <a href="{{ route('biaya.billing') }}"
-                                        class="flex items-center px-4 py-2 rounded-lg text-sm {{ request()->routeIs('biaya.billing') ? 'text-blue-400 font-bold' : 'text-slate-400 hover:bg-slate-800 hover:text-slate-100' }}">
-                                        <span class="sidebar-label">Tagihan WA</span>
-                                    </a>
-                                    <a href="{{ route('biaya.student-list') }}"
-                                        class="flex items-center px-4 py-2 rounded-lg text-sm {{ request()->routeIs('biaya.student-list') ? 'text-blue-400 font-bold' : 'text-slate-400 hover:bg-slate-800 hover:text-slate-100' }}">
-                                        <span class="sidebar-label">Daftar Kontak Siswa</span>
-                                    </a>
-                                    <a href="{{ route('biaya.active-student-list') }}"
-                                        class="flex items-center px-4 py-2 rounded-lg text-sm {{ request()->routeIs('biaya.active-student-list') ? 'text-blue-400 font-bold' : 'text-slate-400 hover:bg-slate-800 hover:text-slate-100' }}">
-                                        <span class="sidebar-label">Kontak Siswa Aktif</span>
-                                    </a>
+                                    <span
+                                        class="font-medium ml-3 sidebar-label transition-all duration-300 whitespace-nowrap">Biaya</span>
                                 </div>
+                                <svg id="biaya-menu-arrow"
+                                    class="w-4 h-4 transition-transform duration-200 sidebar-label {{ request()->routeIs('biaya.*') ? 'rotate-180' : '' }}"
+                                    fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M19 9l-7 7-7-7"></path>
+                                </svg>
+                            </button>
+                            <div id="biaya-menu"
+                                class="{{ request()->routeIs('biaya.*') ? '' : 'hidden' }} pl-4 space-y-1 overflow-hidden">
+                                <a href="{{ route('biaya.index') }}"
+                                    class="flex items-center px-4 py-2 rounded-lg text-sm {{ request()->routeIs('biaya.index') || request()->routeIs('biaya.show') ? 'text-blue-400 font-bold' : 'text-slate-400 hover:bg-slate-800 hover:text-slate-100' }}">
+                                    <span class="sidebar-label">Tabel Per Tentor</span>
+                                </a>
+                                <a href="{{ route('biaya.summary') }}"
+                                    class="flex items-center px-4 py-2 rounded-lg text-sm {{ request()->routeIs('biaya.summary') ? 'text-blue-400 font-bold' : 'text-slate-400 hover:bg-slate-800 hover:text-slate-100' }}">
+                                    <span class="sidebar-label">Tabel Keseluruhan</span>
+                                </a>
+                                <a href="{{ route('biaya.billing') }}"
+                                    class="flex items-center px-4 py-2 rounded-lg text-sm {{ request()->routeIs('biaya.billing') ? 'text-blue-400 font-bold' : 'text-slate-400 hover:bg-slate-800 hover:text-slate-100' }}">
+                                    <span class="sidebar-label">Tagihan WA</span>
+                                </a>
+                                <a href="{{ route('biaya.student-list') }}"
+                                    class="flex items-center px-4 py-2 rounded-lg text-sm {{ request()->routeIs('biaya.student-list') ? 'text-blue-400 font-bold' : 'text-slate-400 hover:bg-slate-800 hover:text-slate-100' }}">
+                                    <span class="sidebar-label">Daftar Kontak Siswa</span>
+                                </a>
+                                <a href="{{ route('biaya.active-student-list') }}"
+                                    class="flex items-center px-4 py-2 rounded-lg text-sm {{ request()->routeIs('biaya.active-student-list') ? 'text-blue-400 font-bold' : 'text-slate-400 hover:bg-slate-800 hover:text-slate-100' }}">
+                                    <span class="sidebar-label">Kontak Siswa Aktif</span>
+                                </a>
                             </div>
-                            <a href="{{ route('tarifs.index') }}"
-                                class="flex items-center px-4 py-2 rounded-lg text-sm {{ request()->routeIs('tarifs.*') ? 'text-blue-400' : 'text-slate-400 hover:bg-slate-800 hover:text-slate-100' }}">
-                                <span class="sidebar-label">Kelola Tarif</span>
-                            </a>
                         </div>
+                        <a href="{{ route('tarifs.index') }}"
+                            class="flex items-center px-4 py-2 rounded-lg text-sm {{ request()->routeIs('tarifs.*') ? 'text-blue-400' : 'text-slate-400 hover:bg-slate-800 hover:text-slate-100' }}">
+                            <span class="sidebar-label">Kelola Tarif</span>
+                        </a>
                     </div>
-                @endif
-            </nav>
+                </div>
+            @endif
+        </nav>
         </div>
 
         <!-- User Panel -->
@@ -412,6 +403,19 @@
 
     <!-- Main Content -->
     <main id="main-content" class="flex-1 p-4 md:p-8 overflow-y-auto transition-all duration-300">
+        <!-- Desktop Header (Top Bar) -->
+        <div
+            class="hidden md:flex items-center mb-6 bg-slate-800/50 backdrop-blur-md border border-slate-700 p-2 rounded-xl sticky top-0 z-40">
+            <button id="sidebar-toggle-btn"
+                class="flex items-center justify-center w-10 h-10 bg-slate-900 border border-slate-700 rounded-lg text-slate-400 hover:text-white hover:bg-blue-600 transition-all shadow-lg group">
+                <svg id="toggle-icon" class="w-5 h-5 transition-transform duration-300" fill="none"
+                    stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
+                </svg>
+            </button>
+            <div class="ml-4 text-xs font-bold text-slate-500 uppercase tracking-widest hidden lg:block">AI LEARNING
+                ADMIN PANEL</div>
+        </div>
         <!-- Flash Messages -->
         @if(session('success'))
             <div
