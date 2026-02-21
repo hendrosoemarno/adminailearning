@@ -89,16 +89,21 @@
 
     <!-- Sidebar -->
     <aside id="sidebar"
-        class="fixed inset-y-0 left-0 z-50 w-64 bg-slate-900/90 backdrop-blur-xl border-r border-slate-700/50 transform -translate-x-full md:translate-x-0 transition-all duration-300 ease-in-out md:relative md:flex md:flex-col justify-between shadow-2xl overflow-hidden group">
+        class="fixed inset-y-0 left-0 z-50 w-64 bg-slate-900/90 backdrop-blur-xl border-r border-slate-700/50 transform -translate-x-full md:translate-x-0 transition-all duration-300 ease-in-out md:relative md:flex md:flex-col shadow-2xl overflow-hidden group">
 
         <!-- Sidebar Header -->
-        <div class="p-6">
-            <div class="flex items-center gap-3">
-                <span id="logo-text"
-                    class="text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-cyan-400 tracking-wide whitespace-nowrap transition-all duration-300">
-                    AdminPanel
-                </span>
-            </div>
+        <div class="flex items-center justify-between h-16 px-4 border-b border-slate-700/50 flex-shrink-0">
+            <span id="logo-text"
+                class="text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-cyan-400 tracking-wide whitespace-nowrap transition-all duration-300">
+                AdminPanel
+            </span>
+            <button id="sidebar-toggle-btn"
+                class="hidden md:flex items-center justify-center w-8 h-8 rounded-lg text-slate-400 hover:text-white hover:bg-blue-600 transition-all">
+                <svg id="toggle-icon" class="w-4 h-4 transition-transform duration-300" fill="none"
+                    stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
+                </svg>
+            </button>
         </div>
 
         <!-- Navigation -->
@@ -403,19 +408,6 @@
 
     <!-- Main Content -->
     <main id="main-content" class="flex-1 p-4 md:p-8 overflow-y-auto transition-all duration-300">
-        <!-- Desktop Header (Top Bar) -->
-        <div
-            class="hidden md:flex items-center mb-6 bg-slate-800/50 backdrop-blur-md border border-slate-700 p-2 rounded-xl sticky top-0 z-40">
-            <button id="sidebar-toggle-btn"
-                class="flex items-center justify-center w-10 h-10 bg-slate-900 border border-slate-700 rounded-lg text-slate-400 hover:text-white hover:bg-blue-600 transition-all shadow-lg group">
-                <svg id="toggle-icon" class="w-5 h-5 transition-transform duration-300" fill="none"
-                    stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
-                </svg>
-            </button>
-            <div class="ml-4 text-xs font-bold text-slate-500 uppercase tracking-widest hidden lg:block">AI LEARNING
-                ADMIN PANEL</div>
-        </div>
         <!-- Flash Messages -->
         @if(session('success'))
             <div
