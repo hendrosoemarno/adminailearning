@@ -92,13 +92,13 @@
         class="fixed inset-y-0 left-0 z-50 w-64 bg-slate-900/90 backdrop-blur-xl border-r border-slate-700/50 transform -translate-x-full md:translate-x-0 transition-all duration-300 ease-in-out md:relative md:flex md:flex-col shadow-2xl overflow-hidden group">
 
         <!-- Sidebar Header -->
-        <div class="flex items-center justify-between h-16 px-4 border-b border-slate-700/50 flex-shrink-0">
+        <div class="flex items-center h-16 px-4 border-b border-slate-700/50 flex-shrink-0">
             <span id="logo-text"
-                class="text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-cyan-400 tracking-wide whitespace-nowrap transition-all duration-300">
+                class="text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-cyan-400 tracking-wide whitespace-nowrap transition-all duration-300 flex-1 min-w-0">
                 AdminPanel
             </span>
             <button id="sidebar-toggle-btn"
-                class="hidden md:flex items-center justify-center w-8 h-8 rounded-lg text-slate-400 hover:text-white hover:bg-blue-600 transition-all">
+                class="hidden md:flex items-center justify-center w-8 h-8 rounded-lg text-slate-400 hover:text-white hover:bg-blue-600 transition-all flex-shrink-0">
                 <svg id="toggle-icon" class="w-4 h-4 transition-transform duration-300" fill="none"
                     stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
@@ -478,16 +478,23 @@
         function collapseSidebar(immediate = false) {
             sidebar.classList.remove('w-64');
             sidebar.classList.add('w-20');
-            logoText.classList.add('opacity-0', 'scale-0');
+            logoText.classList.add('opacity-0', 'scale-0', 'w-0', 'overflow-hidden');
+            logoText.classList.remove('flex-1');
             toggleIcon.classList.add('rotate-180');
+            // Center the button in the header when collapsed
+            const headerDiv = desktopToggleBtn.parentElement;
+            headerDiv.classList.add('justify-center');
             sidebarLabels.forEach(label => label.classList.add('opacity-0', 'pointer-events-none', 'hidden'));
         }
 
         function expandSidebar() {
             sidebar.classList.remove('w-20');
             sidebar.classList.add('w-64');
-            logoText.classList.remove('opacity-0', 'scale-0');
+            logoText.classList.remove('opacity-0', 'scale-0', 'w-0', 'overflow-hidden');
+            logoText.classList.add('flex-1');
             toggleIcon.classList.remove('rotate-180');
+            const headerDiv = desktopToggleBtn.parentElement;
+            headerDiv.classList.remove('justify-center');
             sidebarLabels.forEach(label => label.classList.remove('opacity-0', 'pointer-events-none', 'hidden'));
         }
 
