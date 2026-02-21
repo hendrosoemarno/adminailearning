@@ -17,6 +17,27 @@
         </a>
     </div>
 
+    <!-- Bulk Adjustment Section -->
+    <div class="mb-8 bg-slate-800/40 border border-slate-700/50 p-6 rounded-xl shadow-lg">
+        <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+            <div class="flex-1">
+                <h2 class="text-sm font-bold text-slate-300 uppercase tracking-wider mb-1">Setel Keseluruhan Total Meet (Global)</h2>
+                <p class="text-xs text-slate-500 italic">Ubah Total Meet seluruh siswa dari SEMUA tentor aktif berdasarkan prosentase dari paket mereka.</p>
+            </div>
+            <div class="flex items-center gap-3">
+                <div class="relative w-32">
+                    <input type="number" id="bulk-percentage" placeholder="Contoh: 50" min="1" max="200"
+                        class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-white text-sm outline-none focus:ring-2 focus:ring-blue-500 transition-all pr-8">
+                    <span class="absolute right-3 top-1/2 -translate-y-1/2 text-slate-500 text-sm italic">%</span>
+                </div>
+                <button onclick="bulkProcessMeet()" id="bulk-process-btn"
+                    class="px-6 py-2 bg-blue-600 hover:bg-blue-500 text-white text-sm font-bold rounded-lg transition-all shadow-lg shadow-blue-500/20 disabled:opacity-50 flex items-center gap-2">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
+                    Proses Global
+                </button>
+            </div>
+        </div>
+    </div>
     <!-- Search -->
     <div class="bg-slate-800/50 backdrop-blur-sm border border-slate-700 p-6 rounded-xl shadow-lg mb-8">
         <form method="GET" action="{{ route('biaya.index') }}" class="flex flex-col md:flex-row gap-4 items-end">
@@ -127,4 +148,50 @@
             </table>
         </div>
     </div>
+
+    <script>
+        function bulkProcessMeet() {
+            const percentage = document.getElementById('bulk-percentage').value;
+            if (!percentage || percentage <= 0) {
+                alert('Silakan masukkan prosentase yang valid (contoh: 50)');
+                return;
+            }
+
+            if (!confirm(`Apakah Anda yakin ingin mengatur Total Meet SELURUH SISWA (Global) menjadi ${percentage}% dari paket mereka? Tindakan ini akan mempengaruhi semua tentor aktif.`)) {
+                return;
+            }
+
+            const btn = document.getElementById('bulk-process-btn');
+            btn.disabled = true;
+            btn.innerHTML = '<svg class="w-4 h-4 animate-spin" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg> Memproses Global...';
+
+            fetch('{{ route("biaya.bulk-update-meet") }}', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                },
+                body: JSON.stringify({
+                    percentage: percentage
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    alert(data.message);
+                    location.reload();
+                } else {
+                    alert('Gagal memproses global bulk update.');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Terjadi kesalahan sistem.');
+            })
+            .finally(() => {
+                btn.disabled = false;
+                btn.innerHTML = '<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg> Proses Global';
+            });
+        }
+    </script>
 @endsection

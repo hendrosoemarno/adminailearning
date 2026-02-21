@@ -794,6 +794,51 @@ class BiayaController extends Controller
         ]);
     }
 
+    public function bulkUpdateMeet(Request $request)
+    {
+        $request->validate([
+            'id_tentor' => 'nullable|exists:ai_tentor,id',
+            'percentage' => 'required|numeric|min:1|max:200'
+        ]);
+
+        $id_tentor = $request->id_tentor;
+        $percentage = $request->percentage;
+
+        $query = SiswaTarif::query();
+
+        if ($id_tentor) {
+            $query->where('id_tentor', $id_tentor);
+        } else {
+            // Only update students of active tentors
+            $activeTentorIds = \App\Models\Tentor::where('aktif', 1)->pluck('id');
+            $query->whereIn('id_tentor', $activeTentorIds);
+        }
+
+        $siswaTarifs = $query->get();
+
+        foreach ($siswaTarifs as $st) {
+            $tarif = $st->tarif;
+            if (!$tarif)
+                continue;
+
+            // Calculate default total meet
+            preg_match('/\d+/', $tarif->kode, $matches);
+            $multiplier = isset($matches[0]) ? (int) $matches[0] : 0;
+            $defaultTotalMeet = $multiplier * 4;
+
+            if ($defaultTotalMeet > 0) {
+                $newMeet = round($defaultTotalMeet * ($percentage / 100));
+                $st->custom_total_meet = $newMeet;
+                $st->save();
+            }
+        }
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Berhasil memperbarui Total Meet untuk ' . ($id_tentor ? 'tutor terpilih.' : 'seluruh tutor.')
+        ]);
+    }
+
     public function toggleSalaryStatus(Request $request)
     {
         $request->validate([
