@@ -60,16 +60,27 @@
                             <select name="gender"
                                 class="w-full bg-slate-900 border border-slate-700 rounded-lg px-4 py-2 text-white focus:ring-2 focus:ring-blue-500 outline-none transition-all">
                                 <option value="">Pilih</option>
-                                <option value="L" {{ old('gender', $detil->gender) == 'L' ? 'selected' : '' }}>Laki-laki
+                                <option value="Laki-laki" {{ old('gender', $detil->gender) == 'Laki-laki' ? 'selected' : '' }}>Laki-laki
                                 </option>
-                                <option value="P" {{ old('gender', $detil->gender) == 'P' ? 'selected' : '' }}>Perempuan
+                                <option value="Perempuan" {{ old('gender', $detil->gender) == 'Perempuan' ? 'selected' : '' }}>Perempuan
                                 </option>
                             </select>
                         </div>
                         <div class="space-y-1">
                             <label class="text-sm font-medium text-slate-400">Agama</label>
-                            <input type="text" name="agama" value="{{ old('agama', $detil->agama) }}"
+                            <select name="agama"
                                 class="w-full bg-slate-900 border border-slate-700 rounded-lg px-4 py-2 text-white focus:ring-2 focus:ring-blue-500 outline-none transition-all">
+                                <option value="islam" {{ old('agama', $detil->agama) == 'islam' ? 'selected' : '' }}>Islam
+                                </option>
+                                <option value="kristen" {{ old('agama', $detil->agama) == 'kristen' ? 'selected' : '' }}>
+                                    Kristen</option>
+                                <option value="katolik" {{ old('agama', $detil->agama) == 'katolik' ? 'selected' : '' }}>
+                                    Katolik</option>
+                                <option value="hindu" {{ old('agama', $detil->agama) == 'hindu' ? 'selected' : '' }}>Hindu
+                                </option>
+                                <option value="budha" {{ old('agama', $detil->agama) == 'budha' ? 'selected' : '' }}>Budha
+                                </option>
+                            </select>
                         </div>
                     </div>
 

@@ -68,7 +68,20 @@ class UserController extends Controller
     public function edit($id)
     {
         $user = MoodleUser::findOrFail($id);
-        $detil = $user->detil ?? new \App\Models\UserDetil(['id' => $id]);
+        $detil = $user->detil;
+
+        if (!$detil) {
+            $detil = new \App\Models\UserDetil(['id' => $id]);
+            $detil->tgl_daftar = time();
+        }
+
+        // Convert timestamps to Y-m-d for HTML5 date input
+        if ($detil->tgl_daftar && is_numeric($detil->tgl_daftar)) {
+            $detil->tgl_daftar = date('Y-m-d', $detil->tgl_daftar);
+        }
+        if ($detil->tgl_lahir && is_numeric($detil->tgl_lahir)) {
+            $detil->tgl_lahir = date('Y-m-d', $detil->tgl_lahir);
+        }
 
         return view('user.edit', compact('user', 'detil'));
     }
@@ -78,21 +91,52 @@ class UserController extends Controller
         $request->validate([
             'nama' => 'required|string|max:255',
             'nickname' => 'nullable|string|max:255',
-            'kelas' => 'nullable|string|max:50',
-            'wa_ortu' => 'nullable|string|max:20',
+            'kelas' => 'nullable',
+            'wa_ortu' => 'nullable|string|max:24',
             'nama_ortu' => 'nullable|string|max:255',
             'nama_sekolah' => 'nullable|string|max:255',
             'alamat' => 'nullable|string',
             'tgl_lahir' => 'nullable|date',
             'tempat_lahir' => 'nullable|string|max:255',
-            'gender' => 'nullable|string|max:10',
+            'gender' => 'nullable|string|max:20',
             'agama' => 'nullable|string|max:50',
-            'kelompok' => 'nullable|string|max:100',
+            'kelompok' => 'nullable',
+            'tgl_daftar' => 'nullable|date',
+            'nama_perekom' => 'nullable|string|max:255',
         ]);
+
+        $data = $request->except('_token', '_method');
+
+        // Convert dates to timestamps (int) as required by the schema
+        if (!empty($data['tgl_lahir'])) {
+            $data['tgl_lahir'] = strtotime($data['tgl_lahir']);
+        } else {
+            $data['tgl_lahir'] = 0;
+        }
+
+        if (!empty($data['tgl_daftar'])) {
+            $data['tgl_daftar'] = strtotime($data['tgl_daftar']);
+        } else {
+            $existing = \App\Models\UserDetil::find($id);
+            $data['tgl_daftar'] = ($existing && $existing->tgl_daftar) ? $existing->tgl_daftar : time();
+        }
+
+        // Handle NOT NULL fields with defaults
+        $data['nama'] = $data['nama'] ?? '';
+        $data['kelas'] = $data['kelas'] ?? 0;
+        $data['tempat_lahir'] = $data['tempat_lahir'] ?? '';
+        $data['alamat'] = $data['alamat'] ?? '';
+        $data['wa_ortu'] = $data['wa_ortu'] ?? '';
+        $data['nama_perekom'] = $data['nama_perekom'] ?? '';
+        $data['nama_sekolah'] = $data['nama_sekolah'] ?? '';
+        $data['nama_ortu'] = $data['nama_ortu'] ?? '';
+        $data['agama'] = !empty($data['agama']) ? $data['agama'] : 'islam'; // Enum NO NULL
+        $data['gender'] = !empty($data['gender']) ? $data['gender'] : ''; // Enum NO NULL, but has '' option
+        $data['kelompok'] = !empty($data['kelompok']) ? (int) $data['kelompok'] : 0;
 
         \App\Models\UserDetil::updateOrCreate(
             ['id' => $id],
-            $request->except('_token', '_method')
+            $data
         );
 
         return redirect()->route('dashboard')->with('success', 'Data user berhasil diperbarui');
