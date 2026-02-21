@@ -298,6 +298,72 @@ class BiayaController extends Controller
         return view('admin.biaya.student_list', compact('studentData', 'search', 'sort', 'direction'));
     }
 
+    public function studentListExport(Request $request)
+    {
+        $search = $request->input('search');
+        $fileName = 'Daftar_Kontak_Siswa_' . date('Ymd_His') . '.csv';
+
+        $query = MoodleUser::join('ai_user_detil', 'mdlu6_user.id', '=', 'ai_user_detil.id')
+            ->whereExists(function ($query) {
+                $query->select(\DB::raw(1))
+                    ->from('ai_tentor_siswa')
+                    ->whereRaw('mdlu6_user.id = ai_tentor_siswa.id_siswa');
+            })
+            ->select('mdlu6_user.*', 'ai_user_detil.wa_ortu', 'ai_user_detil.nama_ortu');
+
+        if ($search) {
+            $query->where(function ($q) use ($search) {
+                $q->where('firstname', 'like', "%{$search}%")
+                    ->orWhere('lastname', 'like', "%{$search}%")
+                    ->orWhere('ai_user_detil.nama_ortu', 'like', "%{$search}%");
+            });
+        }
+
+        $siswas = $query->orderBy('firstname', 'asc')->get();
+
+        $headers = [
+            "Content-type" => "text/csv",
+            "Content-Disposition" => "attachment; filename=$fileName",
+            "Pragma" => "no-cache",
+            "Cache-Control" => "must-revalidate, post-check=0, pre-check=0",
+            "Expires" => "0"
+        ];
+
+        $callback = function () use ($siswas) {
+            $file = fopen('php://output', 'w');
+
+            // BOM for Excel
+            fputs($file, "\xEF\xBB\xBF");
+
+            // Column Headers
+            fputcsv($file, ['ID', 'Nama Siswa', 'Nama Orang Tua', 'WhatsApp', 'Kursus', 'Tentor']);
+
+            foreach ($siswas as $siswa) {
+                $tentors = $siswa->tentors()->get();
+                $courses = [];
+                $tentorNames = [];
+
+                foreach ($tentors as $t) {
+                    $courses[] = $t->mapel;
+                    $tentorNames[] = $t->nama;
+                }
+
+                fputcsv($file, [
+                    $siswa->id,
+                    $siswa->firstname . ' ' . $siswa->lastname,
+                    $siswa->nama_ortu ?? '-',
+                    $siswa->wa_ortu ?? '-',
+                    implode(', ', array_unique($courses)),
+                    implode(', ', array_unique($tentorNames))
+                ]);
+            }
+
+            fclose($file);
+        };
+
+        return response()->stream($callback, 200, $headers);
+    }
+
     public function toggleStudentMark(Request $request)
     {
         $request->validate([
