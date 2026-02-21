@@ -235,15 +235,30 @@ class BiayaController extends Controller
 
     public function studentList(Request $request)
     {
+        return $this->handleStudentList($request, 'biaya.student-list', false);
+    }
+
+    public function activeStudentList(Request $request)
+    {
+        return $this->handleStudentList($request, 'biaya.active-student-list', true);
+    }
+
+    private function handleStudentList(Request $request, $viewRoute, $onlyActiveTentor)
+    {
         $search = $request->input('search');
         $sort = $request->input('sort', 'nama_siswa');
         $direction = $request->input('direction', 'asc');
 
         $query = MoodleUser::join('ai_user_detil', 'mdlu6_user.id', '=', 'ai_user_detil.id')
-            ->whereExists(function ($query) {
+            ->whereExists(function ($query) use ($onlyActiveTentor) {
                 $query->select(\DB::raw(1))
                     ->from('ai_tentor_siswa')
+                    ->join('ai_tentor', 'ai_tentor_siswa.id_tentor', '=', 'ai_tentor.id')
                     ->whereRaw('mdlu6_user.id = ai_tentor_siswa.id_siswa');
+
+                if ($onlyActiveTentor) {
+                    $query->where('ai_tentor.aktif', 1);
+                }
             })
             ->select('mdlu6_user.*', 'ai_user_detil.wa_ortu', 'ai_user_detil.nama_ortu', 'ai_user_detil.cek');
 
@@ -268,7 +283,12 @@ class BiayaController extends Controller
         $studentData = [];
 
         foreach ($siswas as $siswa) {
-            $tentors = $siswa->tentors()->get();
+            $tentorQuery = $siswa->tentors();
+            if ($onlyActiveTentor) {
+                $tentorQuery->where('ai_tentor.aktif', 1);
+            }
+            $tentors = $tentorQuery->get();
+
             $courses = [];
             $tentorNames = [];
 
@@ -288,14 +308,15 @@ class BiayaController extends Controller
             ];
         }
 
-        // Collection level sorting for derived fields if needed
+        // Collection level sorting
         if ($sort == 'kursus') {
             $studentData = collect($studentData)->sortBy('kursus', SORT_NATURAL | SORT_FLAG_CASE, $direction == 'desc')->values()->all();
         } elseif ($sort == 'tentor') {
             $studentData = collect($studentData)->sortBy('tentor', SORT_NATURAL | SORT_FLAG_CASE, $direction == 'desc')->values()->all();
         }
 
-        return view('admin.biaya.student_list', compact('studentData', 'search', 'sort', 'direction'));
+        $viewPath = 'admin.biaya.student_list';
+        return view($viewPath, compact('studentData', 'search', 'sort', 'direction', 'viewRoute', 'onlyActiveTentor'));
     }
 
     public function studentListExport(Request $request)

@@ -5,8 +5,12 @@
 @section('content')
     <div class="mb-8 flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
-            <h1 class="text-3xl font-bold text-white tracking-tight mb-2">Daftar Kontak Siswa & Kursus</h1>
-            <p class="text-slate-400">Data lengkap siswa, orang tua, dan pengajar AI Learning.</p>
+            <h1 class="text-3xl font-bold text-white tracking-tight mb-2">
+                {{ isset($onlyActiveTentor) && $onlyActiveTentor ? 'Daftar Kontak Siswa Aktif' : 'Daftar Kontak Siswa & Kursus' }}
+            </h1>
+            <p class="text-slate-400">
+                {{ isset($onlyActiveTentor) && $onlyActiveTentor ? 'Menampilkan hanya siswa yang memiliki pengajar aktif.' : 'Data lengkap siswa, orang tua, dan pengajar AI Learning.' }}
+            </p>
         </div>
         <div class="flex items-center gap-3">
             <a href="{{ route('biaya.student-list.export', ['search' => $search]) }}"
@@ -35,7 +39,7 @@
 
     <!-- Search Section -->
     <div class="bg-slate-800/50 backdrop-blur-sm border border-slate-700 p-6 rounded-xl shadow-lg mb-8">
-        <form method="GET" action="{{ route('biaya.student-list') }}" class="flex flex-col md:flex-row gap-4 items-end">
+        <form method="GET" action="{{ route($viewRoute ?? 'biaya.student-list') }}" class="flex flex-col md:flex-row gap-4 items-end">
             <div class="w-full flex-1 flex flex-col gap-1">
                 <label for="search" class="text-sm font-medium text-slate-400">Cari Siswa</label>
                 <div class="relative">
