@@ -321,14 +321,29 @@ class BiayaController extends Controller
 
     public function studentListExport(Request $request)
     {
+        return $this->handleStudentListExport($request, false);
+    }
+
+    public function activeStudentListExport(Request $request)
+    {
+        return $this->handleStudentListExport($request, true);
+    }
+
+    private function handleStudentListExport(Request $request, $onlyActiveTentor)
+    {
         $search = $request->input('search');
-        $fileName = 'Daftar_Kontak_Siswa_' . date('Ymd_His') . '.csv';
+        $fileName = ($onlyActiveTentor ? 'Daftar_Kontak_Siswa_Aktif_' : 'Daftar_Kontak_Siswa_') . date('Ymd_His') . '.csv';
 
         $query = MoodleUser::join('ai_user_detil', 'mdlu6_user.id', '=', 'ai_user_detil.id')
-            ->whereExists(function ($query) {
+            ->whereExists(function ($query) use ($onlyActiveTentor) {
                 $query->select(\DB::raw(1))
                     ->from('ai_tentor_siswa')
+                    ->join('ai_tentor', 'ai_tentor_siswa.id_tentor', '=', 'ai_tentor.id')
                     ->whereRaw('mdlu6_user.id = ai_tentor_siswa.id_siswa');
+
+                if ($onlyActiveTentor) {
+                    $query->where('ai_tentor.aktif', 1);
+                }
             })
             ->select('mdlu6_user.*', 'ai_user_detil.wa_ortu', 'ai_user_detil.nama_ortu');
 
@@ -350,7 +365,7 @@ class BiayaController extends Controller
             "Expires" => "0"
         ];
 
-        $callback = function () use ($siswas) {
+        $callback = function () use ($siswas, $onlyActiveTentor) {
             $file = fopen('php://output', 'w');
 
             // BOM for Excel
@@ -360,7 +375,12 @@ class BiayaController extends Controller
             fputcsv($file, ['ID', 'Nama Siswa', 'Nama Orang Tua', 'WhatsApp', 'Kursus', 'Tentor']);
 
             foreach ($siswas as $siswa) {
-                $tentors = $siswa->tentors()->get();
+                $tentorQuery = $siswa->tentors();
+                if ($onlyActiveTentor) {
+                    $tentorQuery->where('ai_tentor.aktif', 1);
+                }
+                $tentors = $tentorQuery->get();
+
                 $courses = [];
                 $tentorNames = [];
 

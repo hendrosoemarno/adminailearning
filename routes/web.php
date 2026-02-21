@@ -67,6 +67,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/biaya/billing', [\App\Http\Controllers\BiayaController::class, 'billing'])->name('biaya.billing');
     Route::get('/biaya/student-list', [\App\Http\Controllers\BiayaController::class, 'studentList'])->name('biaya.student-list');
     Route::get('/biaya/active-student-list', [\App\Http\Controllers\BiayaController::class, 'activeStudentList'])->name('biaya.active-student-list');
+    Route::get('/biaya/active-student-list/export', [\App\Http\Controllers\BiayaController::class, 'activeStudentListExport'])->name('biaya.active-student-list.export');
     Route::get('/biaya/student-list/export', [\App\Http\Controllers\BiayaController::class, 'studentListExport'])->name('biaya.student-list.export');
     Route::post('/biaya/toggle-student-mark', [\App\Http\Controllers\BiayaController::class, 'toggleStudentMark'])->name('biaya.toggle-student-mark');
     Route::post('/biaya/reset-student-marks', [\App\Http\Controllers\BiayaController::class, 'resetStudentMarks'])->name('biaya.reset-student-marks');

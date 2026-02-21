@@ -13,7 +13,7 @@
             </p>
         </div>
         <div class="flex items-center gap-3">
-            <a href="{{ route('biaya.student-list.export', ['search' => $search]) }}"
+            <a href="{{ route(($onlyActiveTentor ?? false) ? 'biaya.active-student-list.export' : 'biaya.student-list.export', ['search' => $search]) }}"
                 class="px-4 py-2 bg-emerald-600 hover:bg-emerald-500 text-white rounded-lg transition-all font-semibold flex items-center gap-2">
                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -39,7 +39,8 @@
 
     <!-- Search Section -->
     <div class="bg-slate-800/50 backdrop-blur-sm border border-slate-700 p-6 rounded-xl shadow-lg mb-8">
-        <form method="GET" action="{{ route($viewRoute ?? 'biaya.student-list') }}" class="flex flex-col md:flex-row gap-4 items-end">
+        <form method="GET" action="{{ route($viewRoute ?? 'biaya.student-list') }}"
+            class="flex flex-col md:flex-row gap-4 items-end">
             <div class="w-full flex-1 flex flex-col gap-1">
                 <label for="search" class="text-sm font-medium text-slate-400">Cari Siswa</label>
                 <div class="relative">
