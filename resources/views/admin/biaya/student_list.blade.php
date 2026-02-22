@@ -58,6 +58,12 @@
             <input type="hidden" name="sort" value="{{ $sort }}">
             <input type="hidden" name="direction" value="{{ $direction }}">
             <div class="flex items-center gap-2">
+                @if(isset($onlyActiveTentor) && $onlyActiveTentor)
+                    <button type="button" onclick="resetAllMarks()"
+                        class="px-6 py-2 bg-slate-700 hover:bg-slate-600 text-slate-300 font-semibold rounded-lg transition-all border border-slate-600">
+                        Reset Semua Tanda
+                    </button>
+                @endif
                 <button type="submit"
                     class="px-6 py-2 bg-blue-600 hover:bg-blue-500 text-white font-semibold rounded-lg transition-all shadow-lg shadow-blue-500/20">
                     Filter
@@ -72,7 +78,10 @@
             <table class="w-full text-left border-collapse">
                 <thead>
                     <tr class="bg-slate-900/60 border-b border-slate-700">
-
+                        @if(isset($onlyActiveTentor) && $onlyActiveTentor)
+                            <th class="p-5 text-xs font-bold text-slate-400 uppercase tracking-widest text-center w-20">Tanda
+                            </th>
+                        @endif
                         <th class="p-5 text-xs font-bold text-slate-400 uppercase tracking-widest">
                             <a href="{{ request()->fullUrlWithQuery(['sort' => 'nama_siswa', 'direction' => ($sort == 'nama_siswa' && $direction == 'asc') ? 'desc' : 'asc']) }}"
                                 class="flex items-center gap-2 hover:text-white transition-colors">
@@ -147,7 +156,19 @@
                 </thead>
                 <tbody class="divide-y divide-slate-700/50">
                     @forelse($studentData as $data)
-                        <tr class="hover:bg-slate-700/20 transition-colors">
+                        <tr @if(isset($onlyActiveTentor) && $onlyActiveTentor) id="row-{{ $data->id }}" @endif
+                            class="hover:bg-slate-700/20 transition-colors @if(isset($onlyActiveTentor) && $onlyActiveTentor && $data->cek) bg-blue-500/5 @endif">
+                            @if(isset($onlyActiveTentor) && $onlyActiveTentor)
+                                <td class="p-5 text-center">
+                                    <button onclick="toggleMark({{ $data->id }})" id="mark-btn-{{ $data->id }}"
+                                        class="w-8 h-8 rounded-lg flex items-center justify-center transition-all border {{ $data->cek ? 'bg-blue-500 border-blue-400 text-white shadow-lg shadow-blue-500/40' : 'bg-slate-800 border-slate-700 text-slate-500 hover:border-slate-500' }}">
+                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3"
+                                                d="M5 13l4 4L19 7"></path>
+                                        </svg>
+                                    </button>
+                                </td>
+                            @endif
                             <td class="p-5">
                                 <div class="flex items-center gap-3">
                                     <div
@@ -186,7 +207,8 @@
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="5" class="p-20 text-center">
+                            <td colspan="{{ (isset($onlyActiveTentor) && $onlyActiveTentor) ? 6 : 5 }}"
+                                class="p-20 text-center">
                                 <div class="flex flex-col items-center">
                                     <svg class="w-12 h-12 text-slate-600 mb-4" fill="none" stroke="currentColor"
                                         viewBox="0 0 24 24">
@@ -203,5 +225,54 @@
         </div>
     </div>
 
+    @if(isset($onlyActiveTentor) && $onlyActiveTentor)
+        <script>
+            async function toggleMark(studentId) {
+                const btn = document.getElementById(`mark-btn-${studentId}`);
+                const row = document.getElementById(`row-${studentId}`);
+                const isMarked = btn.classList.contains('bg-blue-500');
+                const newValue = isMarked ? 0 : 1;
 
+                btn.disabled = true;
+
+                try {
+                    const response = await fetch('{{ route('biaya.toggle-student-mark') }}', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': '{{ csrf_token() }}' },
+                        body: JSON.stringify({ id: studentId, cek: newValue })
+                    });
+
+                    if (response.ok) {
+                        if (newValue) {
+                            btn.className = 'w-8 h-8 rounded-lg flex items-center justify-center transition-all border bg-blue-500 border-blue-400 text-white shadow-lg shadow-blue-500/40';
+                            row.classList.add('bg-blue-500/5');
+                        } else {
+                            btn.className = 'w-8 h-8 rounded-lg flex items-center justify-center transition-all border bg-slate-800 border-slate-700 text-slate-500 hover:border-slate-500';
+                            row.classList.remove('bg-blue-500/5');
+                        }
+                    }
+                } catch (error) {
+                    console.error('Error toggling mark:', error);
+                } finally {
+                    btn.disabled = false;
+                }
+            }
+
+            async function resetAllMarks() {
+                if (confirm('Apakah Anda yakin ingin menghapus SEMUA tanda di daftar ini?')) {
+                    try {
+                        const response = await fetch('{{ route('biaya.reset-student-marks') }}', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': '{{ csrf_token() }}' }
+                        });
+                        if (response.ok) {
+                            window.location.reload();
+                        }
+                    } catch (error) {
+                        console.error('Error resetting marks:', error);
+                    }
+                }
+            }
+        </script>
+    @endif
 @endsection
