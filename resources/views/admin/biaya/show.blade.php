@@ -303,23 +303,26 @@
 
     <!-- Summary Section -->
     @if(count($siswas) > 0)
+        @php
+            $visibleSiswas = $siswas->where('is_salary_hidden', false);
+        @endphp
         <div class="mt-8 grid grid-cols-1 md:grid-cols-3 gap-6">
             <div class="bg-slate-800/40 p-6 rounded-xl border border-slate-700/50">
                 <div class="text-slate-400 text-sm mb-1">Total Pendapatan AI Learning</div>
                 <div class="text-2xl font-bold text-emerald-400" id="summary-ai-learning">
-                    Rp {{ number_format($siswas->sum('ai_learning'), 0, ',', '.') }}
+                    Rp {{ number_format($visibleSiswas->sum('ai_learning'), 0, ',', '.') }}
                 </div>
             </div>
             <div class="bg-slate-800/40 p-6 rounded-xl border border-slate-700/50">
                 <div class="text-slate-400 text-sm mb-1">Total Gaji Tentor</div>
                 <div class="text-2xl font-bold text-amber-400" id="summary-gaji-tentor">
-                    Rp {{ number_format($siswas->sum('gaji_tentor'), 0, ',', '.') }}
+                    Rp {{ number_format($visibleSiswas->sum('gaji_tentor'), 0, ',', '.') }}
                 </div>
             </div>
             <div class="bg-slate-800/40 p-6 rounded-xl border border-slate-700/50">
                 <div class="text-slate-400 text-sm mb-1">Total Omzet</div>
                 <div class="text-2xl font-bold text-white" id="summary-biaya">
-                    Rp {{ number_format($siswas->sum('biaya'), 0, ',', '.') }}
+                    Rp {{ number_format($visibleSiswas->sum('biaya'), 0, ',', '.') }}
                 </div>
             </div>
         </div>
@@ -327,53 +330,57 @@
 
     <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.js"></script>
     <script>
-            // Init 
+        // Init 
         Sortable
-            const el = document.getElementById('sortable-students');
-            if (el) {
-                Sortable.create(el, {
-                    animation: 150,
-                    handle: '.cursor-move',
-                    onEnd: function () {
-                        let order = [];
-                        document.querySelectorAll('#sortable-students tr[data-siswa-id]').forEach(row => {
-                            order.push(row.getAttribute('data-siswa-id'));
-                        });
+        const el = document.getElementById('sortable-students');
+        if (el) {
+            Sortable.create(el, {
+                animation: 150,
+                handle: '.cursor-move',
+                onEnd: function () {
+                    let order = [];
+                    document.querySelectorAll('#sortable-students tr[data-siswa-id]').forEach(row => {
+                        order.push(row.getAttribute('data-siswa-id'));
+                    });
 
-                        // Send to server
-                        fetch('{{ route("biaya.update-order") }}', {
-                            method: 'POST',
-                            headers: {
-                                'Content-Type': 'application/json',
-                                'X-CSRF-TOKEN': '{{ csrf_token() }}'
-                            },
-                            body: JSON.stringify({
-                                id_tentor: {{ $tentor->id }},
-                                order: order
-                            })
+                    // Send to server
+                    fetch('{{ route("biaya.update-order") }}', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                        },
+                        body: JSON.stringify({
+                            id_tentor: {{ $tentor->id }},
+                            order: order
                         })
-                            .then(response => response.json())
-                            .then(data => {
-                                if (data.success) {
-                                    console.log('Order updated');
-                                }
-                            });
-                    }
-                });
-            }
+                    })
+                        .then(response => response.json())
+                        .then(data => {
+                            if (data.success) {
+                                console.log('Order updated');
+                            }
+                        });
+                }
+            });
+        }
 
-            function formatRupiah(number) {
-                return 'Rp ' + new Intl.NumberFormat('id-ID').format(number);
-            }
+        function formatRupiah(number) {
+            return 'Rp ' + new Intl.NumberFormat('id-ID').format(number);
+        }
 
-            function updateSummary() {
-                let totalAiLearning = 0;
-                let totalGajiTentor = 0;
-                let totalBiaya = 0;
+        function updateSummary() {
+            let totalAiLearning = 0;
+            let totalGajiTentor = 0;
+            let totalBiaya = 0;
 
-                // Get all rows
-                document.querySelectorAll('tr[data-siswa-id]').forEach(row => {
-                    const id = row.getAttribute('data-siswa-id');
+            // Get all rows
+            document.querySelectorAll('tr[data-siswa-id]').forEach(row => {
+                const id = row.getAttribute('data-siswa-id');
+                const btn = row.querySelector('button[onclick^="toggleSalary"]');
+                const isActive = btn.getAttribute('data-active') === 'true';
+
+                if (isActive) {
                     const aiVal = document.getElementById('ai-learning-' + id).textContent.replace(/[^\d]/g, '');
                     const gajiVal = document.getElementById('gaji-tentor-' + id).textContent.replace(/[^\d]/g, '');
                     const biayaVal = document.getElementById('biaya-' + id).textContent.replace(/[^\d]/g, '');
@@ -381,155 +388,159 @@
                     totalAiLearning += parseInt(aiVal || 0);
                     totalGajiTentor += parseInt(gajiVal || 0);
                     totalBiaya += parseInt(biayaVal || 0);
-                });
-
-                document.getElementById('summary-ai-learning').textContent = formatRupiah(totalAiLearning);
-                document.getElementById('summary-gaji-tentor').textContent = formatRupiah(totalGajiTentor);
-                document.getElementById('summary-biaya').textContent = formatRupiah(totalBiaya);
-            }
-
-            function updatePaket(select, siswaId, tentorId) {
-                const tarifId = select.value;
-                if (!tarifId) return;
-
-                // Show loading state
-                select.disabled = true;
-                rowPulse(siswaId, true);
-
-                fetch('{{ route("biaya.update-paket") }}', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'X-CSRF-TOKEN': '{{ csrf_token() }}'
-                    },
-                    body: JSON.stringify({
-                        id_siswa: siswaId,
-                        id_tentor: tentorId,
-                        id_tarif: tarifId
-                    })
-                })
-                    .then(response => response.json())
-                    .then(data => {
-                        if (data.success) {
-                            // Update table cells
-                            document.getElementById('biaya-' + siswaId).textContent = formatRupiah(data.data.biaya);
-                            document.getElementById('ai-learning-' + siswaId).textContent = formatRupiah(data.data.ai_learning);
-                            document.getElementById('gaji-tentor-' + siswaId).textContent = formatRupiah(data.data.gaji_tentor);
-                            // Update meet inputs
-                            document.getElementById('meet-input-' + siswaId).value = data.data.total_meet;
-                            document.getElementById('default-meet-' + siswaId).textContent = data.data.default_total_meet;
-
-                            // Update Summary
-                            updateSummary();
-                        } else {
-                            alert('Gagal memperbarui paket.');
-                        }
-                    })
-                    .catch(error => {
-                        console.error('Error:', error);
-                        alert('Terjadi kesalahan saat memperbarui paket.');
-                    })
-                    .finally(() => {
-                        select.disabled = false;
-                        rowPulse(siswaId, false);
-                    });
-            }
-
-            function rowPulse(id, active) {
-                const row = document.querySelector(`tr[data-siswa-id="${id}"]`);
-                if (active) {
-                    row.classList.add('animate-pulse', 'bg-blue-500/5');
-                } else {
-                    row.classList.remove('animate-pulse', 'bg-blue-500/5');
                 }
-            }
+            });
 
-            function updateCustomData(siswaId, field, value, tentorId) {
-                rowPulse(siswaId, true);
+            document.getElementById('summary-ai-learning').textContent = formatRupiah(totalAiLearning);
+            document.getElementById('summary-gaji-tentor').textContent = formatRupiah(totalGajiTentor);
+            document.getElementById('summary-biaya').textContent = formatRupiah(totalBiaya);
+        }
 
-                fetch('{{ route("biaya.update-custom") }}', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'X-CSRF-TOKEN': '{{ csrf_token() }}'
-                    },
-                    body: JSON.stringify({
-                        id_siswa: siswaId,
-                        id_tentor: tentorId,
-                        field: field,
-                        value: value
-                    })
+        function updatePaket(select, siswaId, tentorId) {
+            const tarifId = select.value;
+            if (!tarifId) return;
+
+            // Show loading state
+            select.disabled = true;
+            rowPulse(siswaId, true);
+
+            fetch('{{ route("biaya.update-paket") }}', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                },
+                body: JSON.stringify({
+                    id_siswa: siswaId,
+                    id_tentor: tentorId,
+                    id_tarif: tarifId
                 })
-                    .then(response => response.json())
-                    .then(data => {
-                        if (data.success) {
-                            // Update all affected cells
-                            document.getElementById('biaya-' + siswaId).textContent = formatRupiah(data.data.biaya);
-                            document.getElementById('ai-learning-' + siswaId).textContent = formatRupiah(data.data.ai_learning);
-                            document.getElementById('gaji-tentor-' + siswaId).textContent = formatRupiah(data.data.gaji_tentor);
+            })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        // Update table cells
+                        document.getElementById('biaya-' + siswaId).textContent = formatRupiah(data.data.biaya);
+                        document.getElementById('ai-learning-' + siswaId).textContent = formatRupiah(data.data.ai_learning);
+                        document.getElementById('gaji-tentor-' + siswaId).textContent = formatRupiah(data.data.gaji_tentor);
+                        // Update meet inputs
+                        document.getElementById('meet-input-' + siswaId).value = data.data.total_meet;
+                        document.getElementById('default-meet-' + siswaId).textContent = data.data.default_total_meet;
 
-                            // Update meet input if it was tanggal_masuk that changed
-                            if (field === 'tanggal_masuk') {
-                                document.getElementById('meet-input-' + siswaId).value = data.data.total_meet;
-                            }
+                        // Update Summary
+                        updateSummary();
+                    } else {
+                        alert('Gagal memperbarui paket.');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('Terjadi kesalahan saat memperbarui paket.');
+                })
+                .finally(() => {
+                    select.disabled = false;
+                    rowPulse(siswaId, false);
+                });
+        }
 
-                            // Update Summary
-                            updateSummary();
+        function rowPulse(id, active) {
+            const row = document.querySelector(`tr[data-siswa-id="${id}"]`);
+            if (active) {
+                row.classList.add('animate-pulse', 'bg-blue-500/5');
+            } else {
+                row.classList.remove('animate-pulse', 'bg-blue-500/5');
+            }
+        }
 
-                            // Show success feedback (optional)
-                            console.log('Data berhasil diperbarui');
+        function updateCustomData(siswaId, field, value, tentorId) {
+            rowPulse(siswaId, true);
+
+            fetch('{{ route("biaya.update-custom") }}', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                },
+                body: JSON.stringify({
+                    id_siswa: siswaId,
+                    id_tentor: tentorId,
+                    field: field,
+                    value: value
+                })
+            })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        // Update all affected cells
+                        document.getElementById('biaya-' + siswaId).textContent = formatRupiah(data.data.biaya);
+                        document.getElementById('ai-learning-' + siswaId).textContent = formatRupiah(data.data.ai_learning);
+                        document.getElementById('gaji-tentor-' + siswaId).textContent = formatRupiah(data.data.gaji_tentor);
+
+                        // Update meet input if it was tanggal_masuk that changed
+                        if (field === 'tanggal_masuk') {
+                            document.getElementById('meet-input-' + siswaId).value = data.data.total_meet;
+                        }
+
+                        // Update Summary
+                        updateSummary();
+
+                        // Show success feedback (optional)
+                        console.log('Data berhasil diperbarui');
+                    } else {
+                        alert('Gagal memperbarui data custom.');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('Terjadi kesalahan saat memperbarui data.');
+                })
+                .finally(() => {
+                    rowPulse(siswaId, false);
+                });
+        }
+        function toggleSalary(siswaId, btn, tentorId) {
+            const isActive = btn.getAttribute('data-active') === 'true';
+            const newStatus = !isActive; // true means hidden (excluded)
+
+            rowPulse(siswaId, true);
+            btn.disabled = true;
+
+            fetch('{{ route("biaya.toggle-salary") }}', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                },
+                body: JSON.stringify({
+                    id_siswa: siswaId,
+                    id_tentor: tentorId,
+                    status: isActive ? 1 : 0 // if it WAS active, we send 1 to hide it
+                })
+            })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        const isNowHidden = data.is_salary_hidden;
+                        btn.setAttribute('data-active', isNowHidden ? 'false' : 'true');
+
+                        if (isNowHidden) {
+                            btn.className = 'p-2 rounded-lg transition-all bg-red-500/10 text-red-500 border border-red-500/20';
+                            btn.innerHTML = '<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>';
+                            btn.title = 'Klik untuk aktifkan di Gaji Tentor';
                         } else {
-                            alert('Gagal memperbarui data custom.');
+                            btn.className = 'p-2 rounded-lg transition-all bg-blue-500/10 text-blue-500 border border-blue-500/20';
+                            btn.innerHTML = '<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>';
+                            btn.title = 'Klik untuk keluarkan dari Gaji Tentor';
                         }
-                    })
-                    .catch(error => {
-                        console.error('Error:', error);
-                        alert('Terjadi kesalahan saat memperbarui data.');
-                    })
-                    .finally(() => {
-                        rowPulse(siswaId, false);
-                    });
-            }
-            function toggleSalary(siswaId, btn, tentorId) {
-                const isActive = btn.getAttribute('data-active') === 'true';
-                const newStatus = !isActive; // true means hidden (excluded)
 
-                rowPulse(siswaId, true);
-                btn.disabled = true;
-
-                fetch('{{ route("biaya.toggle-salary") }}', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'X-CSRF-TOKEN': '{{ csrf_token() }}'
-                    },
-                    body: JSON.stringify({
-                        id_siswa: siswaId,
-                        id_tentor: tentorId,
-                        status: isActive ? 1 : 0 // if it WAS active, we send 1 to hide it
-                    })
+                        // Update Summary after toggle
+                        updateSummary();
+                    }
                 })
-                    .then(response => response.json())
-                    .then(data => {
-                        if (data.success) {
-                            const isNowHidden = data.is_salary_hidden;
-                            btn.setAttribute('data-active', isNowHidden ? 'false' : 'true');
-
-                            if (isNowHidden) {
-                                btn.className = 'p-2 rounded-lg transition-all bg-red-500/10 text-red-500 border border-red-500/20';
-                                btn.innerHTML = '<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>';
-                                btn.title = 'Klik untuk aktifkan di Gaji Tentor';
-                            } else {
-                                btn.className = 'p-2 rounded-lg transition-all bg-blue-500/10 text-blue-500 border border-blue-500/20';
-                                btn.innerHTML = '<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>';
-                                btn.title = 'Klik untuk keluarkan dari Gaji Tentor';
-                            }
-                        }
-                    })
-                    .finally(() => {
-                        btn.disabled = false;
-                        rowPulse(siswaId, false);
-                    });
-            }
-            </script>
+                .finally(() => {
+                    btn.disabled = false;
+                    rowPulse(siswaId, false);
+                });
+        }
+    </script>
 @endsection
