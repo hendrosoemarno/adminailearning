@@ -84,7 +84,7 @@ class BiayaController extends Controller
         $data = [];
 
         foreach ($subjects as $key => $label) {
-            $tentors = Tentor::where('mapel', $key)->where('aktif', 1)->orderBy('nama', 'asc')->get();
+            $tentors = Tentor::where('mapel', $key)->where('aktif', 1)->orderBy('id', 'asc')->get();
 
             foreach ($tentors as $tentor) {
                 $siswas = $tentor->siswas()->get();
@@ -142,7 +142,7 @@ class BiayaController extends Controller
             fputcsv($file, ['Subject', 'Tentor', 'Nama Siswa', 'Paket', 'Biaya (Omzet)', 'AI Learning', 'Gaji Tentor', 'Meet', 'Realisasi']);
 
             foreach ($subjects as $key => $label) {
-                $tentors = Tentor::where('mapel', $key)->where('aktif', 1)->orderBy('nama', 'asc')->get();
+                $tentors = Tentor::where('mapel', $key)->where('aktif', 1)->orderBy('id', 'asc')->get();
 
                 foreach ($tentors as $tentor) {
                     $siswas = $tentor->siswas()->get();
