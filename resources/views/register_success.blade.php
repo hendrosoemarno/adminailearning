@@ -175,51 +175,7 @@
             text-align: left;
         }
 
-        .btn {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-            padding: 12px 28px;
-            border-radius: 12px;
-            border: none;
-            font-size: 0.95rem;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s;
-            font-family: inherit;
-            text-decoration: none;
-        }
 
-        .btn-primary {
-            background: linear-gradient(135deg, #3b82f6, #06b6d4);
-            color: white;
-            box-shadow: 0 4px 14px rgba(59, 130, 246, 0.3);
-        }
-
-        .btn-primary:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 24px rgba(59, 130, 246, 0.4);
-        }
-
-        .btn-ghost {
-            background: transparent;
-            color: var(--text-secondary);
-            border: 1px solid var(--border-color);
-            margin-left: 0.5rem;
-        }
-
-        .btn-ghost:hover {
-            border-color: var(--accent);
-            color: var(--accent);
-        }
-
-        .buttons {
-            display: flex;
-            justify-content: center;
-            flex-wrap: wrap;
-            gap: 0.5rem;
-        }
 
         @keyframes fadeIn {
             from {
@@ -307,11 +263,7 @@
                 Learning.</span>
         </div>
 
-        <div class="buttons">
-            <a href="{{ route('login') }}" class="btn btn-primary">
-                Masuk ke AI Learning
-            </a>
-        </div>
+
     </div>
 </body>
 
