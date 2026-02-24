@@ -423,6 +423,81 @@ class BiayaController extends Controller
         return response()->json(['success' => true]);
     }
 
+    public function exportShow(Request $request, Tentor $tentor)
+    {
+        $month = $request->input('month', date('Y-m'));
+        $sort = $request->input('sort', 'firstname');
+        $direction = $request->input('direction', 'asc');
+
+        $siswas = $tentor->siswas()->get();
+        foreach ($siswas as $siswa) {
+            $this->applyStudentCosts($siswa, $tentor, $month);
+        }
+
+        // Apply Sorting
+        if ($sort == 'id') {
+            $siswas = ($direction == 'asc') ? $siswas->sortBy('id') : $siswas->sortByDesc('id');
+        } elseif ($sort == 'paket_kode') {
+            $siswas = ($direction == 'asc') ? $siswas->sortBy('paket_kode') : $siswas->sortByDesc('paket_kode');
+        } elseif ($sort == 'biaya') {
+            $siswas = ($direction == 'asc') ? $siswas->sortBy('biaya') : $siswas->sortByDesc('biaya');
+        } elseif ($sort == 'ai_learning') {
+            $siswas = ($direction == 'asc') ? $siswas->sortBy('ai_learning') : $siswas->sortByDesc('ai_learning');
+        } elseif ($sort == 'gaji_tentor') {
+            $siswas = ($direction == 'asc') ? $siswas->sortBy('gaji_tentor') : $siswas->sortByDesc('gaji_tentor');
+        } elseif ($sort == 'total_meet') {
+            $siswas = ($direction == 'asc') ? $siswas->sortBy('total_meet') : $siswas->sortByDesc('total_meet');
+        } else {
+            $siswas = ($direction == 'asc') ? $siswas->sortBy('firstname') : $siswas->sortByDesc('firstname');
+        }
+
+        $fileName = 'Biaya_Siswa_' . $tentor->nama . '_' . $month . '.csv';
+
+        $headers = [
+            "Content-type" => "text/csv",
+            "Content-Disposition" => "attachment; filename=$fileName",
+            "Pragma" => "no-cache",
+            "Cache-Control" => "must-revalidate, post-check=0, pre-check=0",
+            "Expires" => "0"
+        ];
+
+        $callback = function () use ($siswas, $tentor, $month) {
+            $file = fopen('php://output', 'w');
+            fputs($file, "\xEF\xBB\xBF");
+
+            fputcsv($file, ['RINCIAN BIAYA SISWA - TENTOR: ' . strtoupper($tentor->nama)]);
+            fputcsv($file, ['PERIODE: ' . $month]);
+            fputcsv($file, []);
+
+            fputcsv($file, ['User ID', 'Nama Siswa', 'Username', 'Paket', 'Tgl Masuk', 'Biaya (Omzet)', 'AI Learning', 'Gaji Tentor', 'Total Meet', 'Realisasi KBM', 'Status Slip Gaji']);
+
+            foreach ($siswas as $siswa) {
+                fputcsv($file, [
+                    $siswa->id,
+                    $siswa->firstname . ' ' . $siswa->lastname,
+                    $siswa->username,
+                    $siswa->paket_kode,
+                    $siswa->tanggal_masuk ?? '-',
+                    $siswa->biaya,
+                    $siswa->ai_learning,
+                    $siswa->gaji_tentor,
+                    $siswa->total_meet,
+                    $siswa->realisasi_kbm,
+                    $siswa->is_salary_hidden ? 'EXCLUDED' : 'INCLUDED'
+                ]);
+            }
+
+            // Summary (only included)
+            $visibleSiswas = $siswas->where('is_salary_hidden', false);
+            fputcsv($file, []);
+            fputcsv($file, ['', '', '', '', 'TOTAL (INCLUDED ONLY)', $visibleSiswas->sum('biaya'), $visibleSiswas->sum('ai_learning'), $visibleSiswas->sum('gaji_tentor'), '', '', '']);
+
+            fclose($file);
+        };
+
+        return response()->stream($callback, 200, $headers);
+    }
+
     private function applyStudentCosts($siswa, $tentor, $month)
     {
         $data = $this->getStudentCost($siswa, $tentor, $month);

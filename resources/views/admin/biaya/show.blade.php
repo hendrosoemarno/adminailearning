@@ -15,6 +15,11 @@
                 @if(request('sort')) <input type="hidden" name="sort" value="{{ request('sort') }}"> @endif
                 @if(request('direction')) <input type="hidden" name="direction" value="{{ request('direction') }}"> @endif
             </form>
+            <a href="{{ route('biaya.export-show', array_merge(['tentor' => $tentor->id], request()->all())) }}"
+                class="px-4 py-2 bg-emerald-600/10 text-emerald-500 hover:bg-emerald-600 hover:text-white rounded-lg border border-emerald-600/20 transition-all font-semibold flex items-center gap-2">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+                Export CSV
+            </a>
             <a href="{{ route('biaya.salary', array_merge(['tentor' => $tentor->id], request()->all())) }}"
                 class="px-4 py-2 bg-amber-600/10 text-amber-500 hover:bg-amber-600 hover:text-white rounded-lg border border-amber-600/20 transition-all font-semibold">
                 Lihat Gaji
@@ -24,6 +29,7 @@
                 Kembali
             </a>
         </div>
+
     </div>
 
     <div class="bg-slate-800/50 backdrop-blur-sm border border-slate-700 rounded-xl shadow-lg overflow-hidden">

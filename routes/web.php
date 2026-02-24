@@ -80,6 +80,8 @@ Route::middleware('auth')->group(function () {
     Route::post('/biaya/toggle-student-mark', [\App\Http\Controllers\BiayaController::class, 'toggleStudentMark'])->name('biaya.toggle-student-mark');
     Route::post('/biaya/reset-student-marks', [\App\Http\Controllers\BiayaController::class, 'resetStudentMarks'])->name('biaya.reset-student-marks');
     Route::get('/biaya/{tentor}', [\App\Http\Controllers\BiayaController::class, 'show'])->name('biaya.show');
+    Route::get('/biaya/{tentor}/export', [\App\Http\Controllers\BiayaController::class, 'exportShow'])->name('biaya.export-show');
+
     Route::get('/biaya/{tentor}/salary', [\App\Http\Controllers\BiayaController::class, 'salary'])->name('biaya.salary');
     Route::get('/biaya/{tentor}/salary/export', [\App\Http\Controllers\BiayaController::class, 'salaryExport'])->name('biaya.salary.export');
     Route::post('/biaya/update-paket', [\App\Http\Controllers\BiayaController::class, 'updatePaket'])->name('biaya.update-paket');
