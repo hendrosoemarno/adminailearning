@@ -549,7 +549,7 @@ class BiayaController extends Controller
             $tanggalMasuk = $siswaTarif->tanggal_masuk;
 
             preg_match('/\d+/', $tarif->kode, $matches);
-            $multiplier = isset($matches[0]) ? (int) $matches[0] : 0;
+            $multiplier = isset($matches[0]) ? (int) $matches[0] : 1;
             $defaultTotalMeet = $multiplier * 4;
 
             $totalMeet = $customTotalMeet ?? $defaultTotalMeet;
@@ -777,7 +777,7 @@ class BiayaController extends Controller
 
         // Recalculate billing based on new tarif but KEEP custom data if any
         preg_match('/\d+/', $tarif->kode, $matches);
-        $multiplier = isset($matches[0]) ? (int) $matches[0] : 0;
+        $multiplier = isset($matches[0]) ? (int) $matches[0] : 1;
         $defaultTotalMeet = $multiplier * 4;
 
         // Use custom or default
@@ -849,7 +849,7 @@ class BiayaController extends Controller
 
         // Calculate default total meet
         preg_match('/\d+/', $tarif->kode, $matches);
-        $multiplier = isset($matches[0]) ? (int) $matches[0] : 0;
+        $multiplier = isset($matches[0]) ? (int) $matches[0] : 1;
         $defaultTotalMeet = $multiplier * 4;
 
         // Use custom or default
@@ -918,7 +918,7 @@ class BiayaController extends Controller
 
             // Calculate default total meet
             preg_match('/\d+/', $tarif->kode, $matches);
-            $multiplier = isset($matches[0]) ? (int) $matches[0] : 0;
+            $multiplier = isset($matches[0]) ? (int) $matches[0] : 1;
             $defaultTotalMeet = $multiplier * 4;
 
             if ($defaultTotalMeet > 0) {
