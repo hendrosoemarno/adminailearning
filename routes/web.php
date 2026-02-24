@@ -22,6 +22,13 @@ Route::get('/login', [LoginController::class, 'showLoginForm'])->name('login');
 Route::post('/login', [LoginController::class, 'login']);
 Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
 
+// Student Registration (public)
+Route::get('/register', [\App\Http\Controllers\RegistrationController::class, 'showForm'])->name('register');
+Route::post('/register', [\App\Http\Controllers\RegistrationController::class, 'register'])->name('register.submit');
+Route::post('/register/check-username', [\App\Http\Controllers\RegistrationController::class, 'checkUsername'])->name('register.check-username');
+Route::post('/register/preview-password', [\App\Http\Controllers\RegistrationController::class, 'previewPassword'])->name('register.preview-password');
+Route::get('/register/success', [\App\Http\Controllers\RegistrationController::class, 'success'])->name('register.success');
+
 Route::middleware('auth')->group(function () {
     Route::get('/dashboard', [\App\Http\Controllers\UserController::class, 'index'])->name('dashboard');
     Route::get('/user/{id}/edit', [\App\Http\Controllers\UserController::class, 'edit'])->name('user.edit');
@@ -78,6 +85,7 @@ Route::middleware('auth')->group(function () {
     Route::post('/biaya/update-custom', [\App\Http\Controllers\BiayaController::class, 'updateCustomData'])->name('biaya.update-custom');
     Route::post('/biaya/toggle-salary', [\App\Http\Controllers\BiayaController::class, 'toggleSalaryStatus'])->name('biaya.toggle-salary');
     Route::post('/biaya/update-order', [\App\Http\Controllers\BiayaController::class, 'updateOrder'])->name('biaya.update-order');
+    Route::post('/biaya/bulk-update-meet', [\App\Http\Controllers\BiayaController::class, 'bulkUpdateMeet'])->name('biaya.bulk-update-meet');
     Route::post('/biaya/save-option', [\App\Http\Controllers\BiayaController::class, 'saveOption'])->name('biaya.save-option');
     Route::post('/biaya/toggle-wa-status', [\App\Http\Controllers\BiayaController::class, 'toggleWaStatus'])->name('biaya.toggle-wa-status');
 
