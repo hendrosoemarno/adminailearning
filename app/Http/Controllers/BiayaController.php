@@ -92,6 +92,8 @@ class BiayaController extends Controller
                     $this->applyStudentCosts($siswa, $tentor, $month);
                 }
 
+                $siswas = $siswas->where('is_salary_hidden', false);
+
                 // Only add if there are students
                 if ($siswas->count() > 0) {
                     $siswas = $siswas->sortBy(function ($siswa) {
@@ -149,6 +151,8 @@ class BiayaController extends Controller
                     foreach ($siswas as $siswa) {
                         $this->applyStudentCosts($siswa, $tentor, $month);
                     }
+
+                    $siswas = $siswas->where('is_salary_hidden', false);
 
                     if ($siswas->count() > 0) {
                         $siswas = $siswas->sortBy(function ($siswa) {
