@@ -136,6 +136,31 @@
             border-radius: 6px;
         }
 
+        .copy-btn {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            color: var(--text-secondary);
+            width: 28px;
+            height: 28px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .copy-btn:hover {
+            background: rgba(6, 182, 212, 0.1);
+            border-color: var(--accent);
+            color: var(--accent);
+            transform: scale(1.05);
+        }
+
+        .copy-btn:active {
+            transform: scale(0.95);
+        }
+
         .warning-note {
             background: rgba(245, 158, 11, 0.08);
             border: 1px solid rgba(245, 158, 11, 0.2);
@@ -244,9 +269,32 @@
             </div>
             <div class="info-row">
                 <span class="info-label">Password</span>
-                <span class="info-value password">{{ session('reg_password') }}</span>
+                <div style="display: flex; align-items: center; gap: 8px;">
+                    <span class="info-value password" id="reg-password">{{ session('reg_password') }}</span>
+                    <button onclick="copyPassword()" class="copy-btn" title="Salin Password">
+                        <svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m3 7h3m-3 4h3m-6-4h.01M9 16h.01">
+                            </path>
+                        </svg>
+                    </button>
+                </div>
             </div>
         </div>
+
+        <script>
+            function copyPassword() {
+                const pw = document.getElementById('reg-password').textContent;
+                navigator.clipboard.writeText(pw).then(() => {
+                    const btn = document.querySelector('.copy-btn');
+                    const originalHTML = btn.innerHTML;
+                    btn.innerHTML = '<svg width="14" height="14" fill="none" stroke="#22c55e" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>';
+                    setTimeout(() => {
+                        btn.innerHTML = originalHTML;
+                    }, 2000);
+                });
+            }
+        </script>
 
         <div class="warning-note">
             <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24"
