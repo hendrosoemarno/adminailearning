@@ -16,12 +16,13 @@ class BiayaController extends Controller
     public function index(Request $request)
     {
         $search = $request->input('search');
-        $sort = $request->input('sort', 'nama');
+        $sort = $request->input('sort', 'id');
         $direction = $request->input('direction', 'asc');
+        $mapel = $request->input('mapel');
 
-        $allowedSorts = ['nama', 'mapel'];
+        $allowedSorts = ['id', 'nama', 'mapel', 'nickname'];
         if (!in_array($sort, $allowedSorts)) {
-            $sort = 'nama';
+            $sort = 'id';
         }
 
         $query = Tentor::where('aktif', 1);
@@ -33,10 +34,15 @@ class BiayaController extends Controller
             });
         }
 
+        if ($mapel) {
+            $query->where('mapel', $mapel);
+        }
+
         $tentors = $query->orderBy($sort, $direction)->get();
 
-        return view('admin.biaya.index', compact('tentors', 'search', 'sort', 'direction'));
+        return view('admin.biaya.index', compact('tentors', 'search', 'sort', 'direction', 'mapel'));
     }
+
 
     public function show(Request $request, Tentor $tentor)
     {

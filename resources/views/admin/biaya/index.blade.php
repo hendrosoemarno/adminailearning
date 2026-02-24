@@ -68,12 +68,44 @@
         </form>
     </div>
 
+    <!-- Tabs for Subject Separation -->
+    <div class="mb-6 flex flex-wrap gap-2 border-b border-slate-700 pb-4">
+        <a href="{{ request()->fullUrlWithQuery(['mapel' => null]) }}" 
+            class="px-4 py-2 rounded-lg text-sm font-bold transition-all {{ !$mapel ? 'bg-blue-600 text-white shadow-lg shadow-blue-500/20' : 'bg-slate-800 text-slate-400 hover:bg-slate-700 hover:text-white' }}">
+            Semua
+        </a>
+        <a href="{{ request()->fullUrlWithQuery(['mapel' => 'mat']) }}" 
+            class="px-4 py-2 rounded-lg text-sm font-bold transition-all {{ $mapel == 'mat' ? 'bg-blue-600 text-white shadow-lg shadow-blue-500/20' : 'bg-slate-800 text-slate-400 hover:bg-slate-700 hover:text-white' }}">
+            Matematika
+        </a>
+        <a href="{{ request()->fullUrlWithQuery(['mapel' => 'bing']) }}" 
+            class="px-4 py-2 rounded-lg text-sm font-bold transition-all {{ $mapel == 'bing' ? 'bg-blue-600 text-white shadow-lg shadow-blue-500/20' : 'bg-slate-800 text-slate-400 hover:bg-slate-700 hover:text-white' }}">
+            Bahasa Inggris
+        </a>
+        <a href="{{ request()->fullUrlWithQuery(['mapel' => 'coding']) }}" 
+            class="px-4 py-2 rounded-lg text-sm font-bold transition-all {{ $mapel == 'coding' ? 'bg-blue-600 text-white shadow-lg shadow-blue-500/20' : 'bg-slate-800 text-slate-400 hover:bg-slate-700 hover:text-white' }}">
+            Coding
+        </a>
+    </div>
+
     <!-- Table -->
     <div class="bg-slate-800/50 backdrop-blur-sm border border-slate-700 rounded-xl shadow-lg overflow-hidden">
         <div class="overflow-x-auto">
             <table class="w-full text-left border-collapse">
                 <thead>
                     <tr class="bg-slate-900/50 border-b border-slate-700">
+                        <th class="p-4 text-xs font-bold text-slate-400 uppercase tracking-wider">
+                            <a href="{{ request()->fullUrlWithQuery(['sort' => 'id', 'direction' => ($sort == 'id' && $direction == 'asc') ? 'desc' : 'asc']) }}" class="flex items-center gap-1 hover:text-white transition-colors">
+                                ID Tentor
+                                @if($sort == 'id')
+                                    @if($direction == 'asc')
+                                        <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 15l7-7 7 7"></path></svg>
+                                    @else
+                                        <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                                    @endif
+                                @endif
+                            </a>
+                        </th>
                         <th class="p-4 text-xs font-bold text-slate-400 uppercase tracking-wider">
                             <a href="{{ request()->fullUrlWithQuery(['sort' => 'nama', 'direction' => ($sort == 'nama' && $direction == 'asc') ? 'desc' : 'asc']) }}" class="flex items-center gap-1 hover:text-white transition-colors">
                                 Nama Tentor
@@ -104,6 +136,9 @@
                 <tbody class="divide-y divide-slate-700/50">
                     @forelse($tentors as $tentor)
                         <tr class="hover:bg-slate-700/20 transition-colors group">
+                            <td class="p-4 text-white font-mono text-sm">
+                                #{{ $tentor->id }}
+                            </td>
                             <td class="p-4">
                                 <div class="font-medium text-white">{{ $tentor->nama }}</div>
                                 <div class="text-xs text-slate-500">{{ $tentor->nickname }}</div>
@@ -139,12 +174,13 @@
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="2" class="p-12 text-center text-slate-500 uppercase tracking-widest text-sm">
+                            <td colspan="4" class="p-12 text-center text-slate-500 uppercase tracking-widest text-sm">
                                 Tidak ada tentor aktif ditemukan.
                             </td>
                         </tr>
                     @endforelse
                 </tbody>
+
             </table>
         </div>
     </div>
