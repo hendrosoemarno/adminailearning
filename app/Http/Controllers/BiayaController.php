@@ -228,6 +228,12 @@ class BiayaController extends Controller
             $tentors = $siswa->tentors()->get();
             foreach ($tentors as $tentor) {
                 $costData = $this->getStudentCost($siswa, $tentor, $month);
+
+                // SKIP if hidden in Slip Gaji
+                if ($costData['is_salary_hidden']) {
+                    continue;
+                }
+
                 $mapel = strtolower($tentor->mapel);
                 if (isset($item['subjects'][$mapel])) {
                     $item['subjects'][$mapel] += $costData['biaya'];
