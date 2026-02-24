@@ -103,6 +103,7 @@ class UserController extends Controller
             'kelompok' => 'nullable',
             'tgl_daftar' => 'nullable|date',
             'nama_perekom' => 'nullable|string|max:255',
+            'kursus' => 'nullable|in:Matematika,Bahasa Inggris,Junior Coder',
         ]);
 
         $data = $request->except('_token', '_method');
@@ -131,8 +132,9 @@ class UserController extends Controller
         $data['nama_sekolah'] = $data['nama_sekolah'] ?? '';
         $data['nama_ortu'] = $data['nama_ortu'] ?? '';
         $data['agama'] = !empty($data['agama']) ? $data['agama'] : 'islam'; // Enum NO NULL
-        $data['gender'] = !empty($data['gender']) ? $data['gender'] : ''; // Enum NO NULL, but has '' option
+        $data['gender'] = !empty($data['gender']) ? $data['gender'] : 'Laki-laki'; // Fixed enum
         $data['kelompok'] = !empty($data['kelompok']) ? (int) $data['kelompok'] : 0;
+        $data['kursus'] = $data['kursus'] ?? '';
 
         \App\Models\UserDetil::updateOrCreate(
             ['id' => $id],

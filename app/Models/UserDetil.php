@@ -28,7 +28,8 @@ class UserDetil extends Model
         'gender',
         'nickname',
         'cek',
-        'kelompok'
+        'kelompok',
+        'kursus'
     ];
 
     public function user()

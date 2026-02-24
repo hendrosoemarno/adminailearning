@@ -92,7 +92,7 @@ class RegistrationController extends Controller
             'email' => 'required|email|max:100',
             'nickname' => 'required|string|max:30',
             'tgl_lahir' => 'required|date',
-            'kelas' => 'required|integer|min:1|max:12',
+            'kelas' => 'required|string|max:10',
             'tempat_lahir' => 'required|string|max:255',
             'alamat' => 'required|string|max:255',
             'wa_ortu' => 'required|string|max:30',

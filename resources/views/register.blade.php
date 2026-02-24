@@ -552,6 +552,7 @@
                     <label>Kelas <span class="required">*</span></label>
                     <select name="kelas" required>
                         <option value="">— Pilih —</option>
+                        <option value="TK" {{ old('kelas') == 'TK' ? 'selected' : '' }}>TK (Taman Kanak-kanak)</option>
                         @for ($i = 1; $i <= 12; $i++)
                             <option value="{{ $i }}" {{ old('kelas') == $i ? 'selected' : '' }}>Kelas {{ $i }}</option>
                         @endfor
@@ -564,14 +565,18 @@
                     <label>Kursus yang Diminati <span class="required">*</span></label>
                     <select name="kursus" required>
                         <option value="">— Pilih Kursus —</option>
-                        <option value="Matematika" {{ old('kursus') == 'Matematika' ? 'selected' : '' }}>Matematika</option>
-                        <option value="Bahasa Inggris" {{ old('kursus') == 'Bahasa Inggris' ? 'selected' : '' }}>Bahasa Inggris</option>
-                        <option value="Junior Coder" {{ old('kursus') == 'Junior Coder' ? 'selected' : '' }}>Junior Coder</option>
+                        <option value="Matematika" {{ old('kursus') == 'Matematika' ? 'selected' : '' }}>Matematika
+                        </option>
+                        <option value="Bahasa Inggris" {{ old('kursus') == 'Bahasa Inggris' ? 'selected' : '' }}>Bahasa
+                            Inggris</option>
+                        <option value="Junior Coder" {{ old('kursus') == 'Junior Coder' ? 'selected' : '' }}>Junior Coder
+                        </option>
                     </select>
                 </div>
                 <div class="form-group">
                     <label>Dari mana mendapat informasi tentang AI Learning?</label>
-                    <input type="text" name="nama_perekom" value="{{ old('nama_perekom') }}" placeholder="Contoh: Instagram, Teman, dll.">
+                    <input type="text" name="nama_perekom" value="{{ old('nama_perekom') }}"
+                        placeholder="Contoh: Instagram, Teman, dll.">
                 </div>
             </div>
 

@@ -138,7 +138,17 @@
                                 class="w-full bg-slate-900 border border-slate-700 rounded-lg px-4 py-2 text-white focus:ring-2 focus:ring-blue-500 outline-none transition-all">
                         </div>
                         <div class="space-y-1">
-                            <label class="text-sm font-medium text-slate-400">Nama Perekomendasi</label>
+                            <label class="text-sm font-medium text-slate-400">Kursus yang Diminati</label>
+                            <select name="kursus"
+                                class="w-full bg-slate-900 border border-slate-700 rounded-lg px-4 py-2 text-white focus:ring-2 focus:ring-blue-500 outline-none transition-all">
+                                <option value="">Pilih Kursus</option>
+                                <option value="Matematika" {{ old('kursus', $detil->kursus) == 'Matematika' ? 'selected' : '' }}>Matematika</option>
+                                <option value="Bahasa Inggris" {{ old('kursus', $detil->kursus) == 'Bahasa Inggris' ? 'selected' : '' }}>Bahasa Inggris</option>
+                                <option value="Junior Coder" {{ old('kursus', $detil->kursus) == 'Junior Coder' ? 'selected' : '' }}>Junior Coder</option>
+                            </select>
+                        </div>
+                        <div class="space-y-1">
+                            <label class="text-sm font-medium text-slate-400">Nama Perekomendasi / Info Dari</label>
                             <input type="text" name="nama_perekom" value="{{ old('nama_perekom', $detil->nama_perekom) }}"
                                 class="w-full bg-slate-900 border border-slate-700 rounded-lg px-4 py-2 text-white focus:ring-2 focus:ring-blue-500 outline-none transition-all">
                         </div>
