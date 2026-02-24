@@ -101,7 +101,7 @@ class RegistrationController extends Controller
             'nama_perekom' => 'nullable|string|max:100',
             'agama' => 'required|in:islam,kristen,katolik,hindu,budha',
             'gender' => 'required|in:Laki-laki,Perempuan',
-            'kelompok' => 'required|integer',
+            'kursus' => 'required|in:Matematika,Bahasa Inggris,Junior Coder',
         ], [
             'firstname.required' => 'Nama depan wajib diisi.',
             'username.required' => 'Username wajib diisi.',
@@ -118,7 +118,7 @@ class RegistrationController extends Controller
             'nama_sekolah.required' => 'Nama sekolah wajib diisi.',
             'agama.required' => 'Agama wajib dipilih.',
             'gender.required' => 'Jenis kelamin wajib dipilih.',
-            'kelompok.required' => 'Kelompok wajib dipilih.',
+            'kursus.required' => 'Kursus wajib dipilih.',
         ]);
 
         // Check username uniqueness
@@ -215,7 +215,8 @@ class RegistrationController extends Controller
                 'gender' => $request->gender,
                 'nickname' => $request->nickname,
                 'cek' => 1,
-                'kelompok' => $request->kelompok,
+                'kelompok' => 0,
+                'kursus' => $request->kursus,
             ]);
 
             DB::commit();

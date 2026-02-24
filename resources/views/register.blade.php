@@ -561,17 +561,17 @@
 
             <div class="form-row">
                 <div class="form-group">
-                    <label>Kelompok <span class="required">*</span></label>
-                    <select name="kelompok" required>
-                        <option value="">— Pilih —</option>
-                        @for ($i = 1; $i <= 10; $i++)
-                            <option value="{{ $i }}" {{ old('kelompok') == $i ? 'selected' : '' }}>Kelompok {{ $i }}</option>
-                        @endfor
+                    <label>Kursus yang Diminati <span class="required">*</span></label>
+                    <select name="kursus" required>
+                        <option value="">— Pilih Kursus —</option>
+                        <option value="Matematika" {{ old('kursus') == 'Matematika' ? 'selected' : '' }}>Matematika</option>
+                        <option value="Bahasa Inggris" {{ old('kursus') == 'Bahasa Inggris' ? 'selected' : '' }}>Bahasa Inggris</option>
+                        <option value="Junior Coder" {{ old('kursus') == 'Junior Coder' ? 'selected' : '' }}>Junior Coder</option>
                     </select>
                 </div>
                 <div class="form-group">
-                    <label>Nama Perekomendasikan</label>
-                    <input type="text" name="nama_perekom" value="{{ old('nama_perekom') }}" placeholder="Opsional">
+                    <label>Dari mana mendapat informasi tentang AI Learning?</label>
+                    <input type="text" name="nama_perekom" value="{{ old('nama_perekom') }}" placeholder="Contoh: Instagram, Teman, dll.">
                 </div>
             </div>
 
