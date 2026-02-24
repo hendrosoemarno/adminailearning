@@ -31,6 +31,7 @@ Route::get('/register/success', [\App\Http\Controllers\RegistrationController::c
 
 Route::middleware('auth')->group(function () {
     Route::get('/dashboard', [\App\Http\Controllers\UserController::class, 'index'])->name('dashboard');
+    Route::post('/user/export', [\App\Http\Controllers\UserController::class, 'export'])->name('user.export');
     Route::get('/user/{id}/edit', [\App\Http\Controllers\UserController::class, 'edit'])->name('user.edit');
     Route::put('/user/{id}', [\App\Http\Controllers\UserController::class, 'update'])->name('user.update');
     Route::get('/quiz-attempts', [\App\Http\Controllers\LoginController::class, 'dashboard'])->name('quiz-attempts');

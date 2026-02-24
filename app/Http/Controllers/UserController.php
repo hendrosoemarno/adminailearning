@@ -15,13 +15,13 @@ class UserController extends Controller
         $search = $request->input('search');
         $status = $request->input('status', 'active'); // Default to active
         $perPage = $request->input('per_page', 20);
-        $sort = $request->input('sort', 'username');
-        $direction = $request->input('direction', 'asc');
+        $sort = $request->input('sort', 'id');
+        $direction = $request->input('direction', 'desc');
 
         // Validate allowed sort columns
-        $allowedSorts = ['id', 'username', 'firstname', 'lastname', 'firstaccess', 'wa_ortu', 'kelas'];
+        $allowedSorts = ['id', 'username', 'firstname', 'lastname', 'tgl_daftar', 'wa_ortu', 'kelas', 'nickname', 'kursus'];
         if (!in_array($sort, $allowedSorts)) {
-            $sort = 'username';
+            $sort = 'id';
         }
 
         $query = MoodleUser::leftJoin('ai_user_detil', 'mdlu6_user.id', '=', 'ai_user_detil.id')
@@ -32,9 +32,20 @@ class UserController extends Controller
                 'mdlu6_user.lastname',
                 'mdlu6_user.firstaccess',
                 'mdlu6_user.suspended',
-                'ai_user_detil.wa_ortu',
+                'ai_user_detil.nama',
+                'ai_user_detil.tgl_daftar',
+                'ai_user_detil.nickname',
+                'ai_user_detil.kursus',
                 'ai_user_detil.kelas',
-                'ai_user_detil.nama_ortu'
+                'ai_user_detil.wa_ortu',
+                'ai_user_detil.nama_ortu',
+                'ai_user_detil.tempat_lahir',
+                'ai_user_detil.tgl_lahir',
+                'ai_user_detil.alamat',
+                'ai_user_detil.nama_sekolah',
+                'ai_user_detil.nama_perekom',
+                'ai_user_detil.agama',
+                'ai_user_detil.gender'
             );
 
         if ($status === 'active') {
@@ -142,5 +153,71 @@ class UserController extends Controller
         );
 
         return redirect()->route('dashboard')->with('success', 'Data user berhasil diperbarui');
+    }
+
+    public function export(Request $request)
+    {
+        $ids = $request->input('ids');
+        if (empty($ids)) {
+            return back()->with('error', 'Pilih data yang ingin diekspor.');
+        }
+
+        $users = DB::table('ai_user_detil')
+            ->whereIn('id', $ids)
+            ->orderBy('id', 'desc')
+            ->get();
+
+        $headers = [
+            'Content-Type' => 'text/csv',
+            'Content-Disposition' => 'attachment; filename="data_siswa_' . date('Ymd_His') . '.csv"',
+        ];
+
+        $callback = function () use ($users) {
+            $file = fopen('php://output', 'w');
+            // Add BOM for Excel UTF-8
+            fprintf($file, chr(0xEF) . chr(0xBB) . chr(0xBF));
+
+            // CSV Header
+            fputcsv($file, [
+                'ID',
+                'Nama Lengkap',
+                'Tanggal Daftar',
+                'Kelas',
+                'Tempat Lahir',
+                'Tanggal Lahir',
+                'Alamat',
+                'WA Orang Tua',
+                'Nama Orang Tua',
+                'Sekolah',
+                'Nickname',
+                'Kursus',
+                'Agama',
+                'Gender',
+                'Info AI Learning'
+            ]);
+
+            foreach ($users as $user) {
+                fputcsv($file, [
+                    $user->id,
+                    $user->nama,
+                    date('d/m/Y', $user->tgl_daftar),
+                    $user->kelas,
+                    $user->tempat_lahir,
+                    date('d/m/Y', $user->tgl_lahir),
+                    $user->alamat,
+                    $user->wa_ortu,
+                    $user->nama_ortu,
+                    $user->nama_sekolah,
+                    $user->nickname,
+                    $user->kursus,
+                    ucfirst($user->agama),
+                    $user->gender,
+                    $user->nama_perekom
+                ]);
+            }
+            fclose($file);
+        };
+
+        return response()->stream($callback, 200, $headers);
     }
 }
