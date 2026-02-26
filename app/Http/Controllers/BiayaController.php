@@ -54,7 +54,7 @@ class BiayaController extends Controller
         $mapel = strtolower($tentor->mapel);
         $availablePackages = Tarif::where('mapel', $mapel)->orderBy('kode', 'asc')->get();
 
-        $siswas = $tentor->siswas()->get();
+        $siswas = $tentor->siswas()->get()->unique('id');
         foreach ($siswas as $siswa) {
             $this->applyStudentCosts($siswa, $tentor, $month);
         }
@@ -87,7 +87,7 @@ class BiayaController extends Controller
             $tentors = Tentor::where('mapel', $key)->where('aktif', 1)->orderBy('id', 'asc')->get();
 
             foreach ($tentors as $tentor) {
-                $siswas = $tentor->siswas()->get();
+                $siswas = $tentor->siswas()->get()->unique('id');
                 foreach ($siswas as $siswa) {
                     $this->applyStudentCosts($siswa, $tentor, $month);
                 }
@@ -149,7 +149,7 @@ class BiayaController extends Controller
                 $tentors = Tentor::where('mapel', $key)->where('aktif', 1)->orderBy('id', 'asc')->get();
 
                 foreach ($tentors as $tentor) {
-                    $siswas = $tentor->siswas()->get();
+                    $siswas = $tentor->siswas()->get()->unique('id');
                     foreach ($siswas as $siswa) {
                         $this->applyStudentCosts($siswa, $tentor, $month);
                     }
@@ -225,7 +225,7 @@ class BiayaController extends Controller
                 'is_sent' => WaSentStatus::where('student_id', $siswa->id)->where('month', $month)->value('is_sent') ?? false
             ];
 
-            $tentors = $siswa->tentors()->get();
+            $tentors = $siswa->tentors()->where('aktif', 1)->get()->unique('id');
             foreach ($tentors as $tentor) {
                 $costData = $this->getStudentCost($siswa, $tentor, $month);
 
@@ -650,7 +650,7 @@ class BiayaController extends Controller
 
     private function getSalaryData(Tentor $tentor, $month, $sort, $direction)
     {
-        $siswas = $tentor->siswas()->get();
+        $siswas = $tentor->siswas()->get()->unique('id');
         $filteredSiswas = collect();
 
         foreach ($siswas as $siswa) {
