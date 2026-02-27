@@ -191,8 +191,8 @@ class BiayaController extends Controller
         $month = $request->input('month', date('Y-m'));
         $search = $request->input('search');
 
-        // Join to get students who have a relationship in ai_tentor_siswa and sort by wa_ortu
-        $query = MoodleUser::join('ai_user_detil', 'mdlu6_user.id', '=', 'ai_user_detil.id')
+        // Use leftJoin so students without details still show up (e.g. if they have duplicate accounts)
+        $query = MoodleUser::leftJoin('ai_user_detil', 'mdlu6_user.id', '=', 'ai_user_detil.id')
             ->whereExists(function ($query) {
                 $query->select(\DB::raw(1))
                     ->from('ai_tentor_siswa')
