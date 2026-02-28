@@ -133,6 +133,13 @@
 
                     <div class="space-y-4">
                         <div class="space-y-1">
+                            <label class="text-sm font-medium text-slate-400">ID User (Moodle)</label>
+                            <input type="number" name="new_id" value="{{ old('new_id', $user->id) }}"
+                                class="w-full bg-slate-900 border border-slate-700 rounded-lg px-4 py-2 text-white outline-none focus:ring-2 focus:ring-amber-500 border-amber-500/30 transition-all font-mono"
+                                title="Ubah ID ini jika ingin memindahkan data detail ini ke User ID Moodle yang lain">
+                            <p class="text-[10px] text-amber-500/70 mt-1 italic leading-tight">* Ubah ID ini jika ingin memindahkan data detail (seperti nomor WA) ke akun Moodle yang lain.</p>
+                        </div>
+                        <div class="space-y-1">
                             <label class="text-sm font-medium text-slate-400">Kelompok</label>
                             <input type="text" name="kelompok" value="{{ old('kelompok', $detil->kelompok) }}"
                                 class="w-full bg-slate-900 border border-slate-700 rounded-lg px-4 py-2 text-white focus:ring-2 focus:ring-blue-500 outline-none transition-all">

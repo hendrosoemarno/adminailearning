@@ -100,6 +100,7 @@ class UserController extends Controller
     public function update(Request $request, $id)
     {
         $request->validate([
+            'new_id' => 'nullable|integer', // Allow changing the ID in ai_user_detil
             'nama' => 'required|string|max:255',
             'nickname' => 'nullable|string|max:255',
             'kelas' => 'nullable',
@@ -117,7 +118,8 @@ class UserController extends Controller
             'kursus' => 'nullable|in:Matematika,Bahasa Inggris,Junior Coder',
         ]);
 
-        $data = $request->except('_token', '_method');
+        $data = $request->except('_token', '_method', 'new_id');
+        $newId = $request->input('new_id');
 
         // Convert dates to timestamps (int) as required by the schema
         if (!empty($data['tgl_lahir'])) {
@@ -147,10 +149,24 @@ class UserController extends Controller
         $data['kelompok'] = !empty($data['kelompok']) ? (int) $data['kelompok'] : 0;
         $data['kursus'] = $data['kursus'] ?? '';
 
-        \App\Models\UserDetil::updateOrCreate(
-            ['id' => $id],
-            $data
-        );
+        // If ID is changed, we need to handle the primary key change
+        if ($newId && $newId != $id) {
+            // Delete old record if it exists
+            DB::table('ai_user_detil')->where('id', $id)->delete();
+
+            // Create or update record at new ID
+            DB::table('ai_user_detil')->updateOrInsert(
+                ['id' => $newId],
+                $data
+            );
+
+            // Re-bind $id for redirection if needed, but we usually redirect to dashboard
+        } else {
+            \App\Models\UserDetil::updateOrCreate(
+                ['id' => $id],
+                $data
+            );
+        }
 
         return redirect()->route('dashboard')->with('success', 'Data user berhasil diperbarui');
     }
