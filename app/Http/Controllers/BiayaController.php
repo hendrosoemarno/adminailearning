@@ -10,8 +10,8 @@ use App\Models\Presensi;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 use App\Models\WaSentStatus;
-
-class BiayaController extends Controller
+use App\Models\BiayaBulanan;
+use DB;
 {
     public function index(Request $request)
     {
@@ -68,7 +68,9 @@ class BiayaController extends Controller
             $siswas = ($direction == 'asc') ? $siswas->sortBy($sort) : $siswas->sortByDesc($sort);
         }
 
-        return view('admin.biaya.show', compact('tentor', 'siswas', 'sort', 'direction', 'availablePackages', 'month'));
+        $isMonthSaved = BiayaBulanan::where('month', $month)->where('id_tentor', $tentor->id)->exists();
+
+        return view('admin.biaya.show', compact('tentor', 'siswas', 'sort', 'direction', 'availablePackages', 'month', 'isMonthSaved'));
     }
 
     public function summary(Request $request)
@@ -595,8 +597,35 @@ class BiayaController extends Controller
         }
     }
 
-    private function getStudentCost($siswa, $tentor, $month)
+    private function getStudentCost($siswa, $tentor, $month, $forceCalculate = false)
     {
+        // Check if there's a saved record for this month, unless forcing calculation
+        if (!$forceCalculate) {
+            $saved = BiayaBulanan::where('month', $month)
+                ->where('id_siswa', $siswa->id)
+                ->where('id_tentor', $tentor->id)
+                ->first();
+
+            if ($saved) {
+                return [
+                    'biaya' => $saved->biaya,
+                    'ai_learning' => $saved->ai_learning,
+                    'gaji_tentor' => $saved->gaji_tentor,
+                    'paket_kode' => $saved->tarif ? $saved->tarif->kode : '-',
+                    'id_tarif' => $saved->id_tarif,
+                    'total_meet' => $saved->total_meet,
+                    'default_total_meet' => ($saved->total_meet), // Simplified
+                    'tanggal_masuk' => $saved->tanggal_masuk,
+                    'custom_total_meet' => $saved->custom_total_meet,
+                    'is_custom' => ($saved->custom_total_meet !== null || $saved->tanggal_masuk !== null),
+                    'is_salary_hidden' => (bool) $saved->is_salary_hidden,
+                    'sort_order' => $saved->sort_order,
+                    'realisasi_kbm' => $saved->realisasi_kbm ?? 0,
+                    'is_saved' => true
+                ];
+            }
+        }
+
         $siswaTarif = SiswaTarif::where('id_siswa', $siswa->id)
             ->where('id_tentor', $tentor->id)
             ->first();
@@ -661,7 +690,51 @@ class BiayaController extends Controller
             ->whereRaw("DATE_FORMAT(FROM_UNIXTIME(tgl_kbm), '%Y-%m') = ?", [$month])
             ->count();
 
+        $result['is_saved'] = false;
+
         return $result;
+    }
+
+    public function saveMonthly(Request $request, Tentor $tentor)
+    {
+        $month = $request->input('month');
+        if (!$month) return back()->with('error', 'Bulan harus ditentukan.');
+
+        $siswas = $tentor->siswas()->get()->unique('id');
+        
+        DB::beginTransaction();
+        try {
+            foreach ($siswas as $siswa) {
+                // Force calculation from master settings when saving
+                $costData = $this->getStudentCost($siswa, $tentor, $month, true);
+                
+                BiayaBulanan::updateOrCreate(
+                    [
+                        'month' => $month,
+                        'id_siswa' => $siswa->id,
+                        'id_tentor' => $tentor->id,
+                    ],
+                    [
+                        'id_tarif' => $costData['id_tarif'],
+                        'tanggal_masuk' => $costData['tanggal_masuk'],
+                        'custom_total_meet' => $costData['custom_total_meet'],
+                        'is_salary_hidden' => $costData['is_salary_hidden'],
+                        'sort_order' => $costData['sort_order'],
+                        'biaya' => $costData['biaya'],
+                        'ai_learning' => $costData['ai_learning'],
+                        'gaji_tentor' => $costData['gaji_tentor'],
+                        'total_meet' => $costData['total_meet'],
+                        'realisasi_kbm' => $costData['realisasi_kbm'],
+                    ]
+                );
+            }
+            DB::commit();
+            $formattedMonth = \Carbon\Carbon::parse($month . '-01')->translatedFormat('F Y');
+            return back()->with('success', "Data biaya untuk periode $formattedMonth berhasil disimpan.");
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return back()->with('error', 'Gagal menyimpan data: ' . $e->getMessage());
+        }
     }
 
     public function salary(Request $request, Tentor $tentor)

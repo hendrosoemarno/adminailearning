@@ -91,6 +91,7 @@ Route::middleware('auth')->group(function () {
     Route::post('/biaya/update-order', [\App\Http\Controllers\BiayaController::class, 'updateOrder'])->name('biaya.update-order');
     Route::post('/biaya/bulk-update-meet', [\App\Http\Controllers\BiayaController::class, 'bulkUpdateMeet'])->name('biaya.bulk-update-meet');
     Route::post('/biaya/save-option', [\App\Http\Controllers\BiayaController::class, 'saveOption'])->name('biaya.save-option');
+    Route::post('/biaya/{tentor}/save-monthly', [\App\Http\Controllers\BiayaController::class, 'saveMonthly'])->name('biaya.save-monthly');
     Route::post('/biaya/toggle-wa-status', [\App\Http\Controllers\BiayaController::class, 'toggleWaStatus'])->name('biaya.toggle-wa-status');
 
     // Tarif Management

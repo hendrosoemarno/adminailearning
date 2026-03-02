@@ -9,6 +9,31 @@
             <p class="text-slate-400">Rincian paket dan biaya kursus untuk seluruh siswa yang diampu.</p>
         </div>
         <div class="flex items-center gap-3">
+            @if($isMonthSaved)
+                <div
+                    class="px-3 py-1.5 bg-blue-500/20 text-blue-400 rounded-lg border border-blue-500/20 text-sm font-bold flex items-center gap-2">
+                    <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd"
+                            d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+                            clip-rule="evenodd"></path>
+                    </svg>
+                    Tersimpan
+                </div>
+            @endif
+            <form method="POST" action="{{ route('biaya.save-monthly', $tentor) }}" id="saveMonthlyForm" class="hidden">
+                @csrf
+                <input type="hidden" name="month" value="{{ $month }}">
+            </form>
+            <button
+                onclick="if(confirm('Simpan semua rincian biaya {{ $month }} ke database?')) document.getElementById('saveMonthlyForm').submit()"
+                class="px-4 py-2 bg-blue-600 hover:bg-blue-500 text-white rounded-lg transition-all font-semibold flex items-center gap-2 shadow-lg shadow-blue-500/20">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4">
+                    </path>
+                </svg>
+                Simpan
+            </button>
             <form method="GET" action="{{ route('biaya.show', $tentor) }}" class="flex items-center gap-2">
                 <input type="month" name="month" value="{{ $month }}" onchange="this.form.submit()"
                     class="bg-slate-900 border border-slate-700 rounded-lg px-4 py-2 text-white outline-none focus:ring-2 focus:ring-blue-500 transition-all">
@@ -17,7 +42,11 @@
             </form>
             <a href="{{ route('biaya.export-show', array_merge(['tentor' => $tentor->id], request()->all())) }}"
                 class="px-4 py-2 bg-emerald-600/10 text-emerald-500 hover:bg-emerald-600 hover:text-white rounded-lg border border-emerald-600/20 transition-all font-semibold flex items-center gap-2">
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z">
+                    </path>
+                </svg>
                 Export CSV
             </a>
             <a href="{{ route('biaya.salary', array_merge(['tentor' => $tentor->id], request()->all())) }}"
