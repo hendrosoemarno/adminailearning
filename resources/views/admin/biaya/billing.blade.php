@@ -19,6 +19,11 @@
                     class="bg-slate-900 border border-slate-700 rounded-lg px-4 py-2 text-white outline-none focus:ring-2 focus:ring-blue-500 transition-all">
                 @if(request('search')) <input type="hidden" name="search" value="{{ request('search') }}"> @endif
             </form>
+            <a href="{{ route('biaya.billing.export', ['month' => $month, 'search' => $search]) }}"
+                class="px-4 py-2 bg-emerald-600 hover:bg-emerald-500 text-white rounded-lg transition-all font-semibold flex items-center gap-2">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
+                Export CSV
+            </a>
             <a href="{{ route('biaya.index') }}"
                 class="px-4 py-2 bg-slate-800 text-slate-300 hover:text-white rounded-lg border border-slate-700 transition-all font-semibold">
                 Kembali

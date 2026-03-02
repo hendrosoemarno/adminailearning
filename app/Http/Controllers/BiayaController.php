@@ -253,6 +253,81 @@ class BiayaController extends Controller
         return view('admin.biaya.billing', compact('billingData', 'month', 'search', 'template', 'msgBulan', 'msgTahun'));
     }
 
+    public function billingExport(Request $request)
+    {
+        $month = $request->input('month', date('Y-m'));
+        $search = $request->input('search');
+
+        $query = MoodleUser::leftJoin('ai_user_detil', 'mdlu6_user.id', '=', 'ai_user_detil.id')
+            ->whereExists(function ($query) {
+                $query->select(\DB::raw(1))
+                    ->from('ai_tentor_siswa')
+                    ->whereRaw('mdlu6_user.id = ai_tentor_siswa.id_siswa');
+            })
+            ->select('mdlu6_user.*', 'ai_user_detil.wa_ortu', 'ai_user_detil.nama_ortu');
+
+        if ($search) {
+            $query->where(function ($q) use ($search) {
+                $q->where('firstname', 'like', "%{$search}%")
+                    ->orWhere('lastname', 'like', "%{$search}%");
+            });
+        }
+
+        $siswas = $query->orderBy('ai_user_detil.wa_ortu', 'asc')->get();
+
+        $fileName = 'Draft_Tagihan_WA_' . $month . '.csv';
+        $headers = [
+            "Content-type" => "text/csv",
+            "Content-Disposition" => "attachment; filename=$fileName",
+            "Pragma" => "no-cache",
+            "Cache-Control" => "must-revalidate, post-check=0, pre-check=0",
+            "Expires" => "0"
+        ];
+
+        $callback = function () use ($siswas, $month) {
+            $file = fopen('php://output', 'w');
+            fputs($file, "\xEF\xBB\xBF"); // BOM
+
+            fputcsv($file, ['ID Siswa', 'Nama Siswa', 'Nama Orang Tua', 'WhatsApp Ortu', 'Math', 'English', 'Coding', 'Total Tagihan', 'Status Kirim']);
+
+            foreach ($siswas as $siswa) {
+                $total = 0;
+                $subjects = ['mat' => 0, 'bing' => 0, 'coding' => 0];
+
+                $tentors = $siswa->tentors()->where('aktif', 1)->get()->unique('id');
+                foreach ($tentors as $tentor) {
+                    $costData = $this->getStudentCost($siswa, $tentor, $month);
+                    if ($costData['is_salary_hidden'])
+                        continue;
+
+                    $mapel = strtolower($tentor->mapel);
+                    if (isset($subjects[$mapel])) {
+                        $subjects[$mapel] += $costData['biaya'];
+                    }
+                    $total += $costData['biaya'];
+                }
+
+                if ($total > 0) {
+                    $isSent = WaSentStatus::where('student_id', $siswa->id)->where('month', $month)->value('is_sent') ?? false;
+                    fputcsv($file, [
+                        $siswa->id,
+                        $siswa->firstname . ' ' . $siswa->lastname,
+                        $siswa->nama_ortu ?? '-',
+                        $siswa->wa_ortu ?? '-',
+                        $subjects['mat'],
+                        $subjects['bing'],
+                        $subjects['coding'],
+                        $total,
+                        $isSent ? 'SUDAH TERKIRIM' : 'PENDING'
+                    ]);
+                }
+            }
+            fclose($file);
+        };
+
+        return response()->stream($callback, 200, $headers);
+    }
+
     public function studentList(Request $request)
     {
         return $this->handleStudentList($request, 'biaya.student-list', false);
