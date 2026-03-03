@@ -8,13 +8,21 @@
             <h1 class="text-3xl font-bold text-white mb-2 tracking-tight">Manajemen Biaya Tentor</h1>
             <p class="text-slate-400">Pilih Tentor Aktif untuk melihat rincian biaya siswa mereka.</p>
         </div>
-        <a href="{{ route('biaya.summary') }}" 
-            class="inline-flex items-center px-6 py-3 bg-blue-600 hover:bg-blue-500 text-white font-bold rounded-xl shadow-lg transition-all transform hover:-translate-y-1">
-            <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
-            </svg>
-            Lihat Biaya Keseluruhan
-        </a>
+        <div class="flex items-center gap-3">
+            <form method="GET" action="{{ route('biaya.index') }}" id="monthFilterForm" class="flex items-center gap-2">
+                <input type="month" name="month" value="{{ $month }}" onchange="document.getElementById('monthFilterForm').submit()"
+                    class="bg-slate-900 border border-slate-700 rounded-lg px-4 py-2 text-white outline-none focus:ring-2 focus:ring-blue-500 transition-all font-semibold shadow-lg">
+                @if(request('search')) <input type="hidden" name="search" value="{{ request('search') }}"> @endif
+                @if(request('mapel')) <input type="hidden" name="mapel" value="{{ request('mapel') }}"> @endif
+            </form>
+            <a href="{{ route('biaya.summary', ['month' => $month]) }}" 
+                class="inline-flex items-center px-6 py-2.5 bg-blue-600 hover:bg-blue-500 text-white font-bold rounded-xl shadow-lg transition-all transform hover:-translate-y-1">
+                <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
+                </svg>
+                Biaya Keseluruhan
+            </a>
+        </div>
     </div>
 
     <!-- Bulk Adjustment Section -->
@@ -60,10 +68,11 @@
                     class="w-full md:w-auto px-6 py-2 bg-blue-600 hover:bg-blue-500 text-white font-semibold rounded-lg transition-all duration-200 shadow-lg shadow-blue-500/20">
                     Filter
                 </button>
-                @if(request('search'))
-                    <a href="{{ route('biaya.index') }}"
+                @if(request('search') || request('mapel'))
+                    <a href="{{ route('biaya.index', ['month' => $month]) }}"
                         class="text-slate-400 hover:text-white text-sm whitespace-nowrap transition-colors py-2">Reset</a>
                 @endif
+                <input type="hidden" name="month" value="{{ $month }}">
             </div>
         </form>
     </div>
@@ -153,14 +162,14 @@
                             </td>
                             <td class="p-4 text-right">
                                 <div class="flex justify-end gap-2">
-                                    <a href="{{ route('biaya.salary', $tentor) }}"
+                                    <a href="{{ route('biaya.salary', ['tentor' => $tentor->id, 'month' => $month]) }}"
                                         class="inline-flex items-center px-4 py-2 bg-slate-700 hover:bg-amber-600 text-white text-sm font-semibold rounded-lg transition-all">
                                         <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z"></path>
                                         </svg>
                                         Gaji
                                     </a>
-                                    <a href="{{ route('biaya.show', $tentor) }}"
+                                    <a href="{{ route('biaya.show', ['tentor' => $tentor->id, 'month' => $month]) }}"
                                         class="inline-flex items-center px-4 py-2 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white text-sm font-bold rounded-lg shadow-lg hover:shadow-emerald-500/25 transition-all duration-200 transform hover:-translate-y-0.5">
                                         <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"

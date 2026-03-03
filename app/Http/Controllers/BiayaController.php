@@ -11,7 +11,8 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 use App\Models\WaSentStatus;
 use App\Models\BiayaBulanan;
-use DB;
+
+class BiayaController extends Controller
 {
     public function index(Request $request)
     {
@@ -19,6 +20,7 @@ use DB;
         $sort = $request->input('sort', 'id');
         $direction = $request->input('direction', 'asc');
         $mapel = $request->input('mapel');
+        $month = $request->input('month', date('Y-m'));
 
         $allowedSorts = ['id', 'nama', 'mapel', 'nickname'];
         if (!in_array($sort, $allowedSorts)) {
@@ -40,7 +42,7 @@ use DB;
 
         $tentors = $query->orderBy($sort, $direction)->get();
 
-        return view('admin.biaya.index', compact('tentors', 'search', 'sort', 'direction', 'mapel'));
+        return view('admin.biaya.index', compact('tentors', 'search', 'sort', 'direction', 'mapel', 'month'));
     }
 
 
@@ -698,16 +700,17 @@ use DB;
     public function saveMonthly(Request $request, Tentor $tentor)
     {
         $month = $request->input('month');
-        if (!$month) return back()->with('error', 'Bulan harus ditentukan.');
+        if (!$month)
+            return back()->with('error', 'Bulan harus ditentukan.');
 
         $siswas = $tentor->siswas()->get()->unique('id');
-        
+
         DB::beginTransaction();
         try {
             foreach ($siswas as $siswa) {
                 // Force calculation from master settings when saving
                 $costData = $this->getStudentCost($siswa, $tentor, $month, true);
-                
+
                 BiayaBulanan::updateOrCreate(
                     [
                         'month' => $month,
