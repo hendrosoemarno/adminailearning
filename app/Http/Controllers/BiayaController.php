@@ -623,7 +623,10 @@ class BiayaController extends Controller
                     'is_custom' => ($saved->custom_total_meet !== null || $saved->tanggal_masuk !== null),
                     'is_salary_hidden' => (bool) $saved->is_salary_hidden,
                     'sort_order' => $saved->sort_order,
-                    'realisasi_kbm' => $saved->realisasi_kbm ?? 0,
+                    'realisasi_kbm' => \App\Models\Presensi::where('id_tentor', $tentor->id)
+                        ->where('id_siswa', $siswa->id)
+                        ->whereRaw("DATE_FORMAT(FROM_UNIXTIME(tgl_kbm), '%Y-%m') = ?", [$month])
+                        ->count(),
                     'is_saved' => true
                 ];
             }
