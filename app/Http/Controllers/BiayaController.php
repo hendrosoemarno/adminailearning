@@ -1118,7 +1118,8 @@ class BiayaController extends Controller
         $request->validate([
             'id_siswa' => 'required|exists:mdlu6_user,id',
             'id_tentor' => 'required|exists:ai_tentor,id',
-            'status' => 'required|boolean'
+            'status' => 'required|boolean',
+            'month' => 'nullable|string'
         ]);
 
         $siswaTarif = SiswaTarif::firstOrCreate(
@@ -1127,6 +1128,13 @@ class BiayaController extends Controller
 
         $siswaTarif->is_salary_hidden = (bool) $request->status;
         $siswaTarif->save();
+
+        if ($request->has('month') && $request->month) {
+            BiayaBulanan::where('month', $request->month)
+                ->where('id_siswa', $request->id_siswa)
+                ->where('id_tentor', $request->id_tentor)
+                ->update(['is_salary_hidden' => $siswaTarif->is_salary_hidden]);
+        }
 
         return response()->json([
             'success' => true,
@@ -1140,6 +1148,7 @@ class BiayaController extends Controller
             'id_tentor' => 'required|exists:ai_tentor,id',
             'order' => 'required|array',
             'order.*' => 'required|integer',
+            'month' => 'nullable|string'
         ]);
 
         foreach ($request->order as $index => $idSiswa) {
@@ -1147,6 +1156,13 @@ class BiayaController extends Controller
                 ['id_siswa' => $idSiswa, 'id_tentor' => $request->id_tentor],
                 ['sort_order' => $index]
             );
+
+            if ($request->has('month') && $request->month) {
+                BiayaBulanan::where('month', $request->month)
+                    ->where('id_siswa', $idSiswa)
+                    ->where('id_tentor', $request->id_tentor)
+                    ->update(['sort_order' => $index]);
+            }
         }
 
         return response()->json(['success' => true]);

@@ -387,7 +387,8 @@
                         },
                         body: JSON.stringify({
                             id_tentor: {{ $tentor->id }},
-                            order: order
+                            order: order,
+                            month: '{{ $month }}'
                         })
                     })
                         .then(response => response.json())
@@ -551,7 +552,8 @@
                 body: JSON.stringify({
                     id_siswa: siswaId,
                     id_tentor: tentorId,
-                    status: isActive ? 1 : 0 // if it WAS active, we send 1 to hide it
+                    status: isActive ? 1 : 0, // if it WAS active, we send 1 to hide it
+                    month: '{{ $month }}'
                 })
             })
                 .then(response => response.json())
