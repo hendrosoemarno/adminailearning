@@ -808,52 +808,35 @@ class BiayaController extends Controller
         $siswas = $tentor->siswas()->get()->unique('id');
         $filteredSiswas = collect();
 
-        foreach ($siswas as $siswa) {
-            // Kita cari manual agar spesifik ke Tentor ini saja
-            $siswaTarif = \App\Models\SiswaTarif::where('id_siswa', $siswa->id)
-                ->where('id_tentor', $tentor->id)
-                ->first();
+        foreach ($siswas as $siswa) { // Line 811 initially
+            // Gunakan fungsi sentral getStudentCost agar membaca data simpanan jika ada
+            $costData = $this->getStudentCost($siswa, $tentor, $month);
 
             // Skip jika diset hidden untuk tentor ini
-            if ($siswaTarif && $siswaTarif->is_salary_hidden) {
+            if ($costData['is_salary_hidden']) {
                 continue;
             }
 
-            $tarif = $siswaTarif->tarif ?? null;
+            $paketKode = $costData['paket_kode'] ?? '-';
 
-            if ($tarif) {
+            if ($paketKode !== '-') {
                 // Split Kode: "SD 2x" -> Materi: "SD", Paket: "2x"
-                $parts = explode(' ', $tarif->kode);
+                $parts = explode(' ', $paketKode);
                 $siswa->materi = $parts[0] ?? '-';
                 $siswa->paket = $parts[1] ?? '-';
 
-                // Get custom values or defaults
-                $customTotalMeet = $siswaTarif->custom_total_meet;
-                $tanggalMasuk = $siswaTarif->tanggal_masuk;
-
-                // Calculate default total meet from package
-                preg_match('/\d+/', $tarif->kode, $matches);
-                $multiplier = isset($matches[0]) ? (int) $matches[0] : 0;
-                $defaultTotalMeet = $multiplier * 4;
-
-                // Use custom or default
-                $totalMeet = $customTotalMeet ?? $defaultTotalMeet;
-
-                // Calculate proportions
-                $meetRatio = $defaultTotalMeet > 0 ? $totalMeet / $defaultTotalMeet : 1;
-
-                // Calculate Gaji (proportional) - USING CUSTOM FORMULA
-                $gaji = $tarif->tentor * $meetRatio;
-
-                $siswa->gaji = $gaji;
-                $siswa->total = $gaji;
+                $totalMeet = $costData['total_meet'];
+                $defaultTotalMeet = $costData['default_total_meet'];
+                
+                $siswa->gaji = $costData['gaji_tentor'];
+                $siswa->total = $costData['gaji_tentor'];
                 $siswa->total_meet = $totalMeet;
 
                 // Handle custom meet display logic
-                if ($customTotalMeet !== null && $customTotalMeet != $defaultTotalMeet) {
-                    $siswa->rencana_kbm = $customTotalMeet . "x Pertemuan";
-                    $perMeet = $defaultTotalMeet > 0 ? $tarif->tentor / $defaultTotalMeet : 0;
-                    $siswa->perhitungan = $customTotalMeet . " x Rp." . number_format($perMeet, 0, ',', '.');
+                if ($totalMeet != $defaultTotalMeet) {
+                    $siswa->rencana_kbm = $totalMeet . "x Pertemuan";
+                    $perMeet = $totalMeet > 0 ? $costData['gaji_tentor'] / $totalMeet : 0;
+                    $siswa->perhitungan = $totalMeet . " x Rp." . number_format($perMeet, 0, ',', '.');
                 } else {
                     $siswa->rencana_kbm = "Penuh";
                     $siswa->perhitungan = "-";
@@ -868,13 +851,9 @@ class BiayaController extends Controller
                 $siswa->perhitungan = "-";
             }
 
-            // Calculate Realisasi KBM
-            $siswa->realisasi_kbm = Presensi::where('id_tentor', $tentor->id)
-                ->where('id_siswa', $siswa->id)
-                ->whereRaw("DATE_FORMAT(FROM_UNIXTIME(tgl_kbm), '%Y-%m') = ?", [$month])
-                ->count();
-
-            $siswa->sort_order = $siswaTarif ? $siswaTarif->sort_order : 0;
+            // Realisasi KBM ditarik dari getStudentCost (karena sudah dibuat real-time di update sebelumnya)
+            $siswa->realisasi_kbm = $costData['realisasi_kbm'];
+            $siswa->sort_order = $costData['sort_order'];
 
             $filteredSiswas->push($siswa);
         }
