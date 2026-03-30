@@ -717,8 +717,8 @@ class BiayaController extends Controller
         DB::beginTransaction();
         try {
             foreach ($siswas as $siswa) {
-                // Force calculation from master settings when saving
-                $costData = $this->getStudentCost($siswa, $tentor, $month, true);
+                // Prioritize historical data if exists, otherwise fetch from master
+                $costData = $this->getStudentCost($siswa, $tentor, $month, false);
 
                 BiayaBulanan::updateOrCreate(
                     [
