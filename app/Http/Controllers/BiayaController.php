@@ -938,11 +938,32 @@ class BiayaController extends Controller
             }
         }
 
+        $totalBiaya = $gaji + $manajemen + $aplikasi;
+        $aiLearning = $manajemen + $aplikasi;
+
+        // Auto-update saved monthly record if editing inside a saved month
+        if ($request->has('month') && $request->month) {
+            $savedInfo = BiayaBulanan::where('month', $request->month)
+                ->where('id_siswa', $idSiswa)
+                ->where('id_tentor', $idTentor)
+                ->first();
+
+            if ($savedInfo) {
+                $savedInfo->update([
+                    'id_tarif' => $idTarif,
+                    'biaya' => $totalBiaya,
+                    'ai_learning' => $aiLearning,
+                    'gaji_tentor' => $gaji,
+                    'total_meet' => $totalMeet,
+                ]);
+            }
+        }
+
         return response()->json([
             'success' => true,
             'data' => [
-                'biaya' => $gaji + $manajemen + $aplikasi,
-                'ai_learning' => $manajemen + $aplikasi,
+                'biaya' => $totalBiaya,
+                'ai_learning' => $aiLearning,
                 'gaji_tentor' => $gaji,
                 'total_meet' => $totalMeet,
                 'default_total_meet' => $defaultTotalMeet
@@ -1014,6 +1035,25 @@ class BiayaController extends Controller
 
         $totalBiaya = $gaji + $manajemen + $aplikasi;
         $aiLearning = $manajemen + $aplikasi;
+
+        // Auto-update saved monthly record if editing inside a saved month
+        if ($request->has('month') && $request->month) {
+            $savedInfo = BiayaBulanan::where('month', $request->month)
+                ->where('id_siswa', $request->id_siswa)
+                ->where('id_tentor', $request->id_tentor)
+                ->first();
+
+            if ($savedInfo) {
+                $savedInfo->update([
+                    'tanggal_masuk' => $siswaTarif->tanggal_masuk,
+                    'custom_total_meet' => $siswaTarif->custom_total_meet,
+                    'biaya' => $totalBiaya,
+                    'ai_learning' => $aiLearning,
+                    'gaji_tentor' => $gaji,
+                    'total_meet' => $totalMeet,
+                ]);
+            }
+        }
 
         return response()->json([
             'success' => true,

@@ -448,7 +448,8 @@
                 body: JSON.stringify({
                     id_siswa: siswaId,
                     id_tentor: tentorId,
-                    id_tarif: tarifId
+                    id_tarif: tarifId,
+                    month: '{{ $month }}'
                 })
             })
                 .then(response => response.json())
@@ -500,7 +501,8 @@
                     id_siswa: siswaId,
                     id_tentor: tentorId,
                     field: field,
-                    value: value
+                    value: value,
+                    month: '{{ $month }}'
                 })
             })
                 .then(response => response.json())
