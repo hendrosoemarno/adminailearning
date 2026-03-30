@@ -610,14 +610,19 @@ class BiayaController extends Controller
                 ->first();
 
             if ($saved) {
+                $paket_kode = $saved->tarif ? $saved->tarif->kode : '-';
+                preg_match('/\d+/', $paket_kode, $matches);
+                $multiplier = isset($matches[0]) ? (int) $matches[0] : 1;
+                $default_total_meet = ($paket_kode !== '-') ? $multiplier * 4 : 0;
+
                 return [
                     'biaya' => $saved->biaya,
                     'ai_learning' => $saved->ai_learning,
                     'gaji_tentor' => $saved->gaji_tentor,
-                    'paket_kode' => $saved->tarif ? $saved->tarif->kode : '-',
+                    'paket_kode' => $paket_kode,
                     'id_tarif' => $saved->id_tarif,
                     'total_meet' => $saved->total_meet,
-                    'default_total_meet' => ($saved->total_meet), // Simplified
+                    'default_total_meet' => $default_total_meet,
                     'tanggal_masuk' => $saved->tanggal_masuk,
                     'custom_total_meet' => $saved->custom_total_meet,
                     'is_custom' => ($saved->custom_total_meet !== null || $saved->tanggal_masuk !== null),
