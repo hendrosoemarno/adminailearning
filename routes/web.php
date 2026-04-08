@@ -35,6 +35,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/user/{id}/edit', [\App\Http\Controllers\UserController::class, 'edit'])->name('user.edit');
     Route::put('/user/{id}', [\App\Http\Controllers\UserController::class, 'update'])->name('user.update');
     Route::get('/quiz-attempts', [\App\Http\Controllers\LoginController::class, 'dashboard'])->name('quiz-attempts');
+    Route::get('/next-level', [\App\Http\Controllers\NextLevelController::class, 'index'])->name('next-level');
     Route::resource('tentors', \App\Http\Controllers\TentorController::class);
     Route::resource('useradmins', \App\Http\Controllers\AdminUserController::class);
 

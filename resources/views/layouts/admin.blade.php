@@ -217,6 +217,10 @@
                             class="flex items-center px-4 py-2 rounded-lg text-sm {{ request()->routeIs('dashboard') && !request()->routeIs('quiz-attempts') ? 'text-blue-400' : 'text-slate-400 hover:bg-slate-800 hover:text-slate-100' }}">
                             <span class="sidebar-label">Daftar Siswa</span>
                         </a>
+                        <a href="{{ route('next-level') }}"
+                            class="flex items-center px-4 py-2 rounded-lg text-sm {{ request()->routeIs('next-level') ? 'text-blue-400' : 'text-slate-400 hover:bg-slate-800 hover:text-slate-100' }}">
+                            <span class="sidebar-label">Next Level</span>
+                        </a>
                         <a href="#"
                             class="flex items-center px-4 py-2 rounded-lg text-sm text-slate-400 hover:bg-slate-800 hover:text-slate-100">
                             <span class="sidebar-label">Siswa-Tarif</span>
