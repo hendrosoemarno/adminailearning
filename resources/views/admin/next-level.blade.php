@@ -18,12 +18,42 @@
             <table class="w-full text-left text-sm whitespace-nowrap">
                 <thead class="bg-slate-900/50 border-b border-slate-700/50 text-slate-400">
                     <tr>
-                        <th class="p-4 font-semibold">TANGGAL KUIS</th>
-                        <th class="p-4 font-semibold">USERNAME</th>
-                        <th class="p-4 font-semibold">NAMA SISWA</th>
-                        <th class="p-4 font-semibold">NAMA KURSUS</th>
-                        <th class="p-4 font-semibold">NAMA KUIS</th>
-                        <th class="p-4 font-semibold text-center">NILAI</th>
+                        <th class="p-4 font-semibold">
+                            <a href="{{ request()->fullUrlWithQuery(['sort' => 'timestart', 'direction' => ($sort === 'timestart' && $direction === 'asc') ? 'desc' : 'asc']) }}" class="flex items-center gap-1 hover:text-white transition-colors">
+                                TANGGAL KUIS
+                                @if($sort === 'timestart') <span class="text-xs">{{ $direction === 'asc' ? '↑' : '↓' }}</span> @endif
+                            </a>
+                        </th>
+                        <th class="p-4 font-semibold">
+                            <a href="{{ request()->fullUrlWithQuery(['sort' => 'username', 'direction' => ($sort === 'username' && $direction === 'asc') ? 'desc' : 'asc']) }}" class="flex items-center gap-1 hover:text-white transition-colors">
+                                USERNAME
+                                @if($sort === 'username') <span class="text-xs">{{ $direction === 'asc' ? '↑' : '↓' }}</span> @endif
+                            </a>
+                        </th>
+                        <th class="p-4 font-semibold">
+                            <a href="{{ request()->fullUrlWithQuery(['sort' => 'firstname', 'direction' => ($sort === 'firstname' && $direction === 'asc') ? 'desc' : 'asc']) }}" class="flex items-center gap-1 hover:text-white transition-colors">
+                                NAMA SISWA
+                                @if($sort === 'firstname') <span class="text-xs">{{ $direction === 'asc' ? '↑' : '↓' }}</span> @endif
+                            </a>
+                        </th>
+                        <th class="p-4 font-semibold">
+                            <a href="{{ request()->fullUrlWithQuery(['sort' => 'course_name', 'direction' => ($sort === 'course_name' && $direction === 'asc') ? 'desc' : 'asc']) }}" class="flex items-center gap-1 hover:text-white transition-colors">
+                                NAMA KURSUS
+                                @if($sort === 'course_name') <span class="text-xs">{{ $direction === 'asc' ? '↑' : '↓' }}</span> @endif
+                            </a>
+                        </th>
+                        <th class="p-4 font-semibold">
+                            <a href="{{ request()->fullUrlWithQuery(['sort' => 'quiz_name', 'direction' => ($sort === 'quiz_name' && $direction === 'asc') ? 'desc' : 'asc']) }}" class="flex items-center gap-1 hover:text-white transition-colors">
+                                NAMA KUIS
+                                @if($sort === 'quiz_name') <span class="text-xs">{{ $direction === 'asc' ? '↑' : '↓' }}</span> @endif
+                            </a>
+                        </th>
+                        <th class="p-4 font-semibold text-center hidden md:table-cell">
+                            <a href="{{ request()->fullUrlWithQuery(['sort' => 'grade', 'direction' => ($sort === 'grade' && $direction === 'asc') ? 'desc' : 'asc']) }}" class="flex items-center justify-center gap-1 hover:text-white transition-colors">
+                                NILAI
+                                @if($sort === 'grade') <span class="text-xs">{{ $direction === 'asc' ? '↑' : '↓' }}</span> @endif
+                            </a>
+                        </th>
                     </tr>
                 </thead>
                 <tbody class="divide-y divide-slate-700/50 text-slate-300">

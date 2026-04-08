@@ -7,7 +7,7 @@ use Illuminate\Support\Facades\DB;
 
 class NextLevelController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
         $attempts = DB::table('mdlu6_quiz_attempts as qa')
             ->join('mdlu6_quiz as q', 'qa.quiz', '=', 'q.id')
@@ -26,6 +26,7 @@ class NextLevelController extends Controller
                 'q.name as quiz_name',
                 'q.sumgrades as total_grades',
                 'qa.sumgrades as earned_grades',
+                'qa.timestart',
                 'qa.timefinish as quiz_date'
             )
             ->where('q.name', 'like', '%Next%')
@@ -33,7 +34,6 @@ class NextLevelController extends Controller
             ->where('ue.status', 0)
             ->where('q.sumgrades', '>', 0)
             ->whereRaw('(qa.sumgrades / q.sumgrades) * 100 >= 90')
-            ->orderBy('qa.timestart', 'asc')
             ->get();
 
         // Calculate final grade for view
@@ -41,6 +41,16 @@ class NextLevelController extends Controller
             $attempt->grade = ($attempt->earned_grades / $attempt->total_grades) * 100;
         }
 
-        return view('admin.next-level', compact('attempts'));
+        // Handle Collection Sorting
+        $sort = $request->get('sort', 'timestart');
+        $direction = $request->get('direction', 'asc');
+
+        if ($direction === 'desc') {
+            $attempts = $attempts->sortByDesc($sort)->values();
+        } else {
+            $attempts = $attempts->sortBy($sort)->values();
+        }
+
+        return view('admin.next-level', compact('attempts', 'sort', 'direction'));
     }
 }
