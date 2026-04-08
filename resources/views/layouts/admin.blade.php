@@ -221,6 +221,10 @@
                             class="flex items-center px-4 py-2 rounded-lg text-sm {{ request()->routeIs('next-level') ? 'text-blue-400' : 'text-slate-400 hover:bg-slate-800 hover:text-slate-100' }}">
                             <span class="sidebar-label">Next Level</span>
                         </a>
+                        <a href="{{ route('siswa-tentor.index') }}"
+                            class="flex items-center px-4 py-2 rounded-lg text-sm {{ request()->routeIs('siswa-tentor.*') ? 'text-blue-400' : 'text-slate-400 hover:bg-slate-800 hover:text-slate-100' }}">
+                            <span class="sidebar-label">Siswa-Tentor</span>
+                        </a>
                         <a href="#"
                             class="flex items-center px-4 py-2 rounded-lg text-sm text-slate-400 hover:bg-slate-800 hover:text-slate-100">
                             <span class="sidebar-label">Siswa-Tarif</span>
