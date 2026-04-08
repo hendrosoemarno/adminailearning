@@ -19,14 +19,21 @@ class NextLevelController extends Controller
                 'u.lastname',
                 'c.fullname as course_name',
                 'q.name as quiz_name',
-                'qa.sumgrades as grade',
+                'q.sumgrades as total_grades',
+                'qa.sumgrades as earned_grades',
                 'qa.timefinish as quiz_date'
             )
             ->where('q.name', 'like', '%Next%')
             ->where('qa.state', 'finished')
-            ->where('qa.sumgrades', '>=', 90)
+            ->where('q.sumgrades', '>', 0)
+            ->whereRaw('(qa.sumgrades / q.sumgrades) * 100 >= 90')
             ->orderBy('qa.timefinish', 'desc')
             ->get();
+
+        // Calculate final grade for view
+        foreach ($attempts as $attempt) {
+            $attempt->grade = ($attempt->earned_grades / $attempt->total_grades) * 100;
+        }
 
         return view('admin.next-level', compact('attempts'));
     }
