@@ -38,6 +38,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/next-level', [\App\Http\Controllers\NextLevelController::class, 'index'])->name('next-level');
     Route::get('/siswa-tentor', [\App\Http\Controllers\SiswaTentorController::class, 'index'])->name('siswa-tentor.index');
     Route::get('/siswa-tentor/{username}', [\App\Http\Controllers\SiswaTentorController::class, 'detail'])->name('siswa-tentor.detail');
+    Route::get('/placement-test', [\App\Http\Controllers\PlacementTestController::class, 'index'])->name('placement-test');
     Route::resource('tentors', \App\Http\Controllers\TentorController::class);
     Route::resource('useradmins', \App\Http\Controllers\AdminUserController::class);
 
