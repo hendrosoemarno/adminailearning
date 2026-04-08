@@ -13,6 +13,11 @@ class NextLevelController extends Controller
             ->join('mdlu6_quiz as q', 'qa.quiz', '=', 'q.id')
             ->join('mdlu6_course as c', 'q.course', '=', 'c.id')
             ->join('mdlu6_user as u', 'qa.userid', '=', 'u.id')
+            ->join('mdlu6_enrol as e', 'e.courseid', '=', 'c.id')
+            ->join('mdlu6_user_enrolments as ue', function($join) {
+                $join->on('ue.enrolid', '=', 'e.id')
+                     ->on('ue.userid', '=', 'u.id');
+            })
             ->select(
                 'u.username',
                 'u.firstname',
@@ -25,9 +30,10 @@ class NextLevelController extends Controller
             )
             ->where('q.name', 'like', '%Next%')
             ->where('qa.state', 'finished')
+            ->where('ue.status', 0)
             ->where('q.sumgrades', '>', 0)
             ->whereRaw('(qa.sumgrades / q.sumgrades) * 100 >= 90')
-            ->orderBy('qa.timefinish', 'desc')
+            ->orderBy('qa.timestart', 'asc')
             ->get();
 
         // Calculate final grade for view
