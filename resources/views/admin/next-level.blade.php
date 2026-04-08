@@ -42,7 +42,7 @@
                             <td class="p-4 text-amber-400">{{ $attempt->quiz_name }}</td>
                             <td class="p-4 text-center">
                                 <span class="px-3 py-1 rounded-full text-xs font-bold text-green-400 bg-green-400/10 border border-green-400/20">
-                                    {{ rtrim(rtrim((string)$attempt->grade, '0'), '.') }}
+                                    {{ round($attempt->grade, 2) }}
                                 </span>
                             </td>
                         </tr>
