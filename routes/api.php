@@ -17,3 +17,9 @@ use Illuminate\Support\Facades\Route;
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
+
+// Endpoint integrasi n8n: pendaftaran siswa otomatis
+Route::middleware('verify.n8n.token')->post('/register', [
+    \App\Http\Controllers\Api\RegisterController::class,
+    'register',
+]);
