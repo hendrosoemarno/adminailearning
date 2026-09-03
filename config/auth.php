@@ -74,7 +74,7 @@ return [
         //     'table' => 'users',
         // ],
         'tentors' => [
-            'driver' => 'eloquent',
+            'driver' => 'tentor-eloquent',
             'model' => App\Models\Tentor::class,
         ],
     ],

@@ -5,7 +5,6 @@ namespace App\Http\Controllers;
 use App\Models\Tentor;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Hash;
 
 class TentorAuthController extends Controller
 {
@@ -31,7 +30,7 @@ class TentorAuthController extends Controller
             'ket_pendidikan' => 'required|string',
         ]);
 
-        $validated['password'] = Hash::make($request->password);
+        $validated['password'] = md5($request->password);
         $validated['aktif'] = 1;
 
         if (!empty($validated['tgl_lahir'])) {
@@ -57,20 +56,9 @@ class TentorAuthController extends Controller
             'password' => 'required',
         ]);
 
-        // 1. Try normal Bcrypt attempt (Laravel Default)
+        // Verifikasi password ditangani oleh TentorUserProvider (MD5 + bcrypt fallback).
+        // Password TIDAK di-upgrade agar tetap kompatibel dengan aplikasi CodeIgniter.
         if (Auth::guard('tentor')->attempt($credentials, $request->remember)) {
-            $request->session()->regenerate();
-            return redirect()->intended(route('tentor.dashboard'));
-        }
-
-        // 2. Fallback for legacy MD5 passwords
-        $user = Tentor::where('email', $credentials['email'])->first();
-        if ($user && $user->password === md5($credentials['password'])) {
-            // Upgrade to Bcrypt for future logins
-            $user->password = Hash::make($credentials['password']);
-            $user->save();
-
-            Auth::guard('tentor')->login($user, $request->remember);
             $request->session()->regenerate();
             return redirect()->intended(route('tentor.dashboard'));
         }
@@ -113,7 +101,7 @@ class TentorAuthController extends Controller
         ]);
 
         if ($request->filled('password')) {
-            $validated['password'] = Hash::make($request->password);
+            $validated['password'] = md5($request->password);
         } else {
             unset($validated['password']);
         }
