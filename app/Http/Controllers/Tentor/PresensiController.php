@@ -32,6 +32,7 @@ class PresensiController extends Controller
 
         if ($sort === 'siswa') {
             $query->leftJoin('mdlu6_user', 'ai_presensi.id_siswa', '=', 'mdlu6_user.id')
+                ->select('ai_presensi.*')
                 ->orderBy('mdlu6_user.firstname', $direction)
                 ->orderBy('mdlu6_user.lastname', $direction)
                 ->orderBy('ai_presensi.tgl_kbm', 'desc');
