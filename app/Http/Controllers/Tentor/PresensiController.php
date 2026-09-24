@@ -79,15 +79,7 @@ class PresensiController extends Controller
     {
         $tentor = Auth::guard('tentor')->user();
 
-        if ($presensi->id_tentor !== $tentor->id) {
-            \Illuminate\Support\Facades\Log::warning('PRESENSI_EDIT_403', [
-                'presensi_id' => $presensi->id,
-                'presensi_id_tentor' => $presensi->id_tentor,
-                'presensi_id_tentor_type' => gettype($presensi->id_tentor),
-                'tentor_id' => $tentor->id,
-                'tentor_id_type' => gettype($tentor->id),
-                'tentor_email' => $tentor->email,
-            ]);
+        if ((int) $presensi->id_tentor !== (int) $tentor->id) {
             abort(403);
         }
 
@@ -99,7 +91,7 @@ class PresensiController extends Controller
     {
         $tentor = Auth::guard('tentor')->user();
 
-        if ($presensi->id_tentor !== $tentor->id) {
+        if ((int) $presensi->id_tentor !== (int) $tentor->id) {
             abort(403);
         }
 

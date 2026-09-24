@@ -19,6 +19,13 @@ class Presensi extends Model
         'foto'
     ];
 
+    protected $casts = [
+        'id_tentor' => 'integer',
+        'id_siswa' => 'integer',
+        'tgl_input' => 'integer',
+        'tgl_kbm' => 'integer',
+    ];
+
     public $timestamps = false;
 
     public function tentor()
