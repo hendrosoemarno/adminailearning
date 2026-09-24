@@ -17,17 +17,70 @@
         </a>
     </div>
 
+    @php
+        $sortUrl = function ($col) use ($sort, $direction, $dateFromVal, $dateToVal) {
+            $newDirection = ($sort === $col && $direction === 'asc') ? 'desc' : 'asc';
+            return route('tentor.presensi.index', [
+                'sort' => $col,
+                'direction' => $newDirection,
+                'date_from' => $dateFromVal,
+                'date_to' => $dateToVal,
+            ]);
+        };
+        $sortArrow = function ($col) use ($sort, $direction) {
+            if ($sort === $col) {
+                return $direction === 'asc' ? '▲' : '▼';
+            }
+            return '⇅';
+        };
+    @endphp
+
+    <div class="bg-slate-800/50 backdrop-blur-sm border border-slate-700 rounded-xl shadow-xl p-5 mb-6">
+        <form method="GET" action="{{ route('tentor.presensi.index') }}" class="flex flex-col md:flex-row md:items-end gap-4">
+            <div class="flex flex-col gap-2">
+                <label class="text-xs font-bold text-slate-400 uppercase tracking-widest">Tanggal Awal</label>
+                <input type="date" name="date_from" value="{{ $dateFromVal }}"
+                    class="bg-slate-900 border border-slate-700 rounded-lg px-4 py-2.5 text-slate-200 focus:outline-none focus:ring-2 focus:ring-blue-500">
+            </div>
+            <div class="flex flex-col gap-2">
+                <label class="text-xs font-bold text-slate-400 uppercase tracking-widest">Tanggal Akhir</label>
+                <input type="date" name="date_to" value="{{ $dateToVal }}"
+                    class="bg-slate-900 border border-slate-700 rounded-lg px-4 py-2.5 text-slate-200 focus:outline-none focus:ring-2 focus:ring-blue-500">
+            </div>
+            <input type="hidden" name="sort" value="{{ $sort }}">
+            <input type="hidden" name="direction" value="{{ $direction }}">
+            <div class="flex items-center gap-2">
+                <button type="submit"
+                    class="inline-flex items-center px-5 py-2.5 bg-blue-600 hover:bg-blue-500 text-white text-sm font-bold rounded-xl transition-colors">
+                    <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z"></path>
+                    </svg>
+                    Terapkan
+                </button>
+                <a href="{{ route('tentor.presensi.index') }}"
+                    class="inline-flex items-center px-5 py-2.5 bg-slate-700 hover:bg-slate-600 text-white text-sm font-bold rounded-xl transition-colors">
+                    Reset
+                </a>
+            </div>
+        </form>
+    </div>
+
     <div class="bg-slate-800/50 backdrop-blur-sm border border-slate-700 rounded-xl shadow-xl overflow-hidden">
         <div class="overflow-x-auto">
             <table class="w-full text-left border-collapse">
                 <thead>
                     <tr class="bg-slate-900 border-b border-slate-700">
-                        <th class="p-4 text-xs font-bold text-slate-400 uppercase tracking-widest">Siswa</th>
-                        <th class="p-4 text-xs font-bold text-slate-400 uppercase tracking-widest text-center">Tanggal KBM
+                        <th class="p-4 text-xs font-bold text-slate-400 uppercase tracking-widest">
+                            <a href="{{ $sortUrl('siswa') }}" class="inline-flex items-center gap-1 hover:text-blue-400 transition-colors">Siswa <span class="text-slate-500 text-[10px]">{{ $sortArrow('siswa') }}</span></a>
                         </th>
-                        <th class="p-4 text-xs font-bold text-slate-400 uppercase tracking-widest text-center">Bukti Foto
+                        <th class="p-4 text-xs font-bold text-slate-400 uppercase tracking-widest text-center">
+                            <a href="{{ $sortUrl('tgl_kbm') }}" class="inline-flex items-center gap-1 hover:text-blue-400 transition-colors">Tanggal KBM <span class="text-slate-500 text-[10px]">{{ $sortArrow('tgl_kbm') }}</span></a>
                         </th>
-                        <th class="p-4 text-xs font-bold text-slate-400 uppercase tracking-widest text-center">Waktu Input
+                        <th class="p-4 text-xs font-bold text-slate-400 uppercase tracking-widest text-center">
+                            <a href="{{ $sortUrl('foto') }}" class="inline-flex items-center gap-1 hover:text-blue-400 transition-colors">Bukti Foto <span class="text-slate-500 text-[10px]">{{ $sortArrow('foto') }}</span></a>
+                        </th>
+                        <th class="p-4 text-xs font-bold text-slate-400 uppercase tracking-widest text-center">
+                            <a href="{{ $sortUrl('tgl_input') }}" class="inline-flex items-center gap-1 hover:text-blue-400 transition-colors">Waktu Input <span class="text-slate-500 text-[10px]">{{ $sortArrow('tgl_input') }}</span></a>
                         </th>
                         <th class="p-4 text-xs font-bold text-slate-400 uppercase tracking-widest text-right">Aksi</th>
                     </tr>

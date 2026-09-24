@@ -10,16 +10,38 @@ use Illuminate\Support\Facades\Storage;
 
 class PresensiController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
         $tentor = Auth::guard('tentor')->user();
-        $presensis = Presensi::where('id_tentor', $tentor->id)
-            ->with('siswa')
-            ->orderBy('tgl_kbm', 'desc')
-            ->orderBy('tgl_input', 'desc')
-            ->get();
 
-        return view('tentor-portal.presensi.index', compact('presensis'));
+        $dateFromVal = $request->input('date_from', date('Y-m-d', strtotime('-31 days')));
+        $dateToVal = $request->input('date_to', date('Y-m-d'));
+
+        $sortableColumns = ['tgl_kbm', 'tgl_input', 'foto', 'siswa'];
+        $sort = in_array($request->input('sort'), $sortableColumns) ? $request->input('sort') : 'tgl_kbm';
+        $direction = strtolower($request->input('direction', 'desc')) === 'asc' ? 'asc' : 'desc';
+
+        $query = Presensi::where('id_tentor', $tentor->id)->with('siswa');
+
+        if ($dateFromVal) {
+            $query->where('tgl_kbm', '>=', strtotime($dateFromVal . ' 00:00:00'));
+        }
+        if ($dateToVal) {
+            $query->where('tgl_kbm', '<=', strtotime($dateToVal . ' 23:59:59'));
+        }
+
+        if ($sort === 'siswa') {
+            $query->leftJoin('mdlu6_user', 'ai_presensi.id_siswa', '=', 'mdlu6_user.id')
+                ->orderBy('mdlu6_user.firstname', $direction)
+                ->orderBy('mdlu6_user.lastname', $direction)
+                ->orderBy('ai_presensi.tgl_kbm', 'desc');
+        } else {
+            $query->orderBy('ai_presensi.' . $sort, $direction);
+        }
+
+        $presensis = $query->get();
+
+        return view('tentor-portal.presensi.index', compact('presensis', 'dateFromVal', 'dateToVal', 'sort', 'direction'));
     }
 
     public function create()
