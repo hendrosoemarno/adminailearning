@@ -37,4 +37,13 @@ class Presensi extends Model
     {
         return $this->belongsTo(MoodleUser::class, 'id_siswa');
     }
+
+    public function getFotoUrlAttribute()
+    {
+        if (empty($this->foto) || empty($this->getKey())) {
+            return null;
+        }
+
+        return route('tentor.presensi.foto', $this->getKey());
+    }
 }

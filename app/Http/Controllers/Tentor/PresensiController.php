@@ -45,6 +45,37 @@ class PresensiController extends Controller
         return view('tentor-portal.presensi.index', compact('presensis', 'dateFromVal', 'dateToVal', 'sort', 'direction'));
     }
 
+    public function foto(Presensi $presensi)
+    {
+        $tentor = Auth::guard('tentor')->user();
+
+        if ((int) $presensi->id_tentor !== (int) $tentor->id) {
+            abort(403);
+        }
+
+        $file = $presensi->foto;
+        if (empty($file)) {
+            abort(404);
+        }
+
+        // Data baru: "presensi/<file>" (folder public/uploads/presensi)
+        $path = public_path('uploads/' . $file);
+
+        // Data lama: "<file>" saja — cek root uploads lalu subfolder presensi
+        if (!is_file($path)) {
+            $alt = public_path('uploads/' . (strpos($file, 'presensi/') === 0 ? $file : 'presensi/' . $file));
+            if (is_file($alt)) {
+                $path = $alt;
+            }
+        }
+
+        if (!is_file($path)) {
+            abort(404);
+        }
+
+        return response()->file($path);
+    }
+
     public function create()
     {
         $tentor = Auth::guard('tentor')->user();
