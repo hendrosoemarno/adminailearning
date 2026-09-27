@@ -46,4 +46,19 @@ class Presensi extends Model
 
         return route('tentor.presensi.foto', $this->getKey());
     }
+
+    public function getSiswaNameAttribute()
+    {
+        $siswa = $this->siswa;
+        if (!$siswa) {
+            return 'Siswa tidak ditemukan';
+        }
+        return trim($siswa->firstname . ' ' . $siswa->lastname);
+    }
+
+    public function getSiswaUsernameAttribute()
+    {
+        $siswa = $this->siswa;
+        return $siswa ? $siswa->username : '-';
+    }
 }

@@ -89,8 +89,8 @@
                     @forelse($presensis as $item)
                         <tr class="hover:bg-slate-700/20 transition-colors">
                             <td class="p-4 text-sm font-medium text-slate-200">
-                                {{ $item->siswa->firstname }} {{ $item->siswa->lastname }}
-                                <div class="text-xs text-slate-500">{{ $item->siswa->username }}</div>
+                                {{ $item->siswa_name }}
+                                <div class="text-xs text-slate-500">{{ $item->siswa_username }}</div>
                             </td>
                             <td class="p-4 text-sm text-slate-300 text-center">
                                 {{ date('d M Y', $item->tgl_kbm) }}
