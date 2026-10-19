@@ -22,6 +22,82 @@ Route::get('/landing', function () {
     return view('landing');
 });
 
+Route::get('/apps', function () {
+    return view('apps');
+});
+
+Route::get('/siakadplus', function () {
+    return view('siakadplus');
+});
+
+Route::get('/siakadplus/fitur', function () {
+    return view('siakadfitur');
+});
+
+Route::get('/simsiakad', function () {
+    return view('simsiakad');
+});
+
+Route::get('/simsiakad/kepsek', function () {
+    return view('simsiakad-kepsek');
+});
+
+Route::get('/simsiakad/admin', function () {
+    return view('simsiakad-admin');
+});
+
+Route::get('/simsiakad/guru', function () {
+    return view('simsiakad-guru');
+});
+
+Route::get('/simsiakad/murid', function () {
+    return view('simsiakad-murid');
+});
+
+Route::get('/simsiakad/wali', function () {
+    return view('simsiakad-wali');
+});
+
+Route::get('/simsiakad/keuangan', function () {
+    return view('simsiakad-keuangan');
+});
+
+Route::get('/simsiakad/sarpra', function () {
+    return view('simsiakad-sarpra');
+});
+
+Route::get('/simsiakad/hrd', function () {
+    return view('simsiakad-hrd');
+});
+
+Route::get('/simsiakad/bk', function () {
+    return view('simsiakad-bk');
+});
+
+Route::get('/simsiakad/library', function () {
+    return view('simsiakad-library');
+});
+
+Route::get('/simsiakad/klinik', function () {
+    return view('simsiakad-klinik');
+});
+
+Route::get('/simsiakad/laundry', function () {
+    return view('simsiakad-laundry');
+});
+
+Route::get('/simsiakad/pesantren', function () {
+    return view('simsiakad-pesantren');
+});
+
+Route::get('/simsiakad/emoney', function () {
+    return view('simsiakad-emoney');
+});
+
+Route::get('/simsiakad/canteen', function () {
+    return view('simsiakad-canteen');
+});
+
 Route::get('/login', [LoginController::class, 'showLoginForm'])->name('login');
 Route::post('/login', [LoginController::class, 'login']);
 Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
